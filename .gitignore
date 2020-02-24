@@ -1,0 +1,6 @@
+﻿**/*.db
+**/*.db.temp
+
+.vs
+obj
+bin

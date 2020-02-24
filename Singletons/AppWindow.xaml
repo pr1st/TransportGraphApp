@@ -1,0 +1,39 @@
+﻿<Window x:Class="TransportGraphApp.Singletons.AppWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Height="600" Width="750" MouseMove="OnMouseMove">
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Select database file" Click="SelectDataBaseFile"></MenuItem>
+                <MenuItem Header="Create and open database file" Click="CreateAndOpenDataBaseFile"></MenuItem>
+                <MenuItem Header="Close" Click="Close"></MenuItem>
+            </MenuItem>
+            <MenuItem Name="GraphMenu" Header="Graph">
+                <MenuItem Header="New graph" Click="NewGraph"></MenuItem>
+                <MenuItem Header="Select graph" Click="SelectGraph"></MenuItem>
+                <MenuItem Name="ChangeGraphAttributesMenu" Header="Change graph attributes" Click="ChangeGraphAttributes"></MenuItem>
+            </MenuItem>
+            <MenuItem Name="NodeMenu" Header="_Node">
+                <MenuItem Header="New _node" Click="NewNode"></MenuItem>
+                <MenuItem Header="Node list" Click="NodeList"></MenuItem>
+            </MenuItem>
+            <MenuItem Name="EdgeMenu" Header="_Edge">
+                <MenuItem Header="New _edge" Click="NewEdge"></MenuItem>
+                <MenuItem Header="Edge list" Click="EdgeList"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="About" Click="About"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Name="StatusText"></TextBlock>
+            </StatusBarItem>
+        </StatusBar>
+        <Label Name="AppGraph" HorizontalAlignment="Center" VerticalAlignment="Center">
+            There will be graph soon
+        </Label>
+    </DockPanel>
+</Window>
