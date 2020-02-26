@@ -2,7 +2,7 @@
 using LiteDB;
 
 namespace TransportGraphApp.Models {
-    internal class Node : IAttributeElement {
+    public class Node {
         public int Id { get; set; }
 
         public string Name { get; set; }

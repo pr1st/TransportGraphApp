@@ -17,5 +17,7 @@ namespace TransportGraphApp.Dialogs {
                 DialogResult = true;
             }
         }
+
+        public string NewDataBaseFileName => $"{FileName.Text}.db";
     }
 }

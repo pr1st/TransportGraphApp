@@ -2,7 +2,7 @@
 using LiteDB;
 
 namespace TransportGraphApp.Models {
-    internal class Graph : IAttributeElement {
+    public class Graph {
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -13,6 +13,8 @@ namespace TransportGraphApp.Models {
 
         public IList<Attribute> EdgeAttributes { get; set; }
 
-        public IDictionary<string, BsonValue> Attributes { get; set; }
+        public override string ToString() {
+            return Name;
+        }
     }
 }

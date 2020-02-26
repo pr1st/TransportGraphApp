@@ -13,7 +13,7 @@
         </Grid.RowDefinitions>
 
         <Label FontSize="16">Enter file name:</Label>
-        <TextBox Margin="0,5,0,0" FontSize="16" Name="FileName" Grid.Row="1" MinWidth="250"></TextBox>
+        <TextBox Margin="0,5,0,0" FontSize="16" Name="FileName" Grid.Row="1" MinWidth="250" x:FieldModifier="private"></TextBox>
         <WrapPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button IsDefault="True" Click="OkClicked" MinWidth="60" Margin="0,0,10,0">Ok</Button>
             <Button IsCancel="True" MinWidth="60">_Cancel</Button>

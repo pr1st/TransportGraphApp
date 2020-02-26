@@ -1,6 +1,6 @@
 ﻿
 namespace TransportGraphApp.Models {
-    internal enum AttributeType {
+    public enum AttributeType {
         String,
         Number,
         Boolean
