@@ -11,14 +11,7 @@ namespace TransportGraphApp.Actions {
         public static void Invoke() {
             var selectGraphDialog = new SelectGraphDialog();
             selectGraphDialog.ShowDialog();
-            if (selectGraphDialog.DialogResult != true) {
-                if (AppGraph.Instance.Graph == null || AppDataBase.Instance.GetCollection<Graph>()
-                    .Exists(g => g.Id == AppGraph.Instance.Graph.Id)) return;
-                AppGraph.Instance.Graph = null;
-                App.ChangeAppState(AppState.ConnectedToDatabase);
-
-                return;
-            }
+            if (selectGraphDialog.DialogResult != true) return;
 
             AppGraph.Instance.Graph = selectGraphDialog.SelectedGraph;
             App.ChangeAppState(AppState.GraphSelected);

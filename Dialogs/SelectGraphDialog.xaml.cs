@@ -28,8 +28,8 @@ namespace TransportGraphApp.Dialogs {
                 var selected = (Graph)ListView.SelectedItem;
                 TabControl.ItemsSource = new List<TabItem> {
                     CreateTab("Graph", selected.GraphAttributes),
-                    CreateTab("Node", selected.NodeAttributes),
-                    CreateTab("Edge", selected.EdgeAttributes)
+                    CreateTab("Node", selected.DefaultNodeAttributes),
+                    CreateTab("Edge", selected.DefaultEdgeAttributes)
                 };
                 CollectionViewSource.GetDefaultView(TabControl.ItemsSource).Refresh();
             };
@@ -79,7 +79,7 @@ namespace TransportGraphApp.Dialogs {
                     return;
                 }
 
-                AppDataBase.Instance.GetCollection<Graph>().DeleteMany(g => g.Id == SelectedGraph.Id);
+                DeleteGraphAction.Invoke(SelectedGraph);
                 UpdateStateToInit();
             };
             ModifyListButtons.Children.Add(deleteButton);

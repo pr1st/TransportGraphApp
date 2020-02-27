@@ -153,7 +153,7 @@ namespace TransportGraphApp.Dialogs {
                 }
 
                 onAdd.Invoke(new Attribute()
-                    {Name = nameBox.Text, Type = (AttributeType) attributes.SelectedItem, DefaultValue = value});
+                    {Name = nameBox.Text, Type = (AttributeType) attributes.SelectedItem, Value = value});
                 nameBox.Text = "";
             };
             inputFields.Children.Add(addButton);

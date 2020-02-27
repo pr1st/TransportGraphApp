@@ -5,10 +5,10 @@ namespace TransportGraphApp.Models {
 
         public AttributeType Type { get; set; }
 
-        public object DefaultValue { get; set; }
+        public object Value { get; set; }
 
         public override string ToString() {
-            return $"{Name}: {Type} ({DefaultValue})";
+            return $"{Name}: {Type} ({Value})";
         }
     }
 }

@@ -17,8 +17,8 @@ namespace TransportGraphApp.Actions {
             AppDataBase.Instance.GetCollection<Graph>().Insert(new Graph() {
                 Name = newGraphDialog.GraphName,
                 GraphAttributes = newGraphDialog.GraphAttributes,
-                NodeAttributes = newGraphDialog.NodeAttributes,
-                EdgeAttributes = newGraphDialog.EdgeAttributes
+                DefaultNodeAttributes = newGraphDialog.NodeAttributes,
+                DefaultEdgeAttributes = newGraphDialog.EdgeAttributes
             });
         }
     }

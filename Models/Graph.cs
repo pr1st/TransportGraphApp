@@ -9,9 +9,9 @@ namespace TransportGraphApp.Models {
 
         public IList<Attribute> GraphAttributes { get; set; }
 
-        public IList<Attribute> NodeAttributes { get; set; }
+        public IList<Attribute> DefaultNodeAttributes { get; set; }
 
-        public IList<Attribute> EdgeAttributes { get; set; }
+        public IList<Attribute> DefaultEdgeAttributes { get; set; }
 
         public override string ToString() {
             return Name;

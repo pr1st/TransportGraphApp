@@ -9,7 +9,7 @@ namespace TransportGraphApp.Models {
 
         public int ToNodeId { get; set; }
 
-        public IDictionary<string, BsonValue> Attributes { get; set; }
+        public IList<Attribute> Attributes { get; set; }
 
         public int GraphId { get; set; }
     }
