@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -96,7 +97,7 @@ namespace TransportGraphApp {
                         Text = attribute.Value.ToString(),
                         Width = 120,
                         FontSize = 16,
-                        Margin = new Thickness(5,0,5,0),
+                        Margin = new Thickness(5, 0, 5, 0),
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center
                     };
@@ -120,6 +121,35 @@ namespace TransportGraphApp {
                     throw new Exception("Illegal state");
                 }
             }
+
+            return stackPanel;
+        }
+
+        public static StackPanel CreateNodeAttributeRow(IList<Node> nodes, string label, Node selectedNode = null) {
+            var stackPanel = new StackPanel() {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 5, 0, 0)
+            };
+            var name = new Label() {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                FontSize = 16,
+                Content = label,
+                Width = 120
+            };
+            stackPanel.Children.Add(name);
+
+            var textBox = new TextBox {
+                Text = selectedNode != null ? selectedNode.Name : "",
+                Width = 120,
+                FontSize = 16,
+                Margin = new Thickness(5, 0, 5, 0),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            textBox.TextChanged += (sender, args) => {
+                
+            };
+            stackPanel.Children.Add(textBox);
 
             return stackPanel;
         }

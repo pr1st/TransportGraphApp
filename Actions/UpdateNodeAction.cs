@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
+using TransportGraphApp.Dialogs;
 using TransportGraphApp.Models;
+using TransportGraphApp.Singletons;
 
 namespace TransportGraphApp.Actions {
     internal static class UpdateNodeAction {
         public static void Invoke(Node n) {
-            MessageBox.Show("Update node");
+            var updateNodeDialog = new UpdateNodeDialog(n);
+            updateNodeDialog.ShowDialog();
+            if (updateNodeDialog.DialogResult != true) return;
+            AppDataBase.Instance.GetCollection<Node>().Update(n);
         }
     }
 }
