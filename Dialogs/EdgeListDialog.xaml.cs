@@ -51,6 +51,8 @@ namespace TransportGraphApp.Dialogs {
                 };
                 ((GridView) ListView.View).Columns.Add(gridViewColumn);
             }
+            ConfigureButtons();
+            UpdateStateToInit();
         }
 
         private void ConfigureButtons() {

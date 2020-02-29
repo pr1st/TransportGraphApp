@@ -3,7 +3,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Update edge" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
     <StackPanel Margin="15" Orientation="Vertical">
-        <StackPanel Orientation="Vertical" Name="AttributePanel" x:FieldModifier="private"></StackPanel>
+        <StackPanel Orientation="Vertical" Name="AttributeBox" x:FieldModifier="private">
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <StackPanel Orientation="Vertical" Margin="0,5,5,0">
+                    <Label FontSize="16" HorizontalAlignment="Left" Width="120">From</Label>
+                    <TextBox Width="120" KeyUp="TextBox_KeyUp" Height="20" Name="FromTextBox"
+                             x:FieldModifier="private" />
+                    <Label FontSize="16" HorizontalAlignment="Left" Width="120">To</Label>
+                    <TextBox Width="120" KeyUp="TextBox_KeyUp" Height="20" Name="ToTextBox"
+                             x:FieldModifier="private" />
+                </StackPanel>
+                <Border Width="120" Visibility="Collapsed" Height="100" BorderBrush="Black" BorderThickness="1">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Name="ResultStack" />
+                    </ScrollViewer>
+                </Border>
+            </StackPanel>
+        </StackPanel>
 
         <WrapPanel HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button IsDefault="True" Click="OkClicked" MinWidth="60" Margin="0,0,10,0">Change</Button>

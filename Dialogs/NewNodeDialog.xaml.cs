@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using LiteDB;
 using TransportGraphApp.Models;
+using TransportGraphApp.Singletons;
 using Attribute = TransportGraphApp.Models.Attribute;
 
 namespace TransportGraphApp.Dialogs {
@@ -59,6 +60,10 @@ namespace TransportGraphApp.Dialogs {
         }
 
         private void OkClicked(object sender, RoutedEventArgs e) {
+            if (AppDataBase.Instance.GetCollection<Node>().Exists(n => n.Name == (string) NameAttribute.Value)) {
+                ComponentUtils.ShowMessage("Node with this name already exists", MessageBoxImage.Error);
+                return;
+            }
             CreatedNode = new Node() {
                 Name = (string) NameAttribute.Value,
                 X = (double) XAttribute.Value,
