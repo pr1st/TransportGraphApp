@@ -10,8 +10,8 @@
                 <MenuItem Header="Create and open database file" Click="CreateAndOpenDataBaseFile"></MenuItem>
                 <MenuItem Header="Close" Click="Close"></MenuItem>
             </MenuItem>
-            <MenuItem Name="GraphMenu" Header="Graph">
-                <MenuItem Header="New graph" Click="NewGraph"></MenuItem>
+            <MenuItem Name="GraphMenu" Header="_Graph">
+                <MenuItem Header="New _graph" Click="NewGraph"></MenuItem>
                 <MenuItem Header="Select graph" Click="SelectGraph"></MenuItem>
                 <MenuItem Name="ChangeGraphAttributesMenu" Header="Change graph attributes" Click="ChangeGraphAttributes"></MenuItem>
             </MenuItem>
@@ -25,6 +25,11 @@
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About" Click="About"></MenuItem>
+                <MenuItem Header="Components">
+                    <MenuItem Header="Number input field" Click="Help_Component_NumberInputField"></MenuItem>
+                    <MenuItem Header="String input field" Click="Help_Component_StringInputField"></MenuItem>
+                    <MenuItem Header="Boolean input field" Click="Help_Component_BooleanInputField"></MenuItem>
+                </MenuItem>
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom">

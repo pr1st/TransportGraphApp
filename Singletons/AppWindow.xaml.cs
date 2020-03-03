@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using TransportGraphApp.Actions;
+using TransportGraphApp.CustomComponents;
 
 namespace TransportGraphApp.Singletons {
     public partial class AppWindow : Window {
@@ -67,6 +68,22 @@ namespace TransportGraphApp.Singletons {
         private void OnMouseMove(object sender, MouseEventArgs e) {
             var position = e.GetPosition(relativeTo: this);
             StatusText.Text = $"X: {position.X} Y: {position.Y}";
+        }
+
+        private void MenuItem_OnClick(object sender, RoutedEventArgs e) {
+            throw new NotImplementedException();
+        }
+
+        private void Help_Component_NumberInputField(object sender, RoutedEventArgs e) {
+            ComponentUtils.ShowMessage(DoubleTextBox.DescriptionInfo, MessageBoxImage.Information);
+        }
+
+        private void Help_Component_StringInputField(object sender, RoutedEventArgs e) {
+            ComponentUtils.ShowMessage(StringTextBox.DescriptionInfo, MessageBoxImage.Information);
+        }
+
+        private void Help_Component_BooleanInputField(object sender, RoutedEventArgs e) {
+            ComponentUtils.ShowMessage(TrueFalseBox.DescriptionInfo, MessageBoxImage.Information);
         }
     }
 }

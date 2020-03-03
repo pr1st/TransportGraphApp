@@ -16,7 +16,7 @@
         <Label Grid.Row="2" FontSize="16">Add attributes</Label>
         <TabControl Grid.Row="3" Name="TabControl" x:FieldModifier="private"></TabControl>
         <WrapPanel Grid.Row="4" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button IsDefault="True" Click="OkClicked" MinWidth="60" Margin="0,0,10,0">Create</Button>
+            <Button Click="OkClicked" MinWidth="60" Margin="0,0,10,0">Create</Button>
             <Button IsCancel="True" MinWidth="60">_Cancel</Button>
         </WrapPanel>
     </Grid>

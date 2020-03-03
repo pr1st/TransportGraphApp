@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using LiteDB;
+using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
 using TransportGraphApp.Singletons;
 using static System.String;
@@ -39,7 +40,6 @@ namespace TransportGraphApp.Dialogs {
 
             var attributeListView = new ListView {
                 Height = 200,
-                Margin = new Thickness(0, 5, 0, 0),
                 ItemsSource = consumerList
             };
 
@@ -47,14 +47,17 @@ namespace TransportGraphApp.Dialogs {
                 consumerList.Add(a);
                 CollectionViewSource.GetDefaultView(attributeListView.ItemsSource).Refresh();
             });
+            var deleteButton = new IconButton(AppResources.GetCloseSignIcon, () => {
+                if (attributeListView.SelectedItem == null) {
+                    return;
+                }
 
+                foreach (var selected in (IList<Attribute>) attributeListView.SelectedItems) {
+                    consumerList.Remove(selected);
+                }
 
-            var deleteButton = ComponentUtils.ButtonWithIcon(AppResources.GetCloseSignIcon);
-            deleteButton.Click += (sender, args) => {
-                var selectedItem = attributeListView.SelectedItem;
-                consumerList.Remove((Attribute) selectedItem);
                 CollectionViewSource.GetDefaultView(attributeListView.ItemsSource).Refresh();
-            };
+            });
             inputFields.Children.Add(deleteButton);
 
 
@@ -70,40 +73,27 @@ namespace TransportGraphApp.Dialogs {
         private static StackPanel CreateInputFields(Action<Attribute> onAdd) {
             var inputFields = new StackPanel() {Orientation = Orientation.Horizontal};
 
-            var nameBox = new TextBox() {
-                FontSize = 16,
-                MinWidth = 120,
-                Margin = new Thickness(0, 0, 5, 0)
-            };
+            var nameBox = new StringTextBox();
             inputFields.Children.Add(nameBox);
 
             var attributes = new ComboBox {
                 ItemsSource = Enum.GetValues(typeof(AttributeType)), SelectedItem = AttributeType.Number,
-                Margin = new Thickness(0, 0, 5, 0)
+                Margin = new Thickness(5, 5, 5, 5),
+                Width = 80
             };
             attributes.SelectionChanged += (sender, args) => {
                 UIElement newElement;
                 switch ((AttributeType) attributes.SelectedItem) {
                     case AttributeType.Number: {
-                        var doubleTextBox = ComponentUtils.DoubleTextBox();
-                        doubleTextBox.Margin = new Thickness(0, 0, 5, 0);
-                        newElement = doubleTextBox;
+                        newElement = new DoubleTextBox();
                         break;
                     }
                     case AttributeType.String: {
-                        newElement = new TextBox() {
-                            FontSize = 16,
-                            MinWidth = 120,
-                            Margin = new Thickness(0, 0, 5, 0)
-                        };
+                        newElement = new StringTextBox();
                         break;
                     }
                     case AttributeType.Boolean: {
-                        newElement = new CheckBox() {
-                            FontSize = 16,
-                            MinWidth = 120,
-                            Margin = new Thickness(0, 0, 5, 0)
-                        };
+                        newElement = new TrueFalseBox();
                         break;
                     }
                     default: {
@@ -116,35 +106,29 @@ namespace TransportGraphApp.Dialogs {
             };
             inputFields.Children.Add(attributes);
 
-            var numBox = ComponentUtils.DoubleTextBox();
-            numBox.Margin = new Thickness(0, 0, 5, 0);
+            var numBox = new DoubleTextBox();
             inputFields.Children.Add(numBox);
 
-
-            var addButton = ComponentUtils.ButtonWithIcon(AppResources.GetPlusSignIcon);
-            addButton.Click += (sender, args) => {
+            var addButton = new IconButton(AppResources.GetPlusSignIcon, () => {
                 object value;
                 var valueProducer = inputFields.Children[2];
                 switch ((AttributeType) attributes.SelectedItem) {
                     case AttributeType.Number: {
-                        try {
-                            value = double.Parse(((TextBox) valueProducer).Text);
-                        }
-                        catch (Exception) {
-                            value = 0.0;
-                        }
-
-                        ((TextBox) valueProducer).Text = "";
+                        var doubleTextBox = (DoubleTextBox) valueProducer;
+                        value = doubleTextBox.Value;
+                        doubleTextBox.Value = 0.0;
                         break;
                     }
                     case AttributeType.String: {
-                        value = ((TextBox) valueProducer).Text;
-                        ((TextBox) valueProducer).Text = "";
+                        var stringTextBox = (StringTextBox) valueProducer;
+                        value = stringTextBox.Value;
+                        stringTextBox.Value = "";
                         break;
                     }
                     case AttributeType.Boolean: {
-                        value = ((CheckBox) valueProducer).IsChecked;
-                        ((CheckBox) valueProducer).IsChecked = false;
+                        var trueFalseBox = (TrueFalseBox) valueProducer;
+                        value = trueFalseBox.Value;
+                        trueFalseBox.Value = false;
                         break;
                     }
                     default: {
@@ -152,10 +136,14 @@ namespace TransportGraphApp.Dialogs {
                     }
                 }
 
-                onAdd.Invoke(new Attribute()
-                    {Name = nameBox.Text, Type = (AttributeType) attributes.SelectedItem, Value = value});
-                nameBox.Text = "";
-            };
+                onAdd.Invoke(new Attribute() {
+                        Name = nameBox.Value,
+                        Type = (AttributeType) attributes.SelectedItem,
+                        Value = value
+                    }
+                );
+                nameBox.Value = "";
+            });
             inputFields.Children.Add(addButton);
 
             return inputFields;

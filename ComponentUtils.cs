@@ -37,7 +37,10 @@ namespace TransportGraphApp {
             var stackPnl = new StackPanel {Orientation = Orientation.Horizontal};
             stackPnl.Children.Add(img);
 
-            var button = new Button {Content = stackPnl, Margin = new Thickness(5, 0, 5, 0)};
+            var button = new Button {
+                Content = stackPnl, 
+                Margin = new Thickness(5, 5, 5, 5)
+            };
             return button;
         }
 

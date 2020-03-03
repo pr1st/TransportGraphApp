@@ -7,6 +7,18 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="CustomComponents\DoubleTextBox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomComponents\IconButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomComponents\StringTextBox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomComponents\TrueFalseBox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Dialogs\ChangeGraphAttributesDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -39,6 +51,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="CustomComponents\DoubleTextBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomComponents\IconButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomComponents\StringTextBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomComponents\TrueFalseBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Dialogs\ChangeGraphAttributesDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
