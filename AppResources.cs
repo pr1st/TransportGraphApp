@@ -15,6 +15,10 @@ namespace TransportGraphApp {
 
         public static BitmapImage GetUpdateSignIcon => new BitmapImage(GetResourceUrl("update-sign.png"));
 
+        public static BitmapImage GetRemoveItemIcon => new BitmapImage(GetResourceUrl("remove-item.png"));
+
+        public static BitmapImage GetAddItemIcon => new BitmapImage(GetResourceUrl("add-item.png"));
+
         public static string GetAppTitle => "Transport graph app";
 
         public static string GetDefaultDataBasePath => "./application-data.db";

@@ -1,36 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using LiteDB;
 using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
-using TransportGraphApp.Singletons;
 using static System.String;
 using Attribute = TransportGraphApp.Models.Attribute;
 
 namespace TransportGraphApp.Dialogs {
     public partial class NewGraphDialog : Window {
-        public IList<Attribute> GraphAttributes { get; } = new List<Attribute>();
-        public IList<Attribute> NodeAttributes { get; } = new List<Attribute>();
-        public IList<Attribute> EdgeAttributes { get; } = new List<Attribute>();
+        private readonly IList<Attribute> _graphAttributes = new List<Attribute>();
 
-        public string GraphName => GraphNameBox.Text;
+        private readonly IList<Attribute> _nodeAttributes = new List<Attribute>();
 
-        public NewGraphDialog() {
+        private readonly IList<Attribute> _edgeAttributes = new List<Attribute>();
+
+        private readonly IEnumerable<string> _alreadyUsedGraphNames;
+
+        public Graph Graph => new Graph() {
+            Name = GraphNameBox.Value,
+            GraphAttributes = _graphAttributes,
+            DefaultNodeAttributes = _nodeAttributes,
+            DefaultEdgeAttributes = _edgeAttributes
+        };
+
+        public NewGraphDialog(IEnumerable<string> alreadyUsedGraphNames) {
+            _alreadyUsedGraphNames = alreadyUsedGraphNames;
             InitializeComponent();
             var tabItems = new List<TabItem> {
-                CreateTab("Graph", GraphAttributes),
-                CreateTab("Node", NodeAttributes),
-                CreateTab("Edge", EdgeAttributes)
+                CreateTab("Graph", _graphAttributes),
+                CreateTab("Node", _nodeAttributes),
+                CreateTab("Edge", _edgeAttributes)
             };
             TabControl.ItemsSource = tabItems;
         }
@@ -47,7 +49,7 @@ namespace TransportGraphApp.Dialogs {
                 consumerList.Add(a);
                 CollectionViewSource.GetDefaultView(attributeListView.ItemsSource).Refresh();
             });
-            var deleteButton = new IconButton(AppResources.GetCloseSignIcon, () => {
+            var deleteButton = new IconButton(AppResources.GetRemoveItemIcon, () => {
                 if (attributeListView.SelectedItem == null) {
                     return;
                 }
@@ -109,7 +111,7 @@ namespace TransportGraphApp.Dialogs {
             var numBox = new DoubleTextBox();
             inputFields.Children.Add(numBox);
 
-            var addButton = new IconButton(AppResources.GetPlusSignIcon, () => {
+            var addButton = new IconButton(AppResources.GetAddItemIcon, () => {
                 object value;
                 var valueProducer = inputFields.Children[2];
                 switch ((AttributeType) attributes.SelectedItem) {
@@ -150,16 +152,13 @@ namespace TransportGraphApp.Dialogs {
         }
 
         private void OkClicked(object sender, RoutedEventArgs e) {
-            var graphName = GraphNameBox.Text;
+            var graphName = GraphNameBox.Value;
             if (graphName == Empty) {
                 ComponentUtils.ShowMessage("Enter graph name", MessageBoxImage.Error);
                 return;
             }
 
-            var graphCollection = AppDataBase.Instance.GetCollection<Graph>();
-            graphCollection.EnsureIndex(g => g.Name);
-            var findOne = graphCollection.FindOne(g => g.Name == graphName);
-            if (findOne != null) {
+            if (_alreadyUsedGraphNames.Contains(graphName)) {
                 ComponentUtils.ShowMessage("Graph with this name already exists", MessageBoxImage.Error);
                 return;
             }
