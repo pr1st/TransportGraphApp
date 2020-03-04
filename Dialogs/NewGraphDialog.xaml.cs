@@ -29,6 +29,8 @@ namespace TransportGraphApp.Dialogs {
         public NewGraphDialog(IEnumerable<string> alreadyUsedGraphNames) {
             _alreadyUsedGraphNames = alreadyUsedGraphNames;
             InitializeComponent();
+            Icon = AppResources.GetAppIcon;
+
             var tabItems = new List<TabItem> {
                 CreateTab("Graph", _graphAttributes),
                 CreateTab("Node", _nodeAttributes),
@@ -45,6 +47,22 @@ namespace TransportGraphApp.Dialogs {
                 ItemsSource = consumerList
             };
 
+            var labels = new StackPanel() {
+                Orientation = Orientation.Horizontal
+            };
+            labels.Children.Add(new Label() {
+                Content = "Name",
+                Width = 130
+            });
+            labels.Children.Add(new Label() {
+                Content = "Type",
+                Width = 90
+            });
+            labels.Children.Add(new Label() {
+                Content = "Default value",
+                Width = 120
+            });
+
             var inputFields = CreateInputFields(a => {
                 consumerList.Add(a);
                 CollectionViewSource.GetDefaultView(attributeListView.ItemsSource).Refresh();
@@ -59,11 +77,12 @@ namespace TransportGraphApp.Dialogs {
                 }
 
                 CollectionViewSource.GetDefaultView(attributeListView.ItemsSource).Refresh();
-            });
+            }) {ToolTip = "Delete attribute"};
             inputFields.Children.Add(deleteButton);
 
 
             var tabContent = new StackPanel() {Orientation = Orientation.Vertical};
+            tabContent.Children.Add(labels);
             tabContent.Children.Add(inputFields);
             tabContent.Children.Add(attributeListView);
 
@@ -145,7 +164,7 @@ namespace TransportGraphApp.Dialogs {
                     }
                 );
                 nameBox.Value = "";
-            });
+            }) { ToolTip = "Add attribute" };
             inputFields.Children.Add(addButton);
 
             return inputFields;

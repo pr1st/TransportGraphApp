@@ -7,8 +7,12 @@ using TransportGraphApp.Singletons;
 namespace TransportGraphApp.Actions {
     internal static class SelectDataBaseFileAction {
         public static void Invoke() {
-            var openFileDialog = new OpenFileDialog {Filter = "Database files (*.db)|*.db", InitialDirectory = Directory.GetCurrentDirectory()};
+            var openFileDialog = new OpenFileDialog {
+                Filter = "Database files (*.db)|*.db",
+                InitialDirectory = Directory.GetCurrentDirectory()
+            };
             if (openFileDialog.ShowDialog() != true) return;
+
             try {
                 AppDataBase.Instance.Build(openFileDialog.FileName);
                 App.ChangeAppState(AppState.ConnectedToDatabase);

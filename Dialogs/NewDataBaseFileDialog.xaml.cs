@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Windows;
-using TransportGraphApp.Actions;
 
 namespace TransportGraphApp.Dialogs {
     public partial class NewDataBaseFileDialog : Window {
@@ -10,14 +9,14 @@ namespace TransportGraphApp.Dialogs {
         }
 
         private void OkClicked(object sender, RoutedEventArgs e) {
-            var path = $"{FileName.Text}.db";
-            if (File.Exists(path)) {
+            if (File.Exists(NewDataBaseFileName)) {
                 ComponentUtils.ShowMessage("This file already exists", MessageBoxImage.Error);
-            } else {
-                DialogResult = true;
+                return;
             }
+
+            DialogResult = true;
         }
 
-        public string NewDataBaseFileName => $"{FileName.Text}.db";
+        public string NewDataBaseFileName => $"{FileName.Value}.db";
     }
 }

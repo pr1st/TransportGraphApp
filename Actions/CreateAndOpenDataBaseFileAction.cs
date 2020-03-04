@@ -7,6 +7,7 @@ namespace TransportGraphApp.Actions {
             var newDataBaseFileDialog = new NewDataBaseFileDialog();
             newDataBaseFileDialog.ShowDialog();
             if (newDataBaseFileDialog.DialogResult != true) return;
+
             AppDataBase.Instance.Build(newDataBaseFileDialog.NewDataBaseFileName);
             App.ChangeAppState(AppState.ConnectedToDatabase);
         }

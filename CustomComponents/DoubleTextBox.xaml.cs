@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -51,6 +52,9 @@ namespace TransportGraphApp.CustomComponents {
 
             e.Handled = !double.TryParse(result, out _);
         }
+
+        public void ValueChanged(Action<double> onChange) =>
+            TextBox.TextChanged += (sender, args) => onChange.Invoke(Value);
 
         private void ElementGotFocus(object sender, RoutedEventArgs e) {
             TextBox.Select(0, TextBox.Text.Length);

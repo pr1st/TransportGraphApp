@@ -5,37 +5,37 @@
 
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="File">
-                <MenuItem Header="Select database file" Click="SelectDataBaseFile"></MenuItem>
-                <MenuItem Header="Create and open database file" Click="CreateAndOpenDataBaseFile"></MenuItem>
-                <MenuItem Header="Close" Click="Close"></MenuItem>
+            <MenuItem Header="_File">
+                <MenuItem Header="_Select database file" Click="SelectDataBaseFile" />
+                <MenuItem Header="Create and _open database file" Click="CreateAndOpenDataBaseFile" />
+                <MenuItem Header="_Close" Click="Close" />
             </MenuItem>
             <MenuItem Header="_Graph" Name="GraphMenu" x:FieldModifier="private">
-                <MenuItem Header="_New graph" Click="NewGraph"></MenuItem>
-                <MenuItem Header="_Select graph" Click="SelectGraph"></MenuItem>
+                <MenuItem Header="_New graph" Click="NewGraph" />
+                <MenuItem Header="_Select graph" Click="SelectGraph" />
                 <MenuItem Header="_Change graph attributes" Click="ChangeGraphAttributes"
-                          Name="ChangeGraphAttributesMenu" x:FieldModifier="private"></MenuItem>
+                          Name="ChangeGraphAttributesMenu" x:FieldModifier="private" />
             </MenuItem>
-            <MenuItem Name="NodeMenu" Header="_Node">
-                <MenuItem Header="New _node" Click="NewNode"></MenuItem>
-                <MenuItem Header="Node list" Click="NodeList"></MenuItem>
+            <MenuItem Header="_Node" Name="NodeMenu" x:FieldModifier="private">
+                <MenuItem Header="_New node" Click="NewNode" />
+                <MenuItem Header="Node _list" Click="NodeList" />
             </MenuItem>
-            <MenuItem Name="EdgeMenu" Header="_Edge">
-                <MenuItem Header="New _edge" Click="NewEdge"></MenuItem>
-                <MenuItem Header="Edge list" Click="EdgeList"></MenuItem>
+            <MenuItem Header="_Edge" Name="EdgeMenu" x:FieldModifier="private">
+                <MenuItem Header="_New edge" Click="NewEdge" />
+                <MenuItem Header="Edge _list" Click="EdgeList" />
             </MenuItem>
-            <MenuItem Header="Help">
-                <MenuItem Header="About" Click="About"></MenuItem>
-                <MenuItem Header="Components">
-                    <MenuItem Header="Number input field" Click="Help_Component_NumberInputField"></MenuItem>
-                    <MenuItem Header="String input field" Click="Help_Component_StringInputField"></MenuItem>
-                    <MenuItem Header="Boolean input field" Click="Help_Component_BooleanInputField"></MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="About" Click="About" />
+                <MenuItem Header="Component description">
+                    <MenuItem Header="Number input field" Click="Help_Component_NumberInputField" />
+                    <MenuItem Header="String input field" Click="Help_Component_StringInputField" />
+                    <MenuItem Header="Boolean input field" Click="Help_Component_BooleanInputField" />
                 </MenuItem>
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem>
-                <TextBlock Name="StatusText"></TextBlock>
+                <TextBlock Name="StatusText" />
             </StatusBarItem>
         </StatusBar>
         <Label Name="AppGraph" HorizontalAlignment="Center" VerticalAlignment="Center">

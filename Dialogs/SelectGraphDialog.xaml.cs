@@ -1,41 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TransportGraphApp.Actions;
+using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
-using TransportGraphApp.Singletons;
 using Attribute = TransportGraphApp.Models.Attribute;
 
 namespace TransportGraphApp.Dialogs {
     public partial class SelectGraphDialog : Window {
+        private readonly Func<IEnumerable<Graph>> _graphSupplier;
+
         public Graph SelectedGraph => (Graph) ListView.SelectedItem;
 
-        public SelectGraphDialog() {
+        public SelectGraphDialog(Func<IEnumerable<Graph>> graphSupplier, Graph alreadySelected = null) {
+            _graphSupplier = graphSupplier;
             InitializeComponent();
+            Icon = AppResources.GetAppIcon;
+            TabControl.ItemsSource = new List<TabItem> {
+                CreateTab("Graph", new List<Attribute>()),
+                CreateTab("Node", new List<Attribute>()),
+                CreateTab("Edge", new List<Attribute>())
+            };
+
             ConfigureButtons();
-            UpdateStateToInit();
             ListView.SelectionChanged += (sender, args) => {
-                if (ListView.SelectedItem == null)
-                    return;
-                var selected = (Graph)ListView.SelectedItem;
-                TabControl.ItemsSource = new List<TabItem> {
-                    CreateTab("Graph", selected.GraphAttributes),
-                    CreateTab("Node", selected.DefaultNodeAttributes),
-                    CreateTab("Edge", selected.DefaultEdgeAttributes)
-                };
+                if (ListView.SelectedItem == null) {
+                    TabControl.ItemsSource = new List<TabItem> {
+                        CreateTab("Graph", new List<Attribute>()),
+                        CreateTab("Node", new List<Attribute>()),
+                        CreateTab("Edge", new List<Attribute>())
+                    };
+                }
+                else {
+                    var selected = (Graph)ListView.SelectedItem;
+                    TabControl.ItemsSource = new List<TabItem> {
+                        CreateTab("Graph", selected.GraphAttributes),
+                        CreateTab("Node", selected.DefaultNodeAttributes),
+                        CreateTab("Edge", selected.DefaultEdgeAttributes)
+                    };
+                }
                 CollectionViewSource.GetDefaultView(TabControl.ItemsSource).Refresh();
             };
-            if (AppGraph.Instance.Graph != null) {
-                ListView.SelectedItem = AppGraph.Instance.Graph;
-            }
+            UpdateStateToInit(alreadySelected);
         }
 
         private static TabItem CreateTab(string title, IEnumerable<Attribute> attributes) {
@@ -53,52 +62,45 @@ namespace TransportGraphApp.Dialogs {
         }
 
         private void ConfigureButtons() {
-            var addButton = ComponentUtils.ButtonWithIcon(AppResources.GetPlusSignIcon);
-            addButton.Click += (sender, args) => {
+            var addButton = new IconButton(AppResources.GetAddItemIcon, (() => {
                 NewGraphAction.Invoke();
-                UpdateStateToInit();
-            };
+                UpdateStateToInit(null);
+            })) {ToolTip = "Add graph"};
             ModifyListButtons.Children.Add(addButton);
 
-            var updateButton = ComponentUtils.ButtonWithIcon(AppResources.GetUpdateSignIcon);
-            updateButton.Click += (sender, args) => {
-                if (ListView.SelectedItem == null) {
-                    ComponentUtils.ShowMessage("Select graph to change attributes", MessageBoxImage.Error);
+            var updateButton = new IconButton(AppResources.GetUpdateItemIcon, (() => {
+                var selected = ListView.SelectedItem;
+                if (selected == null) {
                     return;
                 }
 
                 ChangeGraphAttributesAction.Invoke(SelectedGraph);
-                UpdateStateToInit();
-            };
+                UpdateStateToInit((Graph) selected);
+            })) {ToolTip = "Change graph attributes"};
             ModifyListButtons.Children.Add(updateButton);
 
-            var deleteButton = ComponentUtils.ButtonWithIcon(AppResources.GetCloseSignIcon);
-            deleteButton.Click += (sender, args) => {
-                if (ListView.SelectedItem == null) {
-                    ComponentUtils.ShowMessage("Select graph to delete it", MessageBoxImage.Error);
+            var deleteButton = new IconButton(AppResources.GetRemoveItemIcon, () => {
+                var selected = ListView.SelectedItem;
+                if (selected == null) {
                     return;
                 }
 
                 DeleteGraphAction.Invoke(SelectedGraph);
-                UpdateStateToInit();
-            };
+                UpdateStateToInit(null);
+            }) {ToolTip = "Remove graph"};
             ModifyListButtons.Children.Add(deleteButton);
         }
 
-        private void UpdateStateToInit() {
-            ListView.ItemsSource = AppDataBase.Instance.GetCollection<Graph>().FindAll();
-            TabControl.ItemsSource = new List<TabItem> {
-                CreateTab("Graph", new List<Attribute>()),
-                CreateTab("Node", new List<Attribute>()),
-                CreateTab("Edge", new List<Attribute>())
-            };
+        private void UpdateStateToInit(Graph selectedGraph) {
+            var graphs = _graphSupplier.Invoke().ToList();
+            ListView.ItemsSource = graphs;
             CollectionViewSource.GetDefaultView(ListView.ItemsSource).Refresh();
-            CollectionViewSource.GetDefaultView(TabControl.ItemsSource).Refresh();
+            ListView.SelectedItem = selectedGraph == null ? null : graphs.SkipWhile(g => g.Id != selectedGraph.Id).First();
         }
 
         private void OkClicked(object sender, RoutedEventArgs e) {
             if (ListView.SelectedItem == null) {
-                ComponentUtils.ShowMessage("Select graph", MessageBoxImage.Error);
+                ComponentUtils.ShowMessage("Graph was not selected", MessageBoxImage.Error);
                 return;
             }
 

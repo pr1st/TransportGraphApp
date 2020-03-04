@@ -1,25 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
-using Attribute = TransportGraphApp.Models.Attribute;
 
 namespace TransportGraphApp.Dialogs {
     public partial class ChangeGraphAttributesDialog : Window {
+        public Graph UpdatedGraph => new Graph() {
+            Id = _initGraph.Id,
+            Name = _initGraph.Name,
+            GraphAttributes = _changeBox.UpdatedAttributes,
+            DefaultNodeAttributes = _initGraph.DefaultNodeAttributes,
+            DefaultEdgeAttributes = _initGraph.DefaultEdgeAttributes
+        };
+
+        private readonly Graph _initGraph;
+        private readonly AttributesChangeBox _changeBox;
+
         public ChangeGraphAttributesDialog(Graph graph) {
+            _initGraph = graph;
             InitializeComponent();
+            Icon = AppResources.GetAppIcon;
+
             GraphNameLabel.Content = graph.Name;
-            foreach (var graphGraphAttribute in graph.GraphAttributes) {
-                AttributePanel.Children.Add(ComponentUtils.CreateAttributeRow(graphGraphAttribute));
-            }
+            _changeBox = new AttributesChangeBox(graph.GraphAttributes);
+            AttributePanel.Children.Add(_changeBox);
         }
 
         private void OkClicked(object sender, RoutedEventArgs e) {

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace TransportGraphApp.CustomComponents {
@@ -16,6 +17,9 @@ namespace TransportGraphApp.CustomComponents {
             get => TextBox.Text;
             set => TextBox.Text = value;
         }
+
+        public void ValueChanged(Action<string> onChange) =>
+            TextBox.TextChanged += (sender, args) => onChange.Invoke(Value);
 
         private void ElementGotFocus(object sender, RoutedEventArgs e) {
             TextBox.Select(0, TextBox.Text.Length);
