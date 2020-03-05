@@ -35,13 +35,14 @@ namespace TransportGraphApp.Dialogs {
                     };
                 }
                 else {
-                    var selected = (Graph)ListView.SelectedItem;
+                    var selected = (Graph) ListView.SelectedItem;
                     TabControl.ItemsSource = new List<TabItem> {
                         CreateTab("Graph", selected.GraphAttributes),
                         CreateTab("Node", selected.DefaultNodeAttributes),
                         CreateTab("Edge", selected.DefaultEdgeAttributes)
                     };
                 }
+
                 CollectionViewSource.GetDefaultView(TabControl.ItemsSource).Refresh();
             };
             UpdateStateToInit(alreadySelected);
@@ -62,13 +63,13 @@ namespace TransportGraphApp.Dialogs {
         }
 
         private void ConfigureButtons() {
-            var addButton = new IconButton(AppResources.GetAddItemIcon, (() => {
+            var addButton = new IconButton(AppResources.GetAddItemIcon, () => {
                 NewGraphAction.Invoke();
                 UpdateStateToInit(null);
-            })) {ToolTip = "Add graph"};
+            }) {ToolTip = "Add graph"};
             ModifyListButtons.Children.Add(addButton);
 
-            var updateButton = new IconButton(AppResources.GetUpdateItemIcon, (() => {
+            var updateButton = new IconButton(AppResources.GetUpdateItemIcon, () => {
                 var selected = ListView.SelectedItem;
                 if (selected == null) {
                     return;
@@ -76,7 +77,7 @@ namespace TransportGraphApp.Dialogs {
 
                 ChangeGraphAttributesAction.Invoke(SelectedGraph);
                 UpdateStateToInit((Graph) selected);
-            })) {ToolTip = "Change graph attributes"};
+            }) {ToolTip = "Change graph attributes"};
             ModifyListButtons.Children.Add(updateButton);
 
             var deleteButton = new IconButton(AppResources.GetRemoveItemIcon, () => {
@@ -95,7 +96,8 @@ namespace TransportGraphApp.Dialogs {
             var graphs = _graphSupplier.Invoke().ToList();
             ListView.ItemsSource = graphs;
             CollectionViewSource.GetDefaultView(ListView.ItemsSource).Refresh();
-            ListView.SelectedItem = selectedGraph == null ? null : graphs.SkipWhile(g => g.Id != selectedGraph.Id).First();
+            ListView.SelectedItem =
+                selectedGraph == null ? null : graphs.SkipWhile(g => g.Id != selectedGraph.Id).First();
         }
 
         private void OkClicked(object sender, RoutedEventArgs e) {

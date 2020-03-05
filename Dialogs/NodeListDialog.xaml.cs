@@ -1,30 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TransportGraphApp.Actions;
+using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
-using TransportGraphApp.Singletons;
 
 namespace TransportGraphApp.Dialogs {
     public partial class NodeListDialog : Window {
         private Node SelectedNode => (Node) ListView.SelectedItem;
 
-        private readonly Graph _graph;
+        private readonly Func<IEnumerable<Node>> _nodeSupplier;
 
-        public NodeListDialog(Graph g) {
+        public NodeListDialog(Graph graph, Func<IEnumerable<Node>> nodeSupplier) {
+            _nodeSupplier = nodeSupplier;
             InitializeComponent();
-            _graph = g;
-            for (var i = 0; i < _graph.DefaultNodeAttributes.Count; i++) {
-                var a = _graph.DefaultNodeAttributes[i];
+            Icon = AppResources.GetAppIcon;
+
+            for (var i = 0; i < graph.DefaultNodeAttributes.Count; i++) {
+                var a = graph.DefaultNodeAttributes[i];
                 var gridViewColumn = new GridViewColumn() {
                     Header = a.Name,
                     DisplayMemberBinding = new Binding() {
@@ -39,42 +36,44 @@ namespace TransportGraphApp.Dialogs {
         }
 
         private void ConfigureButtons() {
-            var addButton = ComponentUtils.ButtonWithIcon(AppResources.GetPlusSignIcon);
-            addButton.Click += (sender, args) => {
+            var addButton = new IconButton(AppResources.GetAddItemIcon, () => {
                 NewNodeAction.Invoke();
                 UpdateStateToInit();
-            };
+            }) {ToolTip = "Add node"};
             ModifyListButtons.Children.Add(addButton);
 
-            var updateButton = ComponentUtils.ButtonWithIcon(AppResources.GetUpdateSignIcon);
-            updateButton.Click += (sender, args) => {
-                if (ListView.SelectedItem == null) {
-                    ComponentUtils.ShowMessage("Select node to change attributes", MessageBoxImage.Error);
+            var updateButton = new IconButton(AppResources.GetUpdateItemIcon, () => {
+                var selected = ListView.SelectedItem;
+                if (selected == null) {
                     return;
                 }
 
                 UpdateNodeAction.Invoke(SelectedNode);
-                UpdateStateToInit();
-            };
+                UpdateStateToInit(SelectedNode);
+            }) {ToolTip = "Change node attributes"};
             ModifyListButtons.Children.Add(updateButton);
 
-            var deleteButton = ComponentUtils.ButtonWithIcon(AppResources.GetCloseSignIcon);
-            deleteButton.Click += (sender, args) => {
-                if (ListView.SelectedItem == null) {
-                    ComponentUtils.ShowMessage("Select node to delete it", MessageBoxImage.Error);
+            var deleteButton = new IconButton(AppResources.GetRemoveItemIcon, () => {
+                var selected = ListView.SelectedItem;
+                if (selected == null) {
                     return;
                 }
+
                 foreach (var listViewSelectedItem in ListView.SelectedItems) {
-                    DeleteNodeAction.Invoke((Node)listViewSelectedItem);
+                    DeleteNodeAction.Invoke((Node) listViewSelectedItem);
                 }
+
                 UpdateStateToInit();
-            };
+            }) {ToolTip = "Remove node"};
             ModifyListButtons.Children.Add(deleteButton);
         }
 
-        private void UpdateStateToInit() {
-            ListView.ItemsSource = AppDataBase.Instance.GetCollection<Node>().Find(n => n.GraphId == _graph.Id);
+        private void UpdateStateToInit(Node selectedNode = null) {
+            var nodes = _nodeSupplier.Invoke().ToList();
+            ListView.ItemsSource = nodes;
             CollectionViewSource.GetDefaultView(ListView.ItemsSource).Refresh();
+            ListView.SelectedItem =
+                selectedNode == null ? null : nodes.SkipWhile(n => n.Id != selectedNode.Id).First();
         }
     }
 

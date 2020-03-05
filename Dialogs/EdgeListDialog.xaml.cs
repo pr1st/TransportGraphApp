@@ -2,47 +2,41 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TransportGraphApp.Actions;
+using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
-using TransportGraphApp.Singletons;
 
 namespace TransportGraphApp.Dialogs {
     public partial class EdgeListDialog : Window {
         private Edge SelectedEdge => (Edge) ListView.SelectedItem;
 
-        private readonly Graph _graph;
-        private readonly IEnumerable<Node> nodes;
+        private readonly Func<IEnumerable<Edge>> _edgeSupplier;
 
-        public EdgeListDialog(Graph g) {
+        public EdgeListDialog(Graph graph, Func<IEnumerable<Edge>> edgeSupplier,
+            IDictionary<int, string> nodeNamesDictionary) {
+            _edgeSupplier = edgeSupplier;
             InitializeComponent();
-            _graph = g;
-            nodes = AppDataBase.Instance.GetCollection<Node>().Find(n => n.GraphId == _graph.Id);
+            Icon = AppResources.GetAppIcon;
 
-            var enumerable = nodes as Node[] ?? nodes.ToArray();
+
             ((GridView) ListView.View).Columns.Add(new GridViewColumn() {
                 Header = "From",
                 DisplayMemberBinding = new Binding() {
-                    Converter = new EdgeFromConverter() {Nodes = enumerable}
+                    Converter = new EdgeFromConverter() {Nodes = nodeNamesDictionary }
                 }
             });
             ((GridView) ListView.View).Columns.Add(new GridViewColumn() {
                 Header = "To",
                 DisplayMemberBinding = new Binding() {
-                    Converter = new EdgeToConverter() {Nodes = enumerable}
+                    Converter = new EdgeToConverter() {Nodes = nodeNamesDictionary }
                 }
             });
 
-            for (var i = 0; i < _graph.DefaultEdgeAttributes.Count; i++) {
-                var a = _graph.DefaultEdgeAttributes[i];
+            for (var i = 0; i < graph.DefaultEdgeAttributes.Count; i++) {
+                var a = graph.DefaultEdgeAttributes[i];
                 var gridViewColumn = new GridViewColumn() {
                     Header = a.Name,
                     DisplayMemberBinding = new Binding() {
@@ -51,52 +45,56 @@ namespace TransportGraphApp.Dialogs {
                 };
                 ((GridView) ListView.View).Columns.Add(gridViewColumn);
             }
+
             ConfigureButtons();
             UpdateStateToInit();
         }
 
         private void ConfigureButtons() {
-            var addButton = ComponentUtils.ButtonWithIcon(AppResources.GetPlusSignIcon);
-            addButton.Click += (sender, args) => {
-                NewEdgeAction.Invoke();
-                UpdateStateToInit();
-            };
+            var addButton = new IconButton(AppResources.GetAddItemIcon, () => {
+                    NewEdgeAction.Invoke();
+                    UpdateStateToInit();
+                })
+                {ToolTip = "Add edge"};
             ModifyListButtons.Children.Add(addButton);
 
-            var updateButton = ComponentUtils.ButtonWithIcon(AppResources.GetUpdateSignIcon);
-            updateButton.Click += (sender, args) => {
-                if (ListView.SelectedItem == null) {
-                    ComponentUtils.ShowMessage("Select edge to change attributes", MessageBoxImage.Error);
-                    return;
-                }
+            var updateButton = new IconButton(AppResources.GetUpdateItemIcon, () => {
+                    var selected = ListView.SelectedItem;
+                    if (selected == null) {
+                        return;
+                    }
 
-                UpdateEdgeAction.Invoke(SelectedEdge);
-                UpdateStateToInit();
-            };
+                    UpdateEdgeAction.Invoke(SelectedEdge);
+                    UpdateStateToInit(SelectedEdge);
+                })
+                {ToolTip = "Change edge attributes"};
             ModifyListButtons.Children.Add(updateButton);
 
-            var deleteButton = ComponentUtils.ButtonWithIcon(AppResources.GetCloseSignIcon);
-            deleteButton.Click += (sender, args) => {
-                if (ListView.SelectedItem == null) {
-                    ComponentUtils.ShowMessage("Select edge to delete it", MessageBoxImage.Error);
-                    return;
-                }
+            var deleteButton = new IconButton(AppResources.GetRemoveItemIcon, () => {
+                    var selected = ListView.SelectedItem;
+                    if (selected == null) {
+                        return;
+                    }
 
-                foreach (var listViewSelectedItem in ListView.SelectedItems) {
-                    DeleteEdgeAction.Invoke((Edge) listViewSelectedItem);
-                }
+                    foreach (var listViewSelectedItem in ListView.SelectedItems) {
+                        DeleteEdgeAction.Invoke((Edge) listViewSelectedItem);
+                    }
 
-                UpdateStateToInit();
-            };
+                    UpdateStateToInit();
+                })
+                {ToolTip = "Remove edge"};
             ModifyListButtons.Children.Add(deleteButton);
         }
 
-        private void UpdateStateToInit() {
-            var edges = AppDataBase.Instance.GetCollection<Edge>().Find(e => e.GraphId == _graph.Id);
+        private void UpdateStateToInit(Edge selectedEdge = null) {
+            var edges = _edgeSupplier.Invoke().ToList();
             ListView.ItemsSource = edges;
             CollectionViewSource.GetDefaultView(ListView.ItemsSource).Refresh();
+            ListView.SelectedItem =
+                selectedEdge == null ? null : edges.SkipWhile(e => e.Id != selectedEdge.Id).First();
         }
     }
+
 
     public class EdgeAttributeConverter : IValueConverter {
         public int AttributeId { get; set; }
@@ -115,11 +113,11 @@ namespace TransportGraphApp.Dialogs {
     }
 
     public class EdgeFromConverter : IValueConverter {
-        public IEnumerable<Node> Nodes { get; set; }
+        public IDictionary<int, string> Nodes { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if (value is Edge edge) {
-                return Nodes.SkipWhile(n => n.Id != edge.FromNodeId).First().Name;
+                return Nodes.SkipWhile(n => n.Key != edge.FromNodeId).First().Value;
             }
 
             throw new NotImplementedException("Illegal state");
@@ -131,11 +129,11 @@ namespace TransportGraphApp.Dialogs {
     }
 
     public class EdgeToConverter : IValueConverter {
-        public IEnumerable<Node> Nodes { get; set; }
+        public IDictionary<int, string> Nodes { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if (value is Edge edge) {
-                return Nodes.SkipWhile(n => n.Id != edge.ToNodeId).First().Name;
+                return Nodes.SkipWhile(n => n.Key != edge.ToNodeId).First().Value;
             }
 
             throw new NotImplementedException("Illegal state");

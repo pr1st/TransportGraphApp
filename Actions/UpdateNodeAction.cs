@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using TransportGraphApp.Dialogs;
+﻿using TransportGraphApp.Dialogs;
 using TransportGraphApp.Models;
 using TransportGraphApp.Singletons;
 
@@ -12,7 +8,8 @@ namespace TransportGraphApp.Actions {
             var updateNodeDialog = new UpdateNodeDialog(n);
             updateNodeDialog.ShowDialog();
             if (updateNodeDialog.DialogResult != true) return;
-            AppDataBase.Instance.GetCollection<Node>().Update(n);
+
+            AppDataBase.Instance.GetCollection<Node>().Update(updateNodeDialog.UpdatedNode);
         }
     }
 }

@@ -23,6 +23,17 @@ namespace TransportGraphApp.CustomComponents {
             }
         }
 
+        public Attribute AddField(Attribute a) {
+            var attributeToUpdate = new Attribute() {
+                Name = a.Name,
+                Type = a.Type,
+                Value = a.Value
+            };
+            var attributeRow = CreateAttributeRow(attributeToUpdate);
+            StackPanel.Children.Insert(0, attributeRow);
+            return attributeToUpdate;
+        }
+
         public static StackPanel CreateAttributeRow(Attribute attribute) {
             var stackPanel = new StackPanel() {
                 Orientation = Orientation.Horizontal,

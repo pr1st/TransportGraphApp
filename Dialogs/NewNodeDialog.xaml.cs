@@ -1,76 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using LiteDB;
+using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
-using TransportGraphApp.Singletons;
 using Attribute = TransportGraphApp.Models.Attribute;
 
 namespace TransportGraphApp.Dialogs {
     public partial class NewNodeDialog : Window {
-        public Node CreatedNode { get; private set; }
+        public Node CreatedNode => new Node() {
+            Name = (string) _nameField.Value,
+            X = (double) _xField.Value,
+            Y = (double) _yField.Value,
+            Attributes = _changeBox.UpdatedAttributes,
+            GraphId = _graph.Id
+        };
 
-        private IList<Attribute> Attributes { get; } = new List<Attribute>();
-
-        private Attribute NameAttribute { get; }
-
-        public Attribute XAttribute { get; }
-        public Attribute YAttribute { get; }
-
+        private readonly Attribute _nameField;
+        private readonly Attribute _xField;
+        private readonly Attribute _yField;
         private readonly Graph _graph;
 
-        public NewNodeDialog(Graph g) {
-            InitializeComponent();
+        private readonly IEnumerable<string> _alreadyUsedNames;
+
+        private readonly AttributesChangeBox _changeBox;
+
+        public NewNodeDialog(Graph g, IEnumerable<string> alreadyUsedNames) {
             _graph = g;
-            NameAttribute = new Attribute() {
-                Name = "Name",
-                Type = AttributeType.String,
-                Value = ""
-            };
-            AttributeBox.Children.Add(ComponentUtils.CreateAttributeRow(NameAttribute));
-            XAttribute = new Attribute() {
-                Name = "X",
-                Type = AttributeType.Number,
-                Value = 0.0
-            };
-            AttributeBox.Children.Add(ComponentUtils.CreateAttributeRow(XAttribute));
-            YAttribute = new Attribute() {
+            _alreadyUsedNames = alreadyUsedNames;
+            InitializeComponent();
+            Icon = AppResources.GetAppIcon;
+
+            _changeBox = new AttributesChangeBox(g.DefaultNodeAttributes);
+
+            _yField = _changeBox.AddField(new Attribute() {
                 Name = "Y",
                 Type = AttributeType.Number,
                 Value = 0.0
-            };
-            AttributeBox.Children.Add(ComponentUtils.CreateAttributeRow(YAttribute));
-            foreach (var gNodeAttribute in g.DefaultNodeAttributes) {
-                var newAttribute = new Attribute() {
-                    Name = gNodeAttribute.Name,
-                    Type = gNodeAttribute.Type,
-                    Value = gNodeAttribute.Value
-                };
-                Attributes.Add(newAttribute);
-                AttributeBox.Children.Add(ComponentUtils.CreateAttributeRow(newAttribute));
-            }
+            });
+            _xField = _changeBox.AddField(new Attribute() {
+                Name = "X",
+                Type = AttributeType.Number,
+                Value = 0.0
+            });
+            _nameField = _changeBox.AddField(new Attribute() {
+                Name = "Name",
+                Type = AttributeType.String,
+                Value = ""
+            });
+            AttributePanel.Children.Add(_changeBox);
         }
 
         private void OkClicked(object sender, RoutedEventArgs e) {
-            if (AppDataBase.Instance.GetCollection<Node>().Exists(n => n.Name == (string) NameAttribute.Value)) {
+            var name = (string)_nameField.Value;
+            if (name == "") {
+                ComponentUtils.ShowMessage("Enter node name", MessageBoxImage.Error);
+                return;
+            }
+
+            if (_alreadyUsedNames.Contains(name)) {
                 ComponentUtils.ShowMessage("Node with this name already exists", MessageBoxImage.Error);
                 return;
             }
-            CreatedNode = new Node() {
-                Name = (string) NameAttribute.Value,
-                X = (double) XAttribute.Value,
-                Y = (double) YAttribute.Value,
-                Attributes = Attributes,
-                GraphId = _graph.Id
-            };
+
             DialogResult = true;
         }
     }
