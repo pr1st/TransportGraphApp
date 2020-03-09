@@ -27,10 +27,10 @@
     <Compile Update="Dialogs\ChangeGraphAttributesDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Dialogs\EdgeListDialog.xaml.cs">
+    <Compile Update="Dialogs\DataBaseDialogs\CreateDataBaseFileDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Dialogs\NewDataBaseFileDialog.xaml.cs">
+    <Compile Update="Dialogs\EdgeListDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Dialogs\NewEdgeDialog.xaml.cs">
@@ -74,10 +74,10 @@
     <Page Update="Dialogs\ChangeGraphAttributesDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Dialogs\EdgeListDialog.xaml">
+    <Page Update="Dialogs\DataBaseDialogs\CreateDataBaseFileDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Dialogs\NewDataBaseFileDialog.xaml">
+    <Page Update="Dialogs\EdgeListDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialogs\NewEdgeDialog.xaml">

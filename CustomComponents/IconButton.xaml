@@ -10,6 +10,6 @@
             BorderThickness="0"
             Background="Transparent"
             Name="Button"
-            x:FieldModifier="private"/>
+            x:FieldModifier="public"/>
     </StackPanel>
 </UserControl>

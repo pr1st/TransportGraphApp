@@ -1,4 +1,5 @@
-﻿using LiteDB;
+﻿using System.IO;
+using LiteDB;
 
 namespace TransportGraphApp.Singletons {
     internal class AppDataBase {
@@ -8,18 +9,30 @@ namespace TransportGraphApp.Singletons {
 
 
         private LiteDatabase _liteDatabase;
+        private string _filePath = "";
 
-        private AppDataBase() { }
+        private AppDataBase() {
+        }
 
         public void Build(string filePath) {
+            var newDatabase = new LiteDatabase(filePath);
+
             _liteDatabase?.Dispose();
-            _liteDatabase = new LiteDatabase(filePath);
+            _liteDatabase = newDatabase;
+            _filePath = new FileInfo(filePath).FullName;
         }
+
+        public void Create(string filePath) {
+            var createdDatabase = new LiteDatabase(filePath);
+            createdDatabase.Dispose();
+        }
+
+        public string DataBaseFileLocation() => _filePath;
+
+        public void Close() => _liteDatabase?.Dispose();
 
         public ILiteCollection<T> GetCollection<T>() {
             return _liteDatabase.GetCollection<T>();
         }
-
-        public void Close() => _liteDatabase?.Dispose();
     }
 }

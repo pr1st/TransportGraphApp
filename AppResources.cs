@@ -9,17 +9,14 @@ namespace TransportGraphApp {
 
         public static BitmapImage GetAppIcon => new BitmapImage(GetResourceUrl("app-icon.png"));
 
-        public static BitmapImage GetPlusSignIcon => new BitmapImage(GetResourceUrl("plus-sign.png"));
-
-        public static BitmapImage GetCloseSignIcon => new BitmapImage(GetResourceUrl("close-sign.png"));
-
-        public static BitmapImage GetUpdateSignIcon => new BitmapImage(GetResourceUrl("update-sign.png"));
-
         public static BitmapImage GetRemoveItemIcon => new BitmapImage(GetResourceUrl("remove-item.png"));
 
         public static BitmapImage GetAddItemIcon => new BitmapImage(GetResourceUrl("add-item.png"));
 
         public static BitmapImage GetUpdateItemIcon => new BitmapImage(GetResourceUrl("update-item.png"));
+        public static BitmapImage GetUpdateDItemIcon => new BitmapImage(GetResourceUrl("update-item-disabled.png"));
+        public static BitmapImage GetDatabaseItemIcon => new BitmapImage(GetResourceUrl("database-item.png"));
+        public static BitmapImage GetDescriptionItemIcon => new BitmapImage(GetResourceUrl("description-item.png"));
 
         public static string GetAppTitle => "Transport graph app";
 

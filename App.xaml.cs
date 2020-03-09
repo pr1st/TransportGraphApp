@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Threading;
 using TransportGraphApp.Actions;
 using TransportGraphApp.Singletons;
@@ -14,8 +15,15 @@ namespace TransportGraphApp {
         public static AppState CurrentState = AppState.Initial;
 
         public static void ChangeAppState(AppState newState) {
-            AppWindow.Instance.AppStateChanged(newState);
             CurrentState = newState;
+            var fileLocation = CurrentState switch {
+                AppState.ConnectedToDatabase => $" ({AppDataBase.Instance.DataBaseFileLocation()})",
+                AppState.GraphSelected => $" ({AppDataBase.Instance.DataBaseFileLocation()})",
+                AppState.Initial => "",
+                _ => throw new NotImplementedException()
+            };
+            AppWindow.Instance.Title = $"{AppResources.GetAppTitle}{fileLocation}";
+            AppActions.Instance.AppStateChanged();
         }
 
         private void UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
@@ -23,7 +31,6 @@ namespace TransportGraphApp {
                 "Exception", 
                 MessageBoxButton.OK, 
                 MessageBoxImage.Warning);
-            e.Handled = true;
         }
     }
 

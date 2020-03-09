@@ -1,2 +1,3 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=dialogs_005Cdatabasedialogs/@EntryIndexedValue">False</s:Boolean>
 	<s:String x:Key="/Default/Housekeeping/ProjectModelSynchronizer/ProjectGuidsToCompileItemsList/=E0C05F00A0423D48B58FCFC72025E2AD/@EntryIndexedValue">resources/icong.png</s:String></wpf:ResourceDictionary>

@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using TransportGraphApp.Actions;
+using TransportGraphApp.Actions.DataBaseActions;
+using TransportGraphApp.Actions.UtilActions;
 using TransportGraphApp.CustomComponents;
 
 namespace TransportGraphApp.Singletons {
@@ -9,18 +14,48 @@ namespace TransportGraphApp.Singletons {
         private static AppWindow _instance;
         public static AppWindow Instance => _instance ??= new AppWindow();
 
-
         private AppWindow() {
             InitializeComponent();
             Title = AppResources.GetAppTitle;
             Icon = AppResources.GetAppIcon;
+
+
+            AppActions.Instance.AddElementToAction<ExitAction>(MenuFileExit);
+            SetUpDataBaseActions();
         }
 
-        private void SelectDataBaseFile(object sender, RoutedEventArgs e) => SelectDataBaseFileAction.Invoke();
+        private void SetUpDataBaseActions() {
+            var actions = AppActions.Instance;
 
-        private void CreateAndOpenDataBaseFile(object sender, RoutedEventArgs e) => CreateAndOpenDataBaseFileAction.Invoke();
+            var createButton = new IconButton(AppResources.GetAddItemIcon, () => { }) {
+                Margin = new Thickness(0, 0, 0, 0),
+                ToolTip = "Создать файл базы данных"
+            };
+            actions.AddElementToAction<CreateDataBaseAction>(MenuFileCreateDataBase);
+            actions.AddElementToAction<CreateDataBaseAction>(createButton.Button);
 
-        private void Close(object sender, RoutedEventArgs e) => CloseAction.Invoke();
+            var openButton = new IconButton(AppResources.GetRemoveItemIcon, () => { }) {
+                Margin = new Thickness(0, 0, 0, 0),
+                ToolTip = "Открыть базу данных"
+            };
+            actions.AddElementToAction<OpenDataBaseAction>(MenuFileOpenDataBase);
+            actions.AddElementToAction<OpenDataBaseAction>(openButton.Button);
+
+            var closeButton = new IconButton(AppResources.GetUpdateItemIcon, () => { }) {
+                Margin = new Thickness(0, 0, 0, 0),
+                ToolTip = "Закрыть текущую базу данных"
+            };
+            actions.AddElementToAction<CloseDataBaseAction>(MenuFileCloseDataBase);
+            actions.AddElementToAction<CloseDataBaseAction>(closeButton.Button);
+
+
+            var img = new Image {Source = AppResources.GetDatabaseItemIcon};
+            Console.WriteLine(img.Source.Height);
+
+            var list = new List<UIElement> {img, createButton, openButton, closeButton};
+            DataBaseToolBar.ItemsSource = list;
+        }
+
 
         private void NewGraph(object sender, RoutedEventArgs e) => NewGraphAction.Invoke();
 
@@ -38,40 +73,12 @@ namespace TransportGraphApp.Singletons {
 
         private void About(object sender, RoutedEventArgs e) => AboutAction.Invoke();
 
-        public void AppStateChanged(AppState newState) {
-            switch (newState) {
-                case AppState.Initial: {
-                    GraphMenu.IsEnabled = false;
-                    NodeMenu.IsEnabled = false;
-                    EdgeMenu.IsEnabled = false;
-                    break;
-                }
-                case AppState.ConnectedToDatabase: {
-                    GraphMenu.IsEnabled = true;
-                    ChangeGraphAttributesMenu.IsEnabled = false;
-                    NodeMenu.IsEnabled = false;
-                    EdgeMenu.IsEnabled = false;
-                    break;
-                }
-                case AppState.GraphSelected: {
-                    GraphMenu.IsEnabled = true;
-                    ChangeGraphAttributesMenu.IsEnabled = true;
-                    NodeMenu.IsEnabled = true;
-                    EdgeMenu.IsEnabled = true;
-                    break;
-                }
-                default:
-                    throw new Exception("Invalid state");
-            }
-        }
 
         private void OnMouseMove(object sender, MouseEventArgs e) {
             var position = e.GetPosition(relativeTo: this);
-            StatusText.Text = $"X: {position.X} Y: {position.Y}";
-        }
 
-        private void MenuItem_OnClick(object sender, RoutedEventArgs e) {
-            throw new NotImplementedException();
+
+            StatusText.Text = $"X: {position.X} Y: {position.Y}";
         }
 
         private void Help_Component_NumberInputField(object sender, RoutedEventArgs e) {
