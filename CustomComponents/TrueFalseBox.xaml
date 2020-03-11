@@ -9,6 +9,6 @@
         <CheckBox
             Margin="50,6,0,0"
             Name="CheckBox"
-            x:FieldModifier="private"/>
+            x:FieldModifier="public"/>
     </StackPanel>
 </UserControl>

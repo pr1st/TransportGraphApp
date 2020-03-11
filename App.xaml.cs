@@ -22,6 +22,9 @@ namespace TransportGraphApp {
                 AppState.Initial => "",
                 _ => throw new NotImplementedException()
             };
+            if (CurrentState != AppState.GraphSelected) {
+                AppGraph.Instance.TransportSystem = null;
+            }
             AppWindow.Instance.Title = $"{AppResources.GetAppTitle}{fileLocation}";
             AppActions.Instance.AppStateChanged();
         }

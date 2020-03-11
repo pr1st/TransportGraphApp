@@ -1,0 +1,37 @@
+﻿<Window x:Class="TransportGraphApp.Dialogs.TransportSystemDialogs.ListTransportSystemsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterOwner"
+        Title="Локальные транспортные системы">
+    <StackPanel Margin="15">
+        <WrapPanel>
+            <StackPanel>
+                <Label>Список доступных систем</Label>
+                <ListView Height="400" Width="250" Name="TransportSystemList" x:FieldModifier="private">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Название" DisplayMemberBinding="{Binding Name}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <WrapPanel Name="RemoveButtonPanel" x:FieldModifier="private"></WrapPanel>
+            </StackPanel>
+            <StackPanel Margin="25,15,0,0">
+                <Label>Добавить локальную систему</Label>
+                <TextBox FontSize="16" Margin="5,5,0,0" Width="220" Name="SystemNameBox" x:FieldModifier="private"
+                         HorizontalAlignment="Left" />
+                <WrapPanel Name="AddButtonPanel" x:FieldModifier="private" />
+            </StackPanel>
+        </WrapPanel>
+        <Grid Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Width="120" Click="SelectClick" IsDefault="True">Выбрать</Button>
+            <Button Grid.Column="2" Width="60" IsCancel="True">Отмена</Button>
+        </Grid>
+    </StackPanel>
+</Window>

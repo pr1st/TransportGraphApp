@@ -8,37 +8,42 @@
         <StackPanel DockPanel.Dock="Top">
             <Menu>
                 <MenuItem Header="_Файл">
-                    <MenuItem Header="_Создать файл базы данных" Name="MenuFileCreateDataBase" x:FieldModifier="private" />
+                    <MenuItem Header="_Создать файл базы данных" Name="MenuFileCreateDataBase"
+                              x:FieldModifier="private" />
                     <MenuItem Header="_Открыть базу данных" Name="MenuFileOpenDataBase" x:FieldModifier="private" />
-                    <MenuItem Header="_Закрыть текущую базу данных" Name="MenuFileCloseDataBase" x:FieldModifier="private" />
+                    <MenuItem Header="_Закрыть текущую базу данных" Name="MenuFileCloseDataBase"
+                              x:FieldModifier="private" />
                     <MenuItem Header="_Выход" Name="MenuFileExit" x:FieldModifier="private" />
                 </MenuItem>
-                <MenuItem Header="_Graph" Name="GraphMenu" x:FieldModifier="private">
+                <MenuItem Header="_Транспортная система">
+                    <MenuItem Header="_Список" Name="MenuTransportSystemList" x:FieldModifier="private" />
+                </MenuItem>
+                <!--<MenuItem Header="_Graph" Name="GraphMenu" x:FieldModifier="private">
                     <MenuItem Header="_New graph" Click="NewGraph" />
                     <MenuItem Header="_Select graph" Click="SelectGraph" />
                     <MenuItem Header="_Change graph attributes" Click="ChangeGraphAttributes"
                               Name="ChangeGraphAttributesMenu" x:FieldModifier="private" />
-                </MenuItem>
-                <MenuItem Header="_Node" Name="NodeMenu" x:FieldModifier="private">
+                </MenuItem>-->
+                <!--<MenuItem Header="_Node" Name="NodeMenu" x:FieldModifier="private">
                     <MenuItem Header="_New node" Click="NewNode" />
                     <MenuItem Header="Node _list" Click="NodeList" />
-                </MenuItem>
-                <MenuItem Header="_Edge" Name="EdgeMenu" x:FieldModifier="private">
+                </MenuItem>-->
+                <!--<MenuItem Header="_Edge" Name="EdgeMenu" x:FieldModifier="private">
                     <MenuItem Header="_New edge" Click="NewEdge" />
                     <MenuItem Header="Edge _list" Click="EdgeList" />
-                </MenuItem>
-                <MenuItem Header="_Help">
+                </MenuItem>-->
+                <!--<MenuItem Header="_Help">
                     <MenuItem Header="About" Click="About" />
                     <MenuItem Header="Component description">
                         <MenuItem Header="Number input field" Click="Help_Component_NumberInputField" />
                         <MenuItem Header="String input field" Click="Help_Component_StringInputField" />
                         <MenuItem Header="Boolean input field" Click="Help_Component_BooleanInputField" />
                     </MenuItem>
-                </MenuItem>
+                </MenuItem>-->
             </Menu>
             <ToolBarTray>
-                <ToolBar Name="DataBaseToolBar"/>
-                <ToolBar Name="GraphToolBar"/>
+                <ToolBar Name="DataBaseToolBar" />
+                <ToolBar Name="TransportSystemsToolBar" />
             </ToolBarTray>
         </StackPanel>
 
@@ -48,8 +53,7 @@
             </StatusBarItem>
         </StatusBar>
 
-        <StackPanel Name="AppGraph">
-            <Label HorizontalAlignment="Center">Скоро здесь будет граф</Label>
+        <StackPanel Name="AppGraphPanel">
         </StackPanel>
     </DockPanel>
 </Window>

@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using TransportGraphApp.Actions;
 using TransportGraphApp.Actions.DataBaseActions;
+using TransportGraphApp.Actions.TransportSystemActions;
 using TransportGraphApp.Actions.UtilActions;
 using TransportGraphApp.CustomComponents;
 
@@ -22,26 +23,27 @@ namespace TransportGraphApp.Singletons {
 
             AppActions.Instance.AddElementToAction<ExitAction>(MenuFileExit);
             SetUpDataBaseActions();
+            SetUpTransportSystemActions();
         }
 
         private void SetUpDataBaseActions() {
             var actions = AppActions.Instance;
 
-            var createButton = new IconButton(AppResources.GetAddItemIcon, () => { }) {
+            var createButton = new IconButton(AppResources.Database.GetDataBaseCreateIcon, () => { }) {
                 Margin = new Thickness(0, 0, 0, 0),
                 ToolTip = "Создать файл базы данных"
             };
             actions.AddElementToAction<CreateDataBaseAction>(MenuFileCreateDataBase);
             actions.AddElementToAction<CreateDataBaseAction>(createButton.Button);
 
-            var openButton = new IconButton(AppResources.GetRemoveItemIcon, () => { }) {
+            var openButton = new IconButton(AppResources.Database.GetDataBaseOpenIcon, () => { }) {
                 Margin = new Thickness(0, 0, 0, 0),
                 ToolTip = "Открыть базу данных"
             };
             actions.AddElementToAction<OpenDataBaseAction>(MenuFileOpenDataBase);
             actions.AddElementToAction<OpenDataBaseAction>(openButton.Button);
 
-            var closeButton = new IconButton(AppResources.GetUpdateItemIcon, () => { }) {
+            var closeButton = new IconButton(AppResources.Database.GetDataBaseCloseIcon, () => { }) {
                 Margin = new Thickness(0, 0, 0, 0),
                 ToolTip = "Закрыть текущую базу данных"
             };
@@ -49,29 +51,61 @@ namespace TransportGraphApp.Singletons {
             actions.AddElementToAction<CloseDataBaseAction>(closeButton.Button);
 
 
-            var img = new Image {Source = AppResources.GetDatabaseItemIcon};
-            Console.WriteLine(img.Source.Height);
-
-            var list = new List<UIElement> {img, createButton, openButton, closeButton};
+            var list = new List<UIElement> {createButton, openButton, closeButton};
             DataBaseToolBar.ItemsSource = list;
         }
 
+        private void SetUpTransportSystemActions() {
+            var actions = AppActions.Instance;
 
-        private void NewGraph(object sender, RoutedEventArgs e) => NewGraphAction.Invoke();
+            var listButton = new IconButton(AppResources.GetTransportSystemsListIcon, () => { }) {
+                Margin = new Thickness(0, 0, 0, 0),
+                ToolTip = "Список транспортных систем"
+            };
+            actions.AddElementToAction<ListTransportSystemsAction>(MenuTransportSystemList);
+            actions.AddElementToAction<ListTransportSystemsAction>(listButton.Button);
 
-        private void SelectGraph(object sender, RoutedEventArgs e) => SelectGraphAction.Invoke();
+            var list = new List<UIElement> {listButton};
+            TransportSystemsToolBar.ItemsSource = list;
+        }
 
-        private void ChangeGraphAttributes(object sender, RoutedEventArgs e) => ChangeGraphAttributesAction.Invoke();
+        public void DrawGraph() {
+            var ts = AppGraph.Instance.TransportSystem;
+            AppGraphPanel.Children.Clear();
+            if (ts == null) {
+                var label = new Label() {
+                    Content = "Никакая система еще не выбрана"
+                };
+                AppGraphPanel.Children.Add(label);
+                return;
+            }
 
-        private void NewNode(object sender, RoutedEventArgs e) => NewNodeAction.Invoke();
+            var prev = new Label() {
+                Content = "Выбранная система"
+            };
+            var name = new Label() {
+                Content = $"Name: {ts.Name}"
+            };
+            AppGraphPanel.Children.Add(prev);
+            AppGraphPanel.Children.Add(name);
+        }
 
-        private void NodeList(object sender, RoutedEventArgs e) => NodeListAction.Invoke();
 
-        private void NewEdge(object sender, RoutedEventArgs e) => NewEdgeAction.Invoke();
+        //private void NewGraph(object sender, RoutedEventArgs e) => NewGraphAction.Invoke();
 
-        private void EdgeList(object sender, RoutedEventArgs e) => EdgeListAction.Invoke();
+        //private void SelectGraph(object sender, RoutedEventArgs e) => SelectGraphAction.Invoke();
 
-        private void About(object sender, RoutedEventArgs e) => AboutAction.Invoke();
+        //private void ChangeGraphAttributes(object sender, RoutedEventArgs e) => ChangeGraphAttributesAction.Invoke();
+
+        //private void NewNode(object sender, RoutedEventArgs e) => NewNodeAction.Invoke();
+
+        //private void NodeList(object sender, RoutedEventArgs e) => NodeListAction.Invoke();
+
+        //private void NewEdge(object sender, RoutedEventArgs e) => NewEdgeAction.Invoke();
+
+        //private void EdgeList(object sender, RoutedEventArgs e) => EdgeListAction.Invoke();
+
+        //private void About(object sender, RoutedEventArgs e) => AboutAction.Invoke();
 
 
         private void OnMouseMove(object sender, MouseEventArgs e) {

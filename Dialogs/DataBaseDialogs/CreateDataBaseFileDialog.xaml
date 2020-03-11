@@ -6,7 +6,7 @@
       Title="Создание файла базы данных">
     <StackPanel Margin="15">
         <Label>Введите название:</Label>
-        <TextBox Margin="5,5,0,0" Width="210" Name="FileNameBox" x:FieldModifier="private" HorizontalAlignment="Left"></TextBox>
+        <TextBox FontSize="16" Margin="5,5,0,0" Width="210" Name="FileNameBox" x:FieldModifier="private" HorizontalAlignment="Left"></TextBox>
         <Grid Margin="0,10,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"></ColumnDefinition>

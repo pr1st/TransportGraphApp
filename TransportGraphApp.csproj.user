@@ -24,34 +24,10 @@
     <Compile Update="CustomComponents\TrueFalseBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Dialogs\ChangeGraphAttributesDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Dialogs\DataBaseDialogs\CreateDataBaseFileDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Dialogs\EdgeListDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Dialogs\NewEdgeDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Dialogs\NewGraphDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Dialogs\NewNodeDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Dialogs\NodeListDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Dialogs\SelectGraphDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Dialogs\UpdateEdgeDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Dialogs\UpdateNodeDialog.xaml.cs">
+    <Compile Update="Dialogs\TransportSystemDialogs\ListTransportSystemsDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -71,34 +47,10 @@
     <Page Update="CustomComponents\TrueFalseBox.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Dialogs\ChangeGraphAttributesDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Dialogs\DataBaseDialogs\CreateDataBaseFileDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Dialogs\EdgeListDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Dialogs\NewEdgeDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Dialogs\NewGraphDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Dialogs\NewNodeDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Dialogs\NodeListDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Dialogs\SelectGraphDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Dialogs\UpdateEdgeDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Dialogs\UpdateNodeDialog.xaml">
+    <Page Update="Dialogs\TransportSystemDialogs\ListTransportSystemsDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Singletons\AppWindow.xaml">

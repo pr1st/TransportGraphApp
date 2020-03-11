@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using LiteDB;
+using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Singletons {
     internal class AppDataBase {
@@ -32,7 +33,7 @@ namespace TransportGraphApp.Singletons {
         public void Close() => _liteDatabase?.Dispose();
 
         public ILiteCollection<T> GetCollection<T>() {
-            return _liteDatabase.GetCollection<T>();
+            return _liteDatabase.GetCollection<T>(typeof(T).Name);
         }
     }
 }

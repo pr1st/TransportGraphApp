@@ -14,7 +14,7 @@
             Name="TextBox"
             PreviewKeyDown="UpOrDownPressed"
             GotKeyboardFocus="ElementGotFocus"
-            x:FieldModifier="private"/>
+            x:FieldModifier="public"/>
         <StackPanel 
             Orientation="Vertical">
             <Line Height="1"></Line>

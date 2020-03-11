@@ -12,6 +12,6 @@
             FontSize="16"
             Name="TextBox"
             GotKeyboardFocus="ElementGotFocus"
-            x:FieldModifier="private"/>
+            x:FieldModifier="public"/>
     </StackPanel>
 </UserControl>
