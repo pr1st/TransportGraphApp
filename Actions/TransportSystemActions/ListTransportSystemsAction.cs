@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TransportGraphApp.Dialogs.TransportSystemDialogs;
 using TransportGraphApp.Models;
@@ -22,8 +23,15 @@ namespace TransportGraphApp.Actions.TransportSystemActions {
         public void Invoke() {
             
             var dialog = new ListTransportSystemsDialog(
-                () => AppDataBase.Instance.GetCollection<TransportSystem>().FindAll(),
-                ts => 0);
+                () => AppDataBase
+                    .Instance
+                    .GetCollection<TransportSystem>()
+                    .FindAll(),
+                ts => AppDataBase
+                    .Instance
+                    .GetCollection<City>()
+                    .Find(c => c.TransportSystemId == AppGraph.Instance.TransportSystem.Id)
+                    .Count());
             dialog.ShowDialog();
             if (dialog.DialogResult != true) return;
 

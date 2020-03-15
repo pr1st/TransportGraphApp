@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using TransportGraphApp.Actions;
+using TransportGraphApp.Actions.CityActions;
 using TransportGraphApp.Actions.DataBaseActions;
 using TransportGraphApp.Actions.TransportSystemActions;
 using TransportGraphApp.Actions.UtilActions;
@@ -24,6 +25,7 @@ namespace TransportGraphApp.Singletons {
             AppActions.Instance.AddElementToAction<ExitAction>(MenuFileExit);
             SetUpDataBaseActions();
             SetUpTransportSystemActions();
+            SetUpTransportSystemParametersActions();
         }
 
         private void SetUpDataBaseActions() {
@@ -58,15 +60,29 @@ namespace TransportGraphApp.Singletons {
         private void SetUpTransportSystemActions() {
             var actions = AppActions.Instance;
 
-            var listButton = new IconButton(AppResources.GetTransportSystemsListIcon, () => { }) {
+            var systemsListButton = new IconButton(AppResources.GetTransportSystemsListIcon, () => { }) {
                 Margin = new Thickness(0, 0, 0, 0),
                 ToolTip = "Список транспортных систем"
             };
             actions.AddElementToAction<ListTransportSystemsAction>(MenuTransportSystemList);
-            actions.AddElementToAction<ListTransportSystemsAction>(listButton.Button);
+            actions.AddElementToAction<ListTransportSystemsAction>(systemsListButton.Button);
 
-            var list = new List<UIElement> {listButton};
+            var list = new List<UIElement> {systemsListButton};
             TransportSystemsToolBar.ItemsSource = list;
+        }
+
+        private void SetUpTransportSystemParametersActions() {
+            var actions = AppActions.Instance;
+
+            var citiesListButton = new IconButton(AppResources.GetCitiesListIcon, () => { }) {
+                Margin = new Thickness(0, 0, 0, 0),
+                ToolTip = "Список городов в системе"
+            };
+            actions.AddElementToAction<ListCitiesAction>(MenuCitiesList);
+            actions.AddElementToAction<ListCitiesAction>(citiesListButton.Button);
+
+            var list = new List<UIElement> {citiesListButton};
+            TransportSystemParametersToolBar.ItemsSource = list;
         }
 
         public void DrawGraph() {

@@ -17,6 +17,12 @@
     <None Update="resources\app-icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="resources\cities-list.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\city-list.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="resources\database-close.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

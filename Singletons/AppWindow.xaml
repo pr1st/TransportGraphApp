@@ -18,6 +18,11 @@
                 <MenuItem Header="_Транспортная система">
                     <MenuItem Header="_Список" Name="MenuTransportSystemList" x:FieldModifier="private" />
                 </MenuItem>
+                <MenuItem Header="_Параметры системы">
+                    <MenuItem Header="Список _городов" Name="MenuCitiesList" x:FieldModifier="private" />
+                    <MenuItem Header="Список _атрибутов" Name="MenuAttributesList" x:FieldModifier="private" />
+                    <MenuItem Header="Список _дорог" Name="MenuRoadsList" x:FieldModifier="private" />
+                </MenuItem>
                 <!--<MenuItem Header="_Graph" Name="GraphMenu" x:FieldModifier="private">
                     <MenuItem Header="_New graph" Click="NewGraph" />
                     <MenuItem Header="_Select graph" Click="SelectGraph" />
@@ -44,6 +49,7 @@
             <ToolBarTray>
                 <ToolBar Name="DataBaseToolBar" />
                 <ToolBar Name="TransportSystemsToolBar" />
+                <ToolBar Name="TransportSystemParametersToolBar" />
             </ToolBarTray>
         </StackPanel>
 

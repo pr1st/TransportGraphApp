@@ -18,7 +18,8 @@
                 <WrapPanel Name="RemoveButtonPanel" x:FieldModifier="private"></WrapPanel>
             </StackPanel>
             <StackPanel Margin="25,15,0,0">
-                <Label>Добавить локальную систему</Label>
+                <Label>Добавить транспортную систему</Label>
+                <Label>Введите название:</Label>
                 <TextBox FontSize="16" Margin="5,5,0,0" Width="220" Name="SystemNameBox" x:FieldModifier="private"
                          HorizontalAlignment="Left" />
                 <WrapPanel Name="AddButtonPanel" x:FieldModifier="private" />

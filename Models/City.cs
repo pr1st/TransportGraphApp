@@ -8,11 +8,10 @@ namespace TransportGraphApp.Models {
 
         public string Name { get; set; }
 
-        public double X { get; set; }
+        public double Latitude { get; set; }
 
-        public double Y { get; set; }
+        public double Magnitude { get; set; }
 
-        [BsonRef("TransportSystem")]
-        public TransportSystem TransportSystem { get; set; }
+        public ObjectId TransportSystemId { get; set; }
     }
 }

@@ -23,5 +23,6 @@ namespace TransportGraphApp {
         }
 
         public static BitmapImage GetTransportSystemsListIcon => new BitmapImage(GetResourceUrl("transport-systems-list.png"));
+        public static BitmapImage GetCitiesListIcon => new BitmapImage(GetResourceUrl("cities-list.png"));
     }
 }
