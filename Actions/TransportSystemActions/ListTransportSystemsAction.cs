@@ -30,7 +30,7 @@ namespace TransportGraphApp.Actions.TransportSystemActions {
                 ts => AppDataBase
                     .Instance
                     .GetCollection<City>()
-                    .Find(c => c.TransportSystemId == AppGraph.Instance.TransportSystem.Id)
+                    .Find(c => c.TransportSystemId == ts.Id)
                     .Count());
             dialog.ShowDialog();
             if (dialog.DialogResult != true) return;

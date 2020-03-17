@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         WindowStartupLocation="CenterScreen"
-        Height="800" Width="950" MouseMove="OnMouseMove">
+        Height="700" Width="950" MouseMove="OnMouseMove">
 
     <DockPanel>
         <StackPanel DockPanel.Dock="Top">

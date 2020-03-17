@@ -50,12 +50,12 @@ namespace TransportGraphApp.Dialogs.TransportSystemDialogs {
         private void ConfigureButtons() {
             var addButton = new IconButton(AppResources.GetAddItemIcon, () => {
                     if (SystemNameBox.Text == "") {
-                        ComponentUtils.ShowMessage("Введите имя транспортной системы", MessageBoxImage.Error);
+                        ComponentUtils.ShowMessage("Введите название транспортной системы", MessageBoxImage.Error);
                         return;
                     }
 
                     if (_currentSystemList.Select(ts => ts.Name).Contains(SystemNameBox.Text)) {
-                        ComponentUtils.ShowMessage("Система с таким именем уже существует", MessageBoxImage.Error);
+                        ComponentUtils.ShowMessage("Система с таким названием уже существует", MessageBoxImage.Error);
                         return;
                     }
 

@@ -90,17 +90,17 @@ namespace TransportGraphApp.Singletons {
             AppGraphPanel.Children.Clear();
             if (ts == null) {
                 var label = new Label() {
-                    Content = "Никакая система еще не выбрана"
+                    Content = "Никакая транспортная система еще не выбрана"
                 };
                 AppGraphPanel.Children.Add(label);
                 return;
             }
 
             var prev = new Label() {
-                Content = "Выбранная система"
+                Content = "Выбранная транспортная система"
             };
             var name = new Label() {
-                Content = $"Name: {ts.Name}"
+                Content = $"Название: {ts.Name}"
             };
             AppGraphPanel.Children.Add(prev);
             AppGraphPanel.Children.Add(name);
