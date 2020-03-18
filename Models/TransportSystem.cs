@@ -6,5 +6,7 @@ namespace TransportGraphApp.Models {
         public ObjectId Id { get; set; }
 
         public string Name { get; set; }
+
+        public SystemParameters Parameters { get; set; }
     }
 }

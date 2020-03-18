@@ -24,9 +24,6 @@
     <Compile Update="CustomComponents\TrueFalseBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Dialogs\CitiesDialog\ListCitiesDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Dialogs\DataBaseDialogs\CreateDataBaseFileDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -48,9 +45,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="CustomComponents\TrueFalseBox.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Dialogs\CitiesDialog\ListCitiesDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialogs\DataBaseDialogs\CreateDataBaseFileDialog.xaml">

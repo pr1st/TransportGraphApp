@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -24,9 +25,14 @@ namespace TransportGraphApp.Singletons {
 
             AppActions.Instance.AddElementToAction<ExitAction>(MenuFileExit);
             SetUpDataBaseActions();
+            //TODO add separator for toolbar
             SetUpTransportSystemActions();
-            SetUpTransportSystemParametersActions();
+            SetUpCitiesActions();
+            SetUpRoadsActions();
+            ToolBar.ItemsSource = _toolBarItems;
         }
+
+        private readonly List<UIElement> _toolBarItems = new List<UIElement>();
 
         private void SetUpDataBaseActions() {
             var actions = AppActions.Instance;
@@ -35,26 +41,24 @@ namespace TransportGraphApp.Singletons {
                 Margin = new Thickness(0, 0, 0, 0),
                 ToolTip = "Создать файл базы данных"
             };
-            actions.AddElementToAction<CreateDataBaseAction>(MenuFileCreateDataBase);
             actions.AddElementToAction<CreateDataBaseAction>(createButton.Button);
+            actions.AddElementToAction<CreateDataBaseAction>(MenuFileCreateDataBase);
 
             var openButton = new IconButton(AppResources.Database.GetDataBaseOpenIcon, () => { }) {
                 Margin = new Thickness(0, 0, 0, 0),
                 ToolTip = "Открыть базу данных"
             };
-            actions.AddElementToAction<OpenDataBaseAction>(MenuFileOpenDataBase);
             actions.AddElementToAction<OpenDataBaseAction>(openButton.Button);
+            actions.AddElementToAction<OpenDataBaseAction>(MenuFileOpenDataBase);
 
             var closeButton = new IconButton(AppResources.Database.GetDataBaseCloseIcon, () => { }) {
                 Margin = new Thickness(0, 0, 0, 0),
                 ToolTip = "Закрыть текущую базу данных"
             };
-            actions.AddElementToAction<CloseDataBaseAction>(MenuFileCloseDataBase);
             actions.AddElementToAction<CloseDataBaseAction>(closeButton.Button);
+            actions.AddElementToAction<CloseDataBaseAction>(MenuFileCloseDataBase);
 
-
-            var list = new List<UIElement> {createButton, openButton, closeButton};
-            DataBaseToolBar.ItemsSource = list;
+            _toolBarItems.AddRange(new[] {createButton, openButton, closeButton});
         }
 
         private void SetUpTransportSystemActions() {
@@ -67,11 +71,12 @@ namespace TransportGraphApp.Singletons {
             actions.AddElementToAction<ListTransportSystemsAction>(MenuTransportSystemList);
             actions.AddElementToAction<ListTransportSystemsAction>(systemsListButton.Button);
 
-            var list = new List<UIElement> {systemsListButton};
-            TransportSystemsToolBar.ItemsSource = list;
+            //TODO add params buttons
+
+            _toolBarItems.AddRange(new[] {systemsListButton});
         }
 
-        private void SetUpTransportSystemParametersActions() {
+        private void SetUpCitiesActions() {
             var actions = AppActions.Instance;
 
             var citiesListButton = new IconButton(AppResources.GetCitiesListIcon, () => { }) {
@@ -81,66 +86,39 @@ namespace TransportGraphApp.Singletons {
             actions.AddElementToAction<ListCitiesAction>(MenuCitiesList);
             actions.AddElementToAction<ListCitiesAction>(citiesListButton.Button);
 
-            var list = new List<UIElement> {citiesListButton};
-            TransportSystemParametersToolBar.ItemsSource = list;
+            _toolBarItems.AddRange(new[] {citiesListButton});
+        }
+
+        private void SetUpRoadsActions() {
+            //TODO
         }
 
         public void DrawGraph() {
-            var ts = AppGraph.Instance.TransportSystem;
             AppGraphPanel.Children.Clear();
-            if (ts == null) {
+            if (App.CurrentStates[AppStates.TransportSystemSelected]) {
+                var ts = AppCurrentSystem.Instance.Get();
+                var prev = new Label() {
+                    Content = "Выбранная транспортная система"
+                };
+                var name = new Label() {
+                    Content = $"Название: {ts.Name}"
+                };
+                AppGraphPanel.Children.Add(prev);
+                AppGraphPanel.Children.Add(name);
+            }
+            else {
                 var label = new Label() {
                     Content = "Никакая транспортная система еще не выбрана"
                 };
                 AppGraphPanel.Children.Add(label);
-                return;
             }
-
-            var prev = new Label() {
-                Content = "Выбранная транспортная система"
-            };
-            var name = new Label() {
-                Content = $"Название: {ts.Name}"
-            };
-            AppGraphPanel.Children.Add(prev);
-            AppGraphPanel.Children.Add(name);
         }
-
-
-        //private void NewGraph(object sender, RoutedEventArgs e) => NewGraphAction.Invoke();
-
-        //private void SelectGraph(object sender, RoutedEventArgs e) => SelectGraphAction.Invoke();
-
-        //private void ChangeGraphAttributes(object sender, RoutedEventArgs e) => ChangeGraphAttributesAction.Invoke();
-
-        //private void NewNode(object sender, RoutedEventArgs e) => NewNodeAction.Invoke();
-
-        //private void NodeList(object sender, RoutedEventArgs e) => NodeListAction.Invoke();
-
-        //private void NewEdge(object sender, RoutedEventArgs e) => NewEdgeAction.Invoke();
-
-        //private void EdgeList(object sender, RoutedEventArgs e) => EdgeListAction.Invoke();
-
-        //private void About(object sender, RoutedEventArgs e) => AboutAction.Invoke();
-
 
         private void OnMouseMove(object sender, MouseEventArgs e) {
             var position = e.GetPosition(relativeTo: this);
 
 
             StatusText.Text = $"X: {position.X} Y: {position.Y}";
-        }
-
-        private void Help_Component_NumberInputField(object sender, RoutedEventArgs e) {
-            ComponentUtils.ShowMessage(DoubleTextBox.DescriptionInfo, MessageBoxImage.Information);
-        }
-
-        private void Help_Component_StringInputField(object sender, RoutedEventArgs e) {
-            ComponentUtils.ShowMessage(StringTextBox.DescriptionInfo, MessageBoxImage.Information);
-        }
-
-        private void Help_Component_BooleanInputField(object sender, RoutedEventArgs e) {
-            ComponentUtils.ShowMessage(TrueFalseBox.DescriptionInfo, MessageBoxImage.Information);
         }
     }
 }

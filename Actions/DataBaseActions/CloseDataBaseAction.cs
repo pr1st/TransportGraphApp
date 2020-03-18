@@ -7,17 +7,11 @@ namespace TransportGraphApp.Actions.DataBaseActions {
         }
 
         public bool IsAvailable() {
-            return App.CurrentState switch {
-                AppState.Initial => false,
-                AppState.ConnectedToDatabase => true,
-                AppState.GraphSelected => true,
-                _ => throw new NotImplementedException()
-            };
+            return App.CurrentStates[AppStates.ConnectedToDatabase];
         }
 
         public void Invoke() {
             AppDataBase.Instance.Close();
-            App.ChangeAppState(AppState.Initial);
         }
     }
 }

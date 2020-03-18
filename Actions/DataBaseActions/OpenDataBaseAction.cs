@@ -23,8 +23,7 @@ namespace TransportGraphApp.Actions.DataBaseActions {
 
         public void Invoke(string filePath) {
             try {
-                AppDataBase.Instance.Build(filePath);
-                App.ChangeAppState(AppState.ConnectedToDatabase);
+                AppDataBase.Instance.Open(filePath);
             }
             catch (Exception) {
                 ComponentUtils.ShowMessage("Выбранный файл поврежден или занят другим процессом",

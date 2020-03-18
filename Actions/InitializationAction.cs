@@ -7,12 +7,10 @@ namespace TransportGraphApp.Actions {
         public static void Invoke() {
             var defaultFileName = AppResources.GetDefaultDataBasePath;
             try {
-                AppDataBase.Instance.Build(defaultFileName);
-                App.ChangeAppState(AppState.ConnectedToDatabase);
+                AppDataBase.Instance.Open(defaultFileName);
             }
             catch (Exception) {
-                App.ChangeAppState(AppState.Initial);
-                ComponentUtils.ShowMessage("Файл базы данных по умолчанию занят другим процессом или испорчен",
+                ComponentUtils.ShowMessage("Файл базы данных по умолчанию (application-data.db) занят другим процессом или испорчен",
                     MessageBoxImage.Error);
             }
         }

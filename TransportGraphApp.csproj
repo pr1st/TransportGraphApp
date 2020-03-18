@@ -49,4 +49,11 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Actions\RoadActions\" />
+    <Folder Include="Dialogs\CityDialogs\" />
+    <Folder Include="Dialogs\HelpDialogs\" />
+    <Folder Include="Dialogs\RoadDialogs\" />
+  </ItemGroup>
+
 </Project>

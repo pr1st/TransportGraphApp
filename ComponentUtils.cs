@@ -6,7 +6,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TransportGraphApp.Models;
-using Attribute = TransportGraphApp.Models.Attribute;
 
 namespace TransportGraphApp {
     internal static class ComponentUtils {

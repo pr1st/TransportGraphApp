@@ -10,7 +10,7 @@ namespace TransportGraphApp.Actions.CityActions {
         }
 
         public bool IsAvailable() {
-            return App.CurrentState == AppState.GraphSelected;
+            return App.CurrentStates[AppStates.TransportSystemSelected];
         }
 
         public void Invoke() {

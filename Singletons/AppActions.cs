@@ -12,7 +12,7 @@ namespace TransportGraphApp.Singletons {
 
         public static AppActions Instance => _instance ??= new AppActions();
 
-        private Dictionary<IAppAction, IList<UIElement>> _mappedElementsToActions { get; }
+        private readonly Dictionary<IAppAction, IList<UIElement>> _mappedElementsToActions 
             = new Dictionary<IAppAction, IList<UIElement>>();
 
         private AppActions() {

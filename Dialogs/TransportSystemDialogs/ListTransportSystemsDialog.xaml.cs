@@ -20,24 +20,22 @@ namespace TransportGraphApp.Dialogs.TransportSystemDialogs {
     public partial class ListTransportSystemsDialog : Window {
         public TransportSystem SelectedSystem => (TransportSystem) TransportSystemList.SelectedItem;
 
-        private IList<TransportSystem> _currentSystemList;
-        private readonly Func<IEnumerable<TransportSystem>> _systemsSupplier;
-        private readonly Func<TransportSystem, int> _numberOfCitiesSupplier;
+        public Func<IEnumerable<TransportSystem>> TransportSystemsSupplier { get; set; }
+        public Func<TransportSystem, int> NumberOfCitiesInTransportSystemSupplier { get; set; }
+        public Func<TransportSystem, int> NumberOfRoadsInTransportSystemSupplier { get; set; }
 
-        public ListTransportSystemsDialog(
-            Func<IEnumerable<TransportSystem>> systemsSupplier,
-            Func<TransportSystem, int> numberOfCitiesSupplier) {
+        private IList<TransportSystem> _currentSystemList;
+
+        public ListTransportSystemsDialog() {
             InitializeComponent();
             Owner = AppWindow.Instance;
             Icon = AppResources.GetAppIcon;
-            _systemsSupplier = systemsSupplier;
-            _numberOfCitiesSupplier = numberOfCitiesSupplier;
 
             var numberOfCitiesColumn = new GridViewColumn() {
                 Header = "Кол-во нас. пунктов",
                 DisplayMemberBinding = new Binding() {
                     Converter = new NumberOfCities() {
-                        Supplier = _numberOfCitiesSupplier
+                        Supplier = NumberOfCitiesInTransportSystemSupplier
                     }
                 }
             };
@@ -85,7 +83,7 @@ namespace TransportGraphApp.Dialogs.TransportSystemDialogs {
 
         private void UpdateState() {
             SystemNameBox.Text = "";
-            _currentSystemList = _systemsSupplier.Invoke().ToList();
+            _currentSystemList = TransportSystemsSupplier.Invoke().ToList();
             TransportSystemList.ItemsSource = _currentSystemList;
             CollectionViewSource.GetDefaultView(TransportSystemList.ItemsSource).Refresh();
         }

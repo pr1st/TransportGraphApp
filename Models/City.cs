@@ -12,6 +12,8 @@ namespace TransportGraphApp.Models {
 
         public double Magnitude { get; set; }
 
+        public double CostOfStaying { get; set; }
+
         public ObjectId TransportSystemId { get; set; }
     }
 }
