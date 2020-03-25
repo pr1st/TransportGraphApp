@@ -47,13 +47,9 @@
     <None Update="resources\update-item.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Actions\RoadActions\" />
-    <Folder Include="Dialogs\CityDialogs\" />
-    <Folder Include="Dialogs\HelpDialogs\" />
-    <Folder Include="Dialogs\RoadDialogs\" />
+    <None Update="resources\separator.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

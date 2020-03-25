@@ -37,6 +37,6 @@
             </StatusBarItem>
         </StatusBar>
 
-        <StackPanel Name="AppGraphPanel" x:FieldModifier="private"/>
+        <StackPanel Name="AppGraphPanel" x:FieldModifier="private" />
     </DockPanel>
 </Window>

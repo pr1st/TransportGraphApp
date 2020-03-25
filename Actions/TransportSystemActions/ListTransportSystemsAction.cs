@@ -16,25 +16,7 @@ namespace TransportGraphApp.Actions.TransportSystemActions {
         }
 
         public void Invoke() {
-            var dialog = new ListTransportSystemsDialog() {
-                TransportSystemsSupplier = () =>
-                    AppDataBase
-                        .Instance
-                        .GetCollection<TransportSystem>()
-                        .FindAll(),
-                NumberOfCitiesInTransportSystemSupplier = ts =>
-                    AppDataBase
-                        .Instance
-                        .GetCollection<City>()
-                        .Find(c => c.TransportSystemId == ts.Id)
-                        .Count(),
-                NumberOfRoadsInTransportSystemSupplier = ts =>
-                    AppDataBase
-                        .Instance
-                        .GetCollection<Road>()
-                        .Find(r => r.TransportSystemId == ts.Id)
-                        .Count()
-            };
+            var dialog = new ListTransportSystemsDialog();
             dialog.ShowDialog();
             if (dialog.DialogResult != true) return;
 

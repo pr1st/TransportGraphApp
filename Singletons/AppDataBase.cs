@@ -1,8 +1,9 @@
 ﻿using System.IO;
 using LiteDB;
+using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Singletons {
-    internal class AppDataBase {
+    public class AppDataBase {
         private static AppDataBase _instance;
 
         public static AppDataBase Instance => _instance ??= new AppDataBase();
@@ -14,7 +15,7 @@ namespace TransportGraphApp.Singletons {
         private AppDataBase() {
         }
 
-        public void Create(string filePath) {
+        public static void Create(string filePath) {
             var createdDatabase = new LiteDatabase(filePath);
             createdDatabase.Dispose();
         }
@@ -33,6 +34,7 @@ namespace TransportGraphApp.Singletons {
             _liteDatabase?.Dispose();
             _liteDatabase = null;
             _filePath = null;
+
             App.ChangeAppState(AppStates.ConnectedToDatabase, false);
         }
 

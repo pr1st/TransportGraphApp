@@ -25,9 +25,11 @@ namespace TransportGraphApp.Singletons {
 
             AppActions.Instance.AddElementToAction<ExitAction>(MenuFileExit);
             SetUpDataBaseActions();
-            //TODO add separator for toolbar
+            _toolBarItems.Add(new Separator());
             SetUpTransportSystemActions();
+            _toolBarItems.Add(new Separator());
             SetUpCitiesActions();
+            _toolBarItems.Add(new Separator());
             SetUpRoadsActions();
             ToolBar.ItemsSource = _toolBarItems;
         }
@@ -96,15 +98,26 @@ namespace TransportGraphApp.Singletons {
         public void DrawGraph() {
             AppGraphPanel.Children.Clear();
             if (App.CurrentStates[AppStates.TransportSystemSelected]) {
-                var ts = AppCurrentSystem.Instance.Get();
+                var ts = AppCurrentSystem.Instance.GetTransportSystem();
+                var cities = AppCurrentSystem.Instance.GetCities();
+                var roads = AppCurrentSystem.Instance.GetRoads();
                 var prev = new Label() {
-                    Content = "Выбранная транспортная система"
+                    Content = "Скоро здесь будет рисоваться граф, а пока"
                 };
-                var name = new Label() {
+                var nameLabel = new Label() {
                     Content = $"Название: {ts.Name}"
                 };
+                var cityLabel = new Label() {
+                    Content = $"В сети присутсвует {cities.Count} различных населенных пунктов"
+                };
+                var roadLabel = new Label() {
+                    Content = $"В сети присутсвует {roads.Count} различных маршрутов"
+                };
+
                 AppGraphPanel.Children.Add(prev);
-                AppGraphPanel.Children.Add(name);
+                AppGraphPanel.Children.Add(nameLabel);
+                AppGraphPanel.Children.Add(cityLabel);
+                AppGraphPanel.Children.Add(roadLabel);
             }
             else {
                 var label = new Label() {

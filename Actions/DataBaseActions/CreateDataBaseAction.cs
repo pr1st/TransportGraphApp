@@ -13,7 +13,7 @@ namespace TransportGraphApp.Actions.DataBaseActions {
             dialog.ShowDialog();
             if (dialog.DialogResult != true) return;
 
-            AppDataBase.Instance.Create(dialog.NewDataBaseFileName);
+            AppDataBase.Create(dialog.NewDataBaseFileName);
 
             if (dialog.OpenAfterCreation) {
                 AppActions.Instance.GetAction<OpenDataBaseAction>().Invoke(dialog.NewDataBaseFileName);

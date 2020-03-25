@@ -20,10 +20,6 @@ namespace TransportGraphApp.Dialogs.TransportSystemDialogs {
     public partial class ListTransportSystemsDialog : Window {
         public TransportSystem SelectedSystem => (TransportSystem) TransportSystemList.SelectedItem;
 
-        public Func<IEnumerable<TransportSystem>> TransportSystemsSupplier { get; set; }
-        public Func<TransportSystem, int> NumberOfCitiesInTransportSystemSupplier { get; set; }
-        public Func<TransportSystem, int> NumberOfRoadsInTransportSystemSupplier { get; set; }
-
         private IList<TransportSystem> _currentSystemList;
 
         public ListTransportSystemsDialog() {
@@ -35,7 +31,7 @@ namespace TransportGraphApp.Dialogs.TransportSystemDialogs {
                 Header = "Кол-во нас. пунктов",
                 DisplayMemberBinding = new Binding() {
                     Converter = new NumberOfCities() {
-                        Supplier = NumberOfCitiesInTransportSystemSupplier
+                        Supplier = ts => 0
                     }
                 }
             };
@@ -57,7 +53,7 @@ namespace TransportGraphApp.Dialogs.TransportSystemDialogs {
                         return;
                     }
 
-                    AppActions.Instance.GetAction<CreateTransportSystemAction>().Invoke(new TransportSystem() {
+                    AppDataBase.Instance.GetCollection<TransportSystem>().Insert(new TransportSystem() {
                         Name = SystemNameBox.Text
                     });
                     UpdateState();
@@ -72,18 +68,18 @@ namespace TransportGraphApp.Dialogs.TransportSystemDialogs {
                     }
 
                     foreach (var ts in TransportSystemList.SelectedItems) {
-                        AppActions.Instance.GetAction<DeleteTransportSystemAction>().Invoke((TransportSystem) ts);
+                        AppDataBase.Instance.GetCollection<TransportSystem>().Delete(((TransportSystem)ts).Id);
                     }
 
                     UpdateState();
                 })
-                {ToolTip = "Удалить транспортную систему"};
+                {ToolTip = "Удалить выделенные выделенные транспортные системы"};
             RemoveButtonPanel.Children.Add(deleteButton);
         }
 
         private void UpdateState() {
             SystemNameBox.Text = "";
-            _currentSystemList = TransportSystemsSupplier.Invoke().ToList();
+            _currentSystemList = AppDataBase.Instance.GetCollection<TransportSystem>().FindAll().ToList();
             TransportSystemList.ItemsSource = _currentSystemList;
             CollectionViewSource.GetDefaultView(TransportSystemList.ItemsSource).Refresh();
         }

@@ -37,8 +37,8 @@ namespace TransportGraphApp {
         }
 
         private void UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
-            MessageBox.Show("An unhandled exception just occurred: " + e.Exception.Message, 
-                "Exception", 
+            MessageBox.Show("Возникло исключение: " + e.Exception.Message + "\n Приложение будет закрыто", 
+                "Исключение", 
                 MessageBoxButton.OK, 
                 MessageBoxImage.Warning);
             AppActions.Instance.GetAction<ExitAction>().Invoke();
