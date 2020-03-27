@@ -5,108 +5,117 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using TransportGraphApp.Actions.TransportSystemActions;
 using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
 using TransportGraphApp.Singletons;
 
 namespace TransportGraphApp.Dialogs.TransportSystemDialogs {
     public partial class ListTransportSystemsDialog : Window {
-        public TransportSystem SelectedSystem => (TransportSystem) TransportSystemList.SelectedItem;
-
         private IList<TransportSystem> _currentSystemList;
+
+        private EntityListComponent _entityListComponent;
+
+        private StringTextBox _nameBox;
 
         public ListTransportSystemsDialog() {
             InitializeComponent();
             Owner = AppWindow.Instance;
             Icon = AppResources.GetAppIcon;
 
-            var numberOfCitiesColumn = new GridViewColumn() {
-                Header = "Кол-во нас. пунктов",
-                DisplayMemberBinding = new Binding() {
-                    Converter = new NumberOfCities() {
-                        Supplier = ts => 0
+            _currentSystemList = AppDataBase.Instance.GetCollection<TransportSystem>().FindAll().ToList();
+
+            _entityListComponent = new EntityListComponent() {
+                OnAdd = () => {
+                    // if (SystemNameBox.Text == "") {
+                    //     ComponentUtils.ShowMessage("Введите название транспортной системы", MessageBoxImage.Error);
+                    //     return;
+                    // }
+                    //
+                    // if (_currentSystemList.Select(ts => ts.Name).Contains(SystemNameBox.Text)) {
+                    //     ComponentUtils.ShowMessage("Система с таким названием уже существует", MessageBoxImage.Error);
+                    //     return;
+                    // }
+                    //
+                    // AppDataBase.Instance.GetCollection<TransportSystem>().Insert(new TransportSystem() {
+                    //     Name = SystemNameBox.Text
+                    // });
+                    // _entityListComponent.UpdateList();
+                    PropertiesPanel.Children.Clear();
+                    _nameBox = new StringTextBox() {
+                        ValueTitle = "Название"
+                    };
+                    PropertiesPanel.Children.Add(_nameBox);
+                    PropertiesPanel.Visibility = Visibility.Visible;
+                },
+                OnUpdate = () => {
+                    // var selectedItem = _entityListComponent.List.SelectedItem;
+                    // if (selectedItem == null) {
+                    //     ComponentUtils.ShowMessage("Выберите транспортную систему из списка чтобы ее отредактировать", MessageBoxImage.Error);
+                    //     return;
+                    // }
+                    //
+                    // PropertiesPanel.Children.Clear();
+                    // _nameBox = new StringTextBox() {
+                    //     ValueTitle = "Название",
+                    //     Value = ((TransportSystem)selectedItem).Name
+                    // };
+                    // var button = new Button() {
+                    //     Content = "Обновить",
+                    //     HorizontalAlignment = HorizontalAlignment.Right
+                    // };
+                    // button.Click += (sender, args) => {
+                    //     if (IsViable()) {
+                    //         AppDataBase.Instance.GetCollection<TransportSystem>().Update(((TransportSystem) selectedItem).Id);
+                    //     }
+                    // }
+                    // PropertiesPanel.Children.Add(_nameBox);
+                    // PropertiesPanel.Children.Add(button);
+                    // PropertiesPanel.Visibility = Visibility.Visible;
+                },
+                OnRemove = () => {
+                    var selectedItem = _entityListComponent.List.SelectedItem;
+                    if (selectedItem == null) {
+                        ComponentUtils.ShowMessage("Выберите транспортную систему из списка чтобы ее удалить", MessageBoxImage.Error);
+                        return;
                     }
+
+                    AppDataBase.Instance.GetCollection<TransportSystem>().Delete(((TransportSystem) selectedItem).Id);
                 }
             };
-            ((GridView) TransportSystemList.View).Columns.Add(numberOfCitiesColumn);
+            var map = new Dictionary<string, Func<TransportSystem, object>> {
+                {"Название", ts => ts.Name},
+                {"Кол-во нас. пунктов", ts => 0},
+                {"Кол-во маршрутов", ts => "ASD"}
+            };
 
-            ConfigureButtons();
-            UpdateState();
+            _entityListComponent.SetUp("Список доступных транспортных систем", map);
+            _entityListComponent.UpdateList(_currentSystemList);
+            ListPanel.Children.Add(_entityListComponent);
+
+            PropertiesPanel.Visibility = Visibility.Hidden;
         }
 
-        private void ConfigureButtons() {
-            var addButton = new IconButton(AppResources.GetAddItemIcon, () => {
-                    if (SystemNameBox.Text == "") {
-                        ComponentUtils.ShowMessage("Введите название транспортной системы", MessageBoxImage.Error);
-                        return;
-                    }
+        private bool IsViable() {
+            if (_nameBox.Value == "") {
+                ComponentUtils.ShowMessage("Введите название транспортной системы", MessageBoxImage.Error);
+                return false;
+            }
+            
+            if (_currentSystemList.Select(ts => ts.Name).Contains(_nameBox.Value)) {
+                ComponentUtils.ShowMessage("Система с таким названием уже существует", MessageBoxImage.Error);
+                return false;
+            }
 
-                    if (_currentSystemList.Select(ts => ts.Name).Contains(SystemNameBox.Text)) {
-                        ComponentUtils.ShowMessage("Система с таким названием уже существует", MessageBoxImage.Error);
-                        return;
-                    }
-
-                    AppDataBase.Instance.GetCollection<TransportSystem>().Insert(new TransportSystem() {
-                        Name = SystemNameBox.Text
-                    });
-                    UpdateState();
-                })
-                {ToolTip = "Добавить транспортную систему"};
-            AddButtonPanel.Children.Add(addButton);
-
-            var deleteButton = new IconButton(AppResources.GetRemoveItemIcon, () => {
-                    var selected = TransportSystemList.SelectedItem;
-                    if (selected == null) {
-                        return;
-                    }
-
-                    foreach (var ts in TransportSystemList.SelectedItems) {
-                        AppDataBase.Instance.GetCollection<TransportSystem>().Delete(((TransportSystem)ts).Id);
-                    }
-
-                    UpdateState();
-                })
-                {ToolTip = "Удалить выделенные выделенные транспортные системы"};
-            RemoveButtonPanel.Children.Add(deleteButton);
-        }
-
-        private void UpdateState() {
-            SystemNameBox.Text = "";
-            _currentSystemList = AppDataBase.Instance.GetCollection<TransportSystem>().FindAll().ToList();
-            TransportSystemList.ItemsSource = _currentSystemList;
-            CollectionViewSource.GetDefaultView(TransportSystemList.ItemsSource).Refresh();
+            return true;
         }
 
         private void SelectClick(object sender, RoutedEventArgs e) {
-            if (TransportSystemList.SelectedItem == null) {
-                ComponentUtils.ShowMessage("Выберите систему из списка", MessageBoxImage.Error);
+            if (_entityListComponent.List.SelectedItem == null) {
+                ComponentUtils.ShowMessage("Выберите транспортную систему из списка", MessageBoxImage.Error);
                 return;
             }
 
             DialogResult = true;
-        }
-    }
-
-    public class NumberOfCities : IValueConverter {
-        public Func<TransportSystem, int> Supplier { get; set; }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (value is TransportSystem ts) {
-                return Supplier.Invoke(ts);
-            }
-
-            throw new NotImplementedException();
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-            throw new NotImplementedException();
         }
     }
 }

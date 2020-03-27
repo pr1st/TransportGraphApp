@@ -7,24 +7,9 @@
         Title="Транспортные системы">
     <StackPanel Margin="15">
         <WrapPanel>
-            <StackPanel>
-                <Label>Список доступных систем</Label>
-                <ListView Height="400" Width="250" Name="TransportSystemList" x:FieldModifier="private">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Название" DisplayMemberBinding="{Binding Name}" />
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-                <WrapPanel Name="RemoveButtonPanel" x:FieldModifier="private"></WrapPanel>
-            </StackPanel>
-            <StackPanel Margin="25,15,0,0">
-                <Label>Добавить транспортную систему</Label>
-                <Label>Введите название:</Label>
-                <TextBox FontSize="16" Margin="5,5,0,0" Width="220" Name="SystemNameBox" x:FieldModifier="private"
-                         HorizontalAlignment="Left" />
-                <WrapPanel Name="AddButtonPanel" x:FieldModifier="private" />
-            </StackPanel>
+            <StackPanel Name="ListPanel" x:FieldModifier="private" />
+            <Separator BorderBrush="Black" BorderThickness="1" Margin="2,0,2,0"/>
+            <StackPanel Name="PropertiesPanel" x:FieldModifier="private" />
         </WrapPanel>
         <Grid Margin="0,10,0,0">
             <Grid.ColumnDefinitions>

@@ -10,16 +10,11 @@ namespace TransportGraphApp.CustomComponents {
             InitializeComponent();
             Value = 0.0;
         }
-
-        public const string DescriptionInfo = 
-            "Represents input field with double precision\n\n" +
-            "Decimal point is a dot (.)\n\n" +
-            "You can use keyboard arrows to increment/decrement number\n";
-
+        
         public double Value {
             get {
                 var text = TextBox.Text;
-                if (text == "" || text == "-" || text == "." || text == "-.") {
+                if (text == "" || text == ".") {
                     return 0.0;
                 }
                 return double.Parse(text);
@@ -40,17 +35,10 @@ namespace TransportGraphApp.CustomComponents {
                 result = received;
             }
 
-            if (result == "-") {
-                e.Handled = false;
-                return;
-            }
-
-            if (received == ",") {
+            var parsed = double.TryParse(result, out var res);
+            if (!parsed || res < 0) {
                 e.Handled = true;
-                return;
             }
-
-            e.Handled = !double.TryParse(result, out _);
         }
 
         public void ValueChanged(Action<double> onChange) =>

@@ -1,7 +1,0 @@
-﻿<UserControl x:Class="TransportGraphApp.CustomComponents.AttributesChangeBox"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <StackPanel Orientation="Vertical" Name="StackPanel" x:FieldModifier="private">
-            
-    </StackPanel>
-</UserControl>

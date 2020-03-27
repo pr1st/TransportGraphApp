@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
 using System.Windows;
 
-namespace TransportGraphApp.Actions.HelpActions {
-    internal class AboutAction : IAppAction {
+namespace TransportGraphApp.Actions {
+    internal static class AboutAction {
         private const string Goal = "Программа разработанна с целбю получения диплома бакалавра";
 
         private const string Description =
@@ -12,10 +10,8 @@ namespace TransportGraphApp.Actions.HelpActions {
 
         private const string Developer =
             "Дымов Дмитрий Германович, Факультет информационных технологий, Новосибирский государственный университет";
-
-        public bool IsAvailable() => true;
-
-            void IAppAction.Invoke() {
+        
+        public static void Invoke() {
             ComponentUtils.ShowMessage($"{Goal}\n\n{Description}\n\n{Developer}", MessageBoxImage.Information);
         }
     }

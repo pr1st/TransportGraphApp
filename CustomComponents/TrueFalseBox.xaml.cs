@@ -8,11 +8,6 @@ namespace TransportGraphApp.CustomComponents {
             Value = false;
         }
 
-        public const string DescriptionInfo =
-            "Represents true false field\n\n" +
-            "If checkbox is checked it means true, otherwise false\n\n" +
-            "Use space to check/uncheck with keyboard\n";
-
         public void ValueChanged(Action<bool> onChange) {
             CheckBox.Checked += (sender, args) => onChange.Invoke(Value);
             CheckBox.Unchecked += (sender, args) => onChange.Invoke(Value);

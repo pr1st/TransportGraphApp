@@ -17,5 +17,23 @@ namespace TransportGraphApp {
                 icon
             );
         }
+
+        public static void InsertIconToButton(Button button, ImageSource icon, string toolTip) {
+            button.Background = Brushes.Transparent;
+            button.BorderThickness = new Thickness(0);
+            button.Height = 24;
+            button.Width = 24;
+            button.ToolTip = toolTip;
+            
+            var img = new Image { Source = icon };
+
+            // without this do not work :(
+            Console.WriteLine(img.Source.Height);
+
+            var stackPnl = new StackPanel { Orientation = Orientation.Horizontal };
+            stackPnl.Children.Add(img);
+
+            button.Content = stackPnl;
+        }
     }
 }

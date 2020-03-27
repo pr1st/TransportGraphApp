@@ -8,14 +8,14 @@ namespace TransportGraphApp.CustomComponents {
             InitializeComponent();
             Value = "";
         }
-
-        public const string DescriptionInfo =
-            "Represents input field for text\n\n" +
-            "Enter all the text you want\n";
-
         public string Value {
             get => TextBox.Text;
             set => TextBox.Text = value;
+        }
+
+        public string ValueTitle {
+            get => StringTitle.Text;
+            set => StringTitle.Text = value;
         }
 
         public void ValueChanged(Action<string> onChange) =>

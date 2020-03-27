@@ -1,137 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using TransportGraphApp.Actions;
-using TransportGraphApp.Actions.CityActions;
-using TransportGraphApp.Actions.DataBaseActions;
-using TransportGraphApp.Actions.TransportSystemActions;
-using TransportGraphApp.Actions.UtilActions;
-using TransportGraphApp.CustomComponents;
 
 namespace TransportGraphApp.Singletons {
     public partial class AppWindow : Window {
         private static AppWindow _instance;
+        
         public static AppWindow Instance => _instance ??= new AppWindow();
-
+        
+        
+        private IList<UIElement> _systemDependentElements = new List<UIElement>();
+        
         private AppWindow() {
             InitializeComponent();
             Title = AppResources.GetAppTitle;
             Icon = AppResources.GetAppIcon;
 
-
-            AppActions.Instance.AddElementToAction<ExitAction>(MenuFileExit);
-            SetUpDataBaseActions();
-            _toolBarItems.Add(new Separator());
+            MenuFileExit.Click += (sender, args) => ExitAction.Invoke();
             SetUpTransportSystemActions();
-            _toolBarItems.Add(new Separator());
             SetUpCitiesActions();
-            _toolBarItems.Add(new Separator());
             SetUpRoadsActions();
-            ToolBar.ItemsSource = _toolBarItems;
+            MenuHelpAbout.Click += (sender, args) => AboutAction.Invoke();
+            MenuHelpOverview.Click += (sender, args) => OverviewAction.Invoke();
+            
+            MainPanel.Children.Add(AppGraph.Instance);
         }
-
-        private readonly List<UIElement> _toolBarItems = new List<UIElement>();
-
-        private void SetUpDataBaseActions() {
-            var actions = AppActions.Instance;
-
-            var createButton = new IconButton(AppResources.Database.GetDataBaseCreateIcon, () => { }) {
-                Margin = new Thickness(0, 0, 0, 0),
-                ToolTip = "Создать файл базы данных"
-            };
-            actions.AddElementToAction<CreateDataBaseAction>(createButton.Button);
-            actions.AddElementToAction<CreateDataBaseAction>(MenuFileCreateDataBase);
-
-            var openButton = new IconButton(AppResources.Database.GetDataBaseOpenIcon, () => { }) {
-                Margin = new Thickness(0, 0, 0, 0),
-                ToolTip = "Открыть базу данных"
-            };
-            actions.AddElementToAction<OpenDataBaseAction>(openButton.Button);
-            actions.AddElementToAction<OpenDataBaseAction>(MenuFileOpenDataBase);
-
-            var closeButton = new IconButton(AppResources.Database.GetDataBaseCloseIcon, () => { }) {
-                Margin = new Thickness(0, 0, 0, 0),
-                ToolTip = "Закрыть текущую базу данных"
-            };
-            actions.AddElementToAction<CloseDataBaseAction>(closeButton.Button);
-            actions.AddElementToAction<CloseDataBaseAction>(MenuFileCloseDataBase);
-
-            _toolBarItems.AddRange(new[] {createButton, openButton, closeButton});
-        }
-
+        
         private void SetUpTransportSystemActions() {
-            var actions = AppActions.Instance;
+            ComponentUtils.InsertIconToButton(ButtonTransportSystemList, AppResources.GetTransportSystemsListIcon, "Список транспортных систем");
+            ButtonTransportSystemList.Click += (sender, args) => ListTransportSystemsAction.Invoke();
+            MenuTransportSystemList.Click += (sender, args) => ListTransportSystemsAction.Invoke();
 
-            var systemsListButton = new IconButton(AppResources.GetTransportSystemsListIcon, () => { }) {
-                Margin = new Thickness(0, 0, 0, 0),
-                ToolTip = "Список транспортных систем"
-            };
-            actions.AddElementToAction<ListTransportSystemsAction>(MenuTransportSystemList);
-            actions.AddElementToAction<ListTransportSystemsAction>(systemsListButton.Button);
-
-            //TODO add params buttons
-
-            _toolBarItems.AddRange(new[] {systemsListButton});
+            ComponentUtils.InsertIconToButton(ButtonTransportSystemParameters, AppResources.GetTransportSystemsParametersIcon, "Параметры транспортной системы");
+            ButtonTransportSystemParameters.Click += (sender, args) => TransportSystemParametersAction.Invoke();
+            MenuTransportSystemParameters.Click += (sender, args) => TransportSystemParametersAction.Invoke();
+            
+            _systemDependentElements.Add(ButtonTransportSystemParameters);
+            _systemDependentElements.Add(MenuTransportSystemParameters);
         }
 
         private void SetUpCitiesActions() {
-            var actions = AppActions.Instance;
-
-            var citiesListButton = new IconButton(AppResources.GetCitiesListIcon, () => { }) {
-                Margin = new Thickness(0, 0, 0, 0),
-                ToolTip = "Список городов в системе"
-            };
-            actions.AddElementToAction<ListCitiesAction>(MenuCitiesList);
-            actions.AddElementToAction<ListCitiesAction>(citiesListButton.Button);
-
-            _toolBarItems.AddRange(new[] {citiesListButton});
+            ComponentUtils.InsertIconToButton(ButtonCitiesList, AppResources.GetCitiesListIcon, "Список населенных пунктов в системе");
+            ButtonCitiesList.Click += (sender, args) => ListCitiesAction.Invoke();
+            MenuCitiesList.Click += (sender, args) => ListCitiesAction.Invoke();
+            
+            _systemDependentElements.Add(ButtonCitiesList);
+            _systemDependentElements.Add(MenuCitiesList);
         }
 
         private void SetUpRoadsActions() {
-            //TODO
+            ComponentUtils.InsertIconToButton(ButtonRoadsList, AppResources.GetRoadsListIcon, "Список маршрутов в системе");
+            ButtonRoadsList.Click += (sender, args) => ListRoadsAction.Invoke();
+            MenuRoadsList.Click += (sender, args) => ListRoadsAction.Invoke();
+            
+            _systemDependentElements.Add(ButtonRoadsList);
+            _systemDependentElements.Add(MenuRoadsList);
         }
 
-        public void DrawGraph() {
-            AppGraphPanel.Children.Clear();
-            if (App.CurrentStates[AppStates.TransportSystemSelected]) {
-                var ts = AppCurrentSystem.Instance.GetTransportSystem();
-                var cities = AppCurrentSystem.Instance.GetCities();
-                var roads = AppCurrentSystem.Instance.GetRoads();
-                var prev = new Label() {
-                    Content = "Скоро здесь будет рисоваться граф, а пока"
-                };
-                var nameLabel = new Label() {
-                    Content = $"Название: {ts.Name}"
-                };
-                var cityLabel = new Label() {
-                    Content = $"В сети присутсвует {cities.Count} различных населенных пунктов"
-                };
-                var roadLabel = new Label() {
-                    Content = $"В сети присутсвует {roads.Count} различных маршрутов"
-                };
-
-                AppGraphPanel.Children.Add(prev);
-                AppGraphPanel.Children.Add(nameLabel);
-                AppGraphPanel.Children.Add(cityLabel);
-                AppGraphPanel.Children.Add(roadLabel);
+        
+        public void SystemSelected(bool isSystemSelected) {
+            foreach (var element in _systemDependentElements) {
+                element.IsEnabled = isSystemSelected;
             }
-            else {
-                var label = new Label() {
-                    Content = "Никакая транспортная система еще не выбрана"
-                };
-                AppGraphPanel.Children.Add(label);
-            }
-        }
-
-        private void OnMouseMove(object sender, MouseEventArgs e) {
-            var position = e.GetPosition(relativeTo: this);
-
-
-            StatusText.Text = $"X: {position.X} Y: {position.Y}";
         }
     }
 }
