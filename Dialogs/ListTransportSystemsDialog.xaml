@@ -1,12 +1,24 @@
 ﻿<Window x:Class="TransportGraphApp.Dialogs.ListTransportSystemsDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:TransportGraphApp.Dialogs"
-        mc:Ignorable="d"
-        Title="ListTransportSystemsDialog" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Title="Cписок транспортных систем">
+    <StackPanel Margin="15">
+        <WrapPanel>
+            <StackPanel Name="ListPanel" x:FieldModifier="private" />
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />  
+            <StackPanel Name="PropertiesPanel" x:FieldModifier="private" />
+        </WrapPanel>
+        <Grid Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Width="120" Click="SelectClick" IsDefault="True">Выбрать</Button>
+            <Button Grid.Column="2" Width="60" IsCancel="True">Отмена</Button>
+        </Grid>
+    </StackPanel>
 </Window>

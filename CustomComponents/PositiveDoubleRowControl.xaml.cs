@@ -5,8 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace TransportGraphApp.CustomComponents {
-    public partial class DoubleTextBox : UserControl {
-        public DoubleTextBox() {
+    public partial class PositiveDoubleRowControl : UserControl {
+        public PositiveDoubleRowControl() {
             InitializeComponent();
             Value = 0.0;
         }

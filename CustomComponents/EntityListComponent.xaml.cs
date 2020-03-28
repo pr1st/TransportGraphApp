@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using TransportGraphApp.Models;
@@ -41,20 +42,29 @@ namespace TransportGraphApp.CustomComponents {
 
         private void ConfigureButtons() {
             if (OnAdd != null) {
-                var addButton = new IconButton(AppResources.GetAddItemIcon, OnAdd)
-                    {ToolTip = "Добавить объект"};
+                var addButton = new Button() {
+                    Margin = new Thickness(5,5,5,5),
+                };
+                addButton.Click += (sender, args) => OnAdd.Invoke();
+                ComponentUtils.InsertIconToButton(addButton, AppResources.GetAddItemIcon, "Добавить объект");
                 ButtonPanel.Children.Add(addButton);
             }
 
             if (OnUpdate != null) {
-                var updateButton = new IconButton(AppResources.GetUpdateItemIcon, OnUpdate)
-                    {ToolTip = "Обновить объект"};
+                var updateButton = new Button() {
+                    Margin = new Thickness(5,5,5,5),
+                };
+                updateButton.Click += (sender, args) => OnUpdate.Invoke();
+                ComponentUtils.InsertIconToButton(updateButton, AppResources.GetUpdateItemIcon, "Обновить объект");
                 ButtonPanel.Children.Add(updateButton);
             }
 
             if (OnRemove != null) {
-                var removeButton = new IconButton(AppResources.GetRemoveItemIcon, OnRemove)
-                    {ToolTip = "Удалить объект"};
+                var removeButton = new Button() {
+                    Margin = new Thickness(5,5,5,5),
+                };
+                removeButton.Click += (sender, args) => OnRemove.Invoke();
+                ComponentUtils.InsertIconToButton(removeButton, AppResources.GetRemoveItemIcon, "Удалить объект");
                 ButtonPanel.Children.Add(removeButton);
             }
         }

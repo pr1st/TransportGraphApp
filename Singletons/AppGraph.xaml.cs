@@ -17,6 +17,8 @@ namespace TransportGraphApp.Singletons {
         private IList<City> _cities;
         private IList<Road> _roads;
 
+        public TransportSystem GetSelectedSystem => _transportSystem;
+        
         public void SelectSystem(TransportSystem ts) {
             if (ts == null) {
                 _transportSystem = null;
