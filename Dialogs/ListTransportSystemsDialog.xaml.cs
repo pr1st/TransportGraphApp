@@ -12,7 +12,7 @@ namespace TransportGraphApp.Dialogs {
         private IList<TransportSystem> _currentSystemList;
 
 
-        private EntityListComponent _entityListComponent;
+        private EntityListControl _entityListControl;
 
         private Label _propertiesTitleBox;
         private StringRowControl _nameBox;
@@ -21,7 +21,7 @@ namespace TransportGraphApp.Dialogs {
         public ListTransportSystemsDialog() {
             InitializeComponent();
             Owner = AppWindow.Instance;
-            _entityListComponent = new EntityListComponent() {
+            _entityListControl = new EntityListControl() {
                 OnAdd = AddNewPanelAction,
                 OnRemove = RemoveObjectAction
             };
@@ -34,13 +34,13 @@ namespace TransportGraphApp.Dialogs {
                     ts => AppDataBase.Instance.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id)
                 }
             };
-            _entityListComponent.SetUp("Список доступных транспортных систем", propertyMap);
-            _entityListComponent.List.SelectionChanged += (sender, args) => UpdatePanelAction();
+            _entityListControl.SetUp("Список доступных транспортных систем", propertyMap);
+            _entityListControl.List.SelectionChanged += (sender, args) => UpdatePanelAction();
 
             _propertiesTitleBox = new Label();
             _nameBox = new StringRowControl() {
                 Margin = new Thickness(0, 5, 0, 0),
-                ValueTitle = "Название"
+                TitleValue = "Название"
             };
             _actionButton = new Button() {
                 Margin = new Thickness(0, 5, 0, 0),
@@ -51,12 +51,32 @@ namespace TransportGraphApp.Dialogs {
             PropertiesPanel.Children.Add(_actionButton);
             PropertiesPanel.Visibility = Visibility.Collapsed;
 
-            ListPanel.Children.Add(_entityListComponent);
+            ListPanel.Children.Add(_entityListControl);
             UpdateState();
             if (AppGraph.Instance.GetSelectedSystem != null) {
-                _entityListComponent.List.SelectedItem =
+                _entityListControl.List.SelectedItem =
                     _currentSystemList.First(t => t.Id == AppGraph.Instance.GetSelectedSystem.Id);
             }
+        }
+
+        private void DisplayNew() {
+            
+        }
+        
+        private void DisplayUpdate() {
+            
+        }
+
+        private void AddTransportSystem() {
+            
+        }
+        
+        private void UpdateTransportSystem() {
+            
+        }
+        
+        private void RemoveTransportSystem() {
+            
         }
 
         private void AddNewPanelAction() {
@@ -66,17 +86,17 @@ namespace TransportGraphApp.Dialogs {
             _actionButton.Click -= UpdateTransportSystem;
             _actionButton.Click -= AddTransportSystem;
             _actionButton.Click += AddTransportSystem;
-            _entityListComponent.List.SelectedItem = null;
+            _entityListControl.List.SelectedItem = null;
             PropertiesPanel.Visibility = Visibility.Visible;
         }
 
         private void UpdatePanelAction() {
-            if (_entityListComponent.List.SelectedItem == null) {
+            if (_entityListControl.List.SelectedItem == null) {
                 return;
             }
 
             _propertiesTitleBox.Content = "Обновить транспортную систему";
-            _nameBox.Value = ((TransportSystem) _entityListComponent.List.SelectedItem).Name;
+            _nameBox.Value = ((TransportSystem) _entityListControl.List.SelectedItem).Name;
             _actionButton.Content = "Обновить";
             _actionButton.Click -= UpdateTransportSystem;
             _actionButton.Click -= AddTransportSystem;
@@ -95,7 +115,7 @@ namespace TransportGraphApp.Dialogs {
         }
 
         private void UpdateTransportSystem(object sender, RoutedEventArgs args) {
-            var selected = (TransportSystem) _entityListComponent.List.SelectedItem;
+            var selected = (TransportSystem) _entityListControl.List.SelectedItem;
             if (selected.Name == _nameBox.Value || !IsViable()) {
                 return;
             }
@@ -106,11 +126,11 @@ namespace TransportGraphApp.Dialogs {
             if (AppGraph.Instance.GetSelectedSystem != null && AppGraph.Instance.GetSelectedSystem.Id == selected.Id) {
                 AppGraph.Instance.UpdateSystem();
             }
-            _entityListComponent.List.SelectedItem = _currentSystemList.First(t => t.Id == selected.Id);
+            _entityListControl.List.SelectedItem = _currentSystemList.First(t => t.Id == selected.Id);
         }
 
         private void RemoveObjectAction() {
-            var selected = (TransportSystem) _entityListComponent.List.SelectedItem;
+            var selected = (TransportSystem) _entityListControl.List.SelectedItem;
             if (selected == null) {
                 ComponentUtils.ShowMessage("Выберите транспортную систему из списка чтобы ее удалить",
                     MessageBoxImage.Error);
@@ -128,7 +148,7 @@ namespace TransportGraphApp.Dialogs {
 
         private void UpdateState() {
             _currentSystemList = AppDataBase.Instance.GetCollection<TransportSystem>().FindAll().ToList();
-            _entityListComponent.UpdateList(_currentSystemList);
+            _entityListControl.UpdateList(_currentSystemList);
         }
 
         private bool IsViable() {
@@ -146,12 +166,12 @@ namespace TransportGraphApp.Dialogs {
         }
 
         private void SelectClick(object sender, RoutedEventArgs e) {
-            if (_entityListComponent.List.SelectedItem == null) {
+            if (_entityListControl.List.SelectedItem == null) {
                 ComponentUtils.ShowMessage("Выберите транспортную систему из списка", MessageBoxImage.Error);
                 return;
             }
 
-            AppGraph.Instance.SelectSystem((TransportSystem) _entityListComponent.List.SelectedItem);
+            AppGraph.Instance.SelectSystem((TransportSystem) _entityListControl.List.SelectedItem);
             DialogResult = true;
         }
     }

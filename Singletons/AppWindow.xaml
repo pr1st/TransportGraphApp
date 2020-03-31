@@ -12,7 +12,6 @@
                 </MenuItem>
                 <MenuItem Header="_Транспортная система">
                     <MenuItem Header="_Список" Name="MenuTransportSystemList" x:FieldModifier="private" />
-                    <MenuItem Header="_Параметры" Name="MenuTransportSystemParameters" x:FieldModifier="private" />
                 </MenuItem>
                 <MenuItem Header="_Населенные пункты">
                     <MenuItem Header="Список" Name="MenuCitiesList" x:FieldModifier="private" />

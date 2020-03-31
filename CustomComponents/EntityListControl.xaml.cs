@@ -9,8 +9,8 @@ using System.Windows.Data;
 using TransportGraphApp.Models;
 
 namespace TransportGraphApp.CustomComponents {
-    public partial class EntityListComponent : UserControl {
-        public EntityListComponent() {
+    public partial class EntityListControl : UserControl {
+        public EntityListControl() {
             InitializeComponent();
         }
 
@@ -84,5 +84,39 @@ namespace TransportGraphApp.CustomComponents {
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
             throw new NotImplementedException();
         }
+    }
+    
+    
+    public class GenericEntityListControl<T> where T : IAppModel {
+        private EntityListControl _entityListControl;
+
+        public GenericEntityListControl(string title, IDictionary<string, Func<T, string>> propertyMatcher) {
+            
+        }
+
+        public void SetSource(IEnumerable<T> source) {
+            
+        }
+
+
+        public void SetSelectionChanged(Action<T> onChange) {
+            
+        }
+        
+        public void OnAddPressed(ThreadStart onClick) {
+            
+        }
+
+        private T dummy;
+        public T Selected {
+            get {
+                return dummy;
+            }
+            set {
+                dummy = value;
+            }
+        }
+
+        public UIElement GetUiElement() => _entityListControl;
     }
 }

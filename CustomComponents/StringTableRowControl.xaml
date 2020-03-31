@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="TransportGraphApp.CustomComponents.StringTableRowControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <WrapPanel Width="350" Margin="5, 5, 5, 5">
+        <StackPanel Width="180">
+            <TextBlock Width="180" FontSize="16"
+                       Margin="0,0,0,5"
+                       Name="StringTitle" x:FieldModifier="private" />
+            <TextBox Width="180" FontSize="16"
+                     Margin="0,0,0,5"
+                     Name="AddBox" x:FieldModifier="private"/>
+            <Button HorizontalAlignment="Left" 
+                    Click="AddElement" 
+                    Name="AddButton" x:FieldModifier="private" />
+        </StackPanel>
+        <Button Width="20" VerticalAlignment="Top"
+                Click="RemoveElements"
+                Name="RemoveButton" x:FieldModifier="private" />
+        <ListView Width="145" MaxHeight="200"
+            Name="StringList" x:FieldModifier="private" /> 
+    </WrapPanel>
+</UserControl>

@@ -32,12 +32,7 @@ namespace TransportGraphApp.Singletons {
             ButtonTransportSystemList.Click += (sender, args) => ListTransportSystemsAction.Invoke();
             MenuTransportSystemList.Click += (sender, args) => ListTransportSystemsAction.Invoke();
 
-            ComponentUtils.InsertIconToButton(ButtonTransportSystemParameters, AppResources.GetTransportSystemsParametersIcon, "Параметры транспортной системы");
-            ButtonTransportSystemParameters.Click += (sender, args) => TransportSystemParametersAction.Invoke();
-            MenuTransportSystemParameters.Click += (sender, args) => TransportSystemParametersAction.Invoke();
-            
             _systemDependentElements.Add(ButtonTransportSystemParameters);
-            _systemDependentElements.Add(MenuTransportSystemParameters);
         }
 
         private void SetUpCitiesActions() {

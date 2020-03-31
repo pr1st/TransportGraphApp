@@ -7,20 +7,21 @@ namespace TransportGraphApp.CustomComponents {
         public StringRowControl() {
             InitializeComponent();
             Value = "";
+            TitleValue = "Unnamed";
         }
         
         public string Value {
-            get => TextBox.Text;
-            set => TextBox.Text = value;
+            get => ValueBox.Text;
+            set => ValueBox.Text = value;
         }
 
-        public string ValueTitle {
+        public string TitleValue {
             get => StringTitle.Text;
             set => StringTitle.Text = value;
         }
 
         private void ElementGotFocus(object sender, RoutedEventArgs e) {
-            TextBox.Select(0, TextBox.Text.Length);
+            ValueBox.Select(0, ValueBox.Text.Length);
         }
     }
 }

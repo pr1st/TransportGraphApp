@@ -9,23 +9,35 @@ namespace TransportGraphApp.CustomComponents {
         public PositiveDoubleRowControl() {
             InitializeComponent();
             Value = 0.0;
+            TitleValue = "Unnamed";
+        }
+        
+        public string TitleValue {
+            get => StringTitle.Text;
+            set => StringTitle.Text = value;
         }
         
         public double Value {
             get {
-                var text = TextBox.Text;
+                var text = ValueBox.Text;
                 if (text == "" || text == ".") {
                     return 0.0;
                 }
                 return double.Parse(text);
             } 
-            set => TextBox.Text = value.ToString(CultureInfo.InvariantCulture);
+            set => ValueBox.Text = value.ToString(CultureInfo.InvariantCulture);
         }
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e) {
-            var initial = TextBox.Text;
+            var initial = ValueBox.Text;
             var received = e.Text;
-            var caretIndex = TextBox.CaretIndex;
+            var caretIndex = ValueBox.CaretIndex;
+            
+            if (received == " " || received == "," || received == "-") {
+                e.Handled = true;
+                return;
+            }
+            
             string result;
             if (initial.Length > 0) {
                 result = initial.Substring(0, caretIndex) + received +
@@ -35,32 +47,14 @@ namespace TransportGraphApp.CustomComponents {
                 result = received;
             }
 
-            var parsed = double.TryParse(result, out var res);
-            if (!parsed || res < 0) {
+            var parsed = double.TryParse(result, out _);
+            if (!parsed) {
                 e.Handled = true;
             }
         }
 
-        public void ValueChanged(Action<double> onChange) =>
-            TextBox.TextChanged += (sender, args) => onChange.Invoke(Value);
-
         private void ElementGotFocus(object sender, RoutedEventArgs e) {
-            TextBox.Select(0, TextBox.Text.Length);
-        }
-
-        private void ArrowUp(object sender, RoutedEventArgs e) {
-            Value += 1.0;
-        }
-
-        private void ArrowDown(object sender, RoutedEventArgs e) {
-            Value -= 1.0;
-        }
-
-        private void UpOrDownPressed(object sender, KeyEventArgs e) {
-            if (e.Key == Key.Up)
-                Value += 1.0;
-            else if (e.Key == Key.Down)
-                Value -= 1.0;
+            ValueBox.Select(0, ValueBox.Text.Length);
         }
     }
 }
