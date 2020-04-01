@@ -13,61 +13,6 @@ namespace TransportGraphApp.CustomComponents {
         public EntityListControl() {
             InitializeComponent();
         }
-
-        public ThreadStart OnAdd { get; set; }
-        public ThreadStart OnUpdate { get; set; }
-        public ThreadStart OnRemove { get; set; }
-
-        public void SetUp<T>(string title,
-            IDictionary<string, Func<T, object>> propertyGetter) where T: IAppModel {
-            Title.Content = title;
-            foreach (var (key, value) in propertyGetter) {
-                var column = new GridViewColumn() {
-                    Header = key,
-                    DisplayMemberBinding = new Binding() {
-                        Converter = new PropertyConverter<T>() {
-                            Supplier = value
-                        }
-                    }
-                };
-                ((GridView) List.View).Columns.Add(column);
-            }
-            ConfigureButtons();
-        }
-
-        public void UpdateList(IEnumerable<IAppModel> enumerable) {
-            List.ItemsSource = enumerable;
-            CollectionViewSource.GetDefaultView(List.ItemsSource).Refresh();
-        }
-
-        private void ConfigureButtons() {
-            if (OnAdd != null) {
-                var addButton = new Button() {
-                    Margin = new Thickness(5,5,5,5),
-                };
-                addButton.Click += (sender, args) => OnAdd.Invoke();
-                ComponentUtils.InsertIconToButton(addButton, AppResources.GetAddItemIcon, "Добавить объект");
-                ButtonPanel.Children.Add(addButton);
-            }
-
-            if (OnUpdate != null) {
-                var updateButton = new Button() {
-                    Margin = new Thickness(5,5,5,5),
-                };
-                updateButton.Click += (sender, args) => OnUpdate.Invoke();
-                ComponentUtils.InsertIconToButton(updateButton, AppResources.GetUpdateItemIcon, "Обновить объект");
-                ButtonPanel.Children.Add(updateButton);
-            }
-
-            if (OnRemove != null) {
-                var removeButton = new Button() {
-                    Margin = new Thickness(5,5,5,5),
-                };
-                removeButton.Click += (sender, args) => OnRemove.Invoke();
-                ComponentUtils.InsertIconToButton(removeButton, AppResources.GetRemoveItemIcon, "Удалить объект");
-                ButtonPanel.Children.Add(removeButton);
-            }
-        }
     }
 
     public class PropertyConverter<T> : IValueConverter {
@@ -88,33 +33,41 @@ namespace TransportGraphApp.CustomComponents {
     
     
     public class GenericEntityListControl<T> where T : IAppModel {
-        private EntityListControl _entityListControl;
+        private readonly EntityListControl _entityListControl = new EntityListControl();
 
-        public GenericEntityListControl(string title, IDictionary<string, Func<T, string>> propertyMatcher) {
+        public GenericEntityListControl(string title, IDictionary<string, Func<T, object>> propertyMatcher, ThreadStart onAddClick, Action<T> onSelectElement) {
+            _entityListControl.Title.Content = title;
+
+            foreach (var (columnName, supplier) in propertyMatcher) {
+                var column = new GridViewColumn() {
+                    Header = columnName,
+                    DisplayMemberBinding = new Binding() {
+                        Converter = new PropertyConverter<T>() {
+                            Supplier = supplier
+                        }
+                    }
+                };
+                ((GridView) _entityListControl.List.View).Columns.Add(column);
+            }
             
+            ComponentUtils.InsertIconToButton(_entityListControl.AddButton, AppResources.GetAddItemIcon, "Открыть окно для добавления элемента");
+            _entityListControl.AddButton.Click += (sender, args) => onAddClick.Invoke();
+
+            _entityListControl.List.SelectionChanged += (sender, args) => {
+                if (Selected != null) {
+                    onSelectElement.Invoke(Selected);
+                }
+            };
         }
 
         public void SetSource(IEnumerable<T> source) {
-            
+            _entityListControl.List.ItemsSource = source;
+            CollectionViewSource.GetDefaultView(_entityListControl.List.ItemsSource).Refresh();
         }
 
-
-        public void SetSelectionChanged(Action<T> onChange) {
-            
-        }
-        
-        public void OnAddPressed(ThreadStart onClick) {
-            
-        }
-
-        private T dummy;
         public T Selected {
-            get {
-                return dummy;
-            }
-            set {
-                dummy = value;
-            }
+            get => (T) _entityListControl.List.SelectedItem;
+            set => _entityListControl.List.SelectedItem = value;
         }
 
         public UIElement GetUiElement() => _entityListControl;

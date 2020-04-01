@@ -10,13 +10,13 @@ namespace TransportGraphApp.CustomComponents {
     public partial class StringTableRowControl : UserControl {
         public StringTableRowControl() {
             InitializeComponent();
-            ComponentUtils.InsertIconToButton(AddButton, AppResources.GetAddItemIcon, "Добавить строку");
-            ComponentUtils.InsertIconToButton(RemoveButton, AppResources.GetRemoveItemIcon, "Удалить выделенные строки");
+            ComponentUtils.InsertIconToButton(AddButton, AppResources.GetAddItemIcon, "Добавить новый тип дороги");
+            ComponentUtils.InsertIconToButton(RemoveButton, AppResources.GetRemoveItemIcon, "Удалить выделенные типы");
             _values = new List<string>();
             StringList.ItemsSource = _values;
             TitleValue = "Unnamed";
             AddBox.Text = "";
-            IsViable = s => true;
+            IsViable = (s, l) => true;
         }
         
         private IList<string> _values;
@@ -35,10 +35,10 @@ namespace TransportGraphApp.CustomComponents {
             }
         }
         
-        public Func<string, bool> IsViable { get; set; }
+        public Func<string, IList<string>, bool> IsViable { get; set; }
 
         private void AddElement(object sender, RoutedEventArgs e) {
-            if (!IsViable.Invoke(AddBox.Text)) return;
+            if (!IsViable.Invoke(AddBox.Text, _values)) return;
             
             _values.Add(AddBox.Text);
             CollectionViewSource.GetDefaultView(StringList.ItemsSource).Refresh();

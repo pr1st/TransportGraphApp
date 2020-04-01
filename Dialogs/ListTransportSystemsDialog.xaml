@@ -5,7 +5,7 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Title="Cписок транспортных систем">
-    <StackPanel Margin="15">
+    <StackPanel Margin="10">
         <WrapPanel>
             <StackPanel Name="ListPanel" x:FieldModifier="private" />
             <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />  

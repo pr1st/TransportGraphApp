@@ -1,13 +1,13 @@
 ﻿<UserControl x:Class="TransportGraphApp.CustomComponents.StringTableRowControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <WrapPanel Width="350" Margin="5, 5, 5, 5">
-        <StackPanel Width="180">
-            <TextBlock Width="180" FontSize="16"
-                       Margin="0,0,0,5"
+    <WrapPanel Width="360" Margin="5, 5, 5, 5">
+        <StackPanel Width="185">
+            <TextBlock Width="180" Margin="0,0,0,5"
+                       TextWrapping="Wrap" FontSize="16"
                        Name="StringTitle" x:FieldModifier="private" />
-            <TextBox Width="180" FontSize="16"
-                     Margin="0,0,0,5"
+            <TextBox Width="180" Height="25" Margin="0,0,0,5"  
+                     FontSize="16"
                      Name="AddBox" x:FieldModifier="private"/>
             <Button HorizontalAlignment="Left" 
                     Click="AddElement" 

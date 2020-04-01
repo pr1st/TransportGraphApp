@@ -8,7 +8,7 @@ namespace TransportGraphApp.Models {
 
         public double Latitude { get; set; }
 
-        public double Magnitude { get; set; }
+        public double Longitude { get; set; }
 
         public double CostOfStaying { get; set; }
         

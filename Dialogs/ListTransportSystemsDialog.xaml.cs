@@ -11,21 +11,19 @@ namespace TransportGraphApp.Dialogs {
     public partial class ListTransportSystemsDialog : Window {
         private IList<TransportSystem> _currentSystemList;
 
+        private GenericEntityListControl<TransportSystem> _entityList;
 
-        private EntityListControl _entityListControl;
-
-        private Label _propertiesTitleBox;
-        private StringRowControl _nameBox;
-        private Button _actionButton;
+        private Label _propertiesTitleLabel;
+        private StringRowControl _nameControl;
+        private StringTableRowControl _availableRoadTypesControl;
+        private Button _actionButton1;
+        private Button _actionButton2;
 
         public ListTransportSystemsDialog() {
             InitializeComponent();
             Owner = AppWindow.Instance;
-            _entityListControl = new EntityListControl() {
-                OnAdd = AddNewPanelAction,
-                OnRemove = RemoveObjectAction
-            };
-            var propertyMap = new Dictionary<string, Func<TransportSystem, object>> {
+
+            var propertyMatcher = new Dictionary<string, Func<TransportSystem, object>> {
                 {"Название", ts => ts.Name}, {
                     "Кол-во нас. пунктов",
                     ts => AppDataBase.Instance.GetCollection<City>().Count(c => c.TransportSystemId == ts.Id)
@@ -34,130 +32,157 @@ namespace TransportGraphApp.Dialogs {
                     ts => AppDataBase.Instance.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id)
                 }
             };
-            _entityListControl.SetUp("Список доступных транспортных систем", propertyMap);
-            _entityListControl.List.SelectionChanged += (sender, args) => UpdatePanelAction();
 
-            _propertiesTitleBox = new Label();
-            _nameBox = new StringRowControl() {
-                Margin = new Thickness(0, 5, 0, 0),
+            _entityList = new GenericEntityListControl<TransportSystem>(
+                "Список доступных транспортных систем",
+                propertyMatcher,
+                DisplayNew,
+                DisplayUpdate);
+
+
+            _propertiesTitleLabel = new Label() {
+                Margin = new Thickness(5, 5, 5, 5)
+            };
+            _nameControl = new StringRowControl() {
                 TitleValue = "Название"
             };
-            _actionButton = new Button() {
-                Margin = new Thickness(0, 5, 0, 0),
+            _availableRoadTypesControl = new StringTableRowControl() {
+                TitleValue = "Используемые типы дорог",
+                IsViable = (adding, roadTypes) => {
+                    if (adding.Trim() == "") {
+                        ComponentUtils.ShowMessage("Введите название для нового типа дорог", MessageBoxImage.Error);
+                        return false;
+                    }
+
+                    if (roadTypes.Contains(adding.Trim())) {
+                        ComponentUtils.ShowMessage("Тип дороги с таким названием уже существует",
+                            MessageBoxImage.Error);
+                        return false;
+                    }
+
+                    return true;
+                }
+            };
+
+            var buttonPanel = new WrapPanel() {
+                Margin = new Thickness(5, 5, 5, 5),
                 HorizontalAlignment = HorizontalAlignment.Right
             };
-            PropertiesPanel.Children.Add(_propertiesTitleBox);
-            PropertiesPanel.Children.Add(_nameBox);
-            PropertiesPanel.Children.Add(_actionButton);
+            _actionButton1 = new Button() {
+                Margin = new Thickness(0, 0, 5, 0),
+            };
+            _actionButton2 = new Button();
+            buttonPanel.Children.Add(_actionButton1);
+            buttonPanel.Children.Add(_actionButton2);
+
+            PropertiesPanel.Children.Add(_propertiesTitleLabel);
+            PropertiesPanel.Children.Add(_nameControl);
+            PropertiesPanel.Children.Add(_availableRoadTypesControl);
+            PropertiesPanel.Children.Add(buttonPanel);
             PropertiesPanel.Visibility = Visibility.Collapsed;
 
-            ListPanel.Children.Add(_entityListControl);
+            ListPanel.Children.Add(_entityList.GetUiElement());
             UpdateState();
-            if (AppGraph.Instance.GetSelectedSystem != null) {
-                _entityListControl.List.SelectedItem =
-                    _currentSystemList.First(t => t.Id == AppGraph.Instance.GetSelectedSystem.Id);
+
+            var selected = AppGraph.Instance.GetSelectedSystem;
+            if (selected != null) {
+                _entityList.Selected = _currentSystemList.First(t => t.Id == selected.Id);
             }
         }
 
         private void DisplayNew() {
-            
-        }
-        
-        private void DisplayUpdate() {
-            
-        }
+            _propertiesTitleLabel.Content = "Добавить транспортную систему";
+            _nameControl.Value = "";
+            _availableRoadTypesControl.Value = new List<string>();
 
-        private void AddTransportSystem() {
-            
-        }
-        
-        private void UpdateTransportSystem() {
-            
-        }
-        
-        private void RemoveTransportSystem() {
-            
-        }
+            _actionButton1.Visibility = Visibility.Hidden;
+            _actionButton2.Content = "Добавить";
+            ClearFromEvents(_actionButton2);
+            _actionButton2.Click += AddTransportSystem;
 
-        private void AddNewPanelAction() {
-            _propertiesTitleBox.Content = "Добавить транспортную систему";
-            _nameBox.Value = "";
-            _actionButton.Content = "Добавить";
-            _actionButton.Click -= UpdateTransportSystem;
-            _actionButton.Click -= AddTransportSystem;
-            _actionButton.Click += AddTransportSystem;
-            _entityListControl.List.SelectedItem = null;
+            _entityList.Selected = null;
             PropertiesPanel.Visibility = Visibility.Visible;
         }
 
-        private void UpdatePanelAction() {
-            if (_entityListControl.List.SelectedItem == null) {
-                return;
-            }
-
-            _propertiesTitleBox.Content = "Обновить транспортную систему";
-            _nameBox.Value = ((TransportSystem) _entityListControl.List.SelectedItem).Name;
-            _actionButton.Content = "Обновить";
-            _actionButton.Click -= UpdateTransportSystem;
-            _actionButton.Click -= AddTransportSystem;
-            _actionButton.Click += UpdateTransportSystem;
+        private void DisplayUpdate(TransportSystem ts) {
+            _propertiesTitleLabel.Content = "Обновить транспортную систему";
+            _nameControl.Value = ts.Name;
+            _availableRoadTypesControl.Value = ts.Parameters.AvailableRoadTypes;
+            
+            _actionButton1.Visibility = Visibility.Visible;
+            _actionButton1.Content = "Удалить";
+            ClearFromEvents(_actionButton1);
+            _actionButton1.Click += RemoveTransportSystem;
+            
+            _actionButton2.Content = "Обновить";
+            ClearFromEvents(_actionButton2);
+            _actionButton2.Click += UpdateTransportSystem;
+            
             PropertiesPanel.Visibility = Visibility.Visible;
         }
 
         private void AddTransportSystem(object sender, RoutedEventArgs args) {
             if (!IsViable()) return;
             AppDataBase.Instance.GetCollection<TransportSystem>().Insert(new TransportSystem() {
-                Name = _nameBox.Value,
-                Parameters = new TransportSystemParameters()
+                Name = _nameControl.Value,
+                Parameters = new TransportSystemParameters() {
+                    AvailableRoadTypes = _availableRoadTypesControl.Value
+                }
             });
-            _nameBox.Value = "";
             UpdateState();
+            DisplayNew();
         }
 
         private void UpdateTransportSystem(object sender, RoutedEventArgs args) {
-            var selected = (TransportSystem) _entityListControl.List.SelectedItem;
-            if (selected.Name == _nameBox.Value || !IsViable()) {
+            var selected = _entityList.Selected;
+            if (!IsViable(selected)) {
                 return;
             }
 
-            selected.Name = _nameBox.Value;
+            selected.Name = _nameControl.Value;
+            selected.Parameters.AvailableRoadTypes = _availableRoadTypesControl.Value;
+            
             AppDataBase.Instance.GetCollection<TransportSystem>().Update(selected);
             UpdateState();
             if (AppGraph.Instance.GetSelectedSystem != null && AppGraph.Instance.GetSelectedSystem.Id == selected.Id) {
                 AppGraph.Instance.UpdateSystem();
             }
-            _entityListControl.List.SelectedItem = _currentSystemList.First(t => t.Id == selected.Id);
+            _entityList.Selected = _currentSystemList.First(t => t.Id == selected.Id);
+            ComponentUtils.ShowMessage("Данная транспортная система была обновлена", MessageBoxImage.Information);
         }
 
-        private void RemoveObjectAction() {
-            var selected = (TransportSystem) _entityListControl.List.SelectedItem;
-            if (selected == null) {
-                ComponentUtils.ShowMessage("Выберите транспортную систему из списка чтобы ее удалить",
-                    MessageBoxImage.Error);
-                return;
-            }
-            
-            AppDataBase.Instance.GetCollection<TransportSystem>()
-                .Delete(selected.Id);
+        private void RemoveTransportSystem(object sender, RoutedEventArgs args) {
+            var selected = _entityList.Selected;
+
+            AppDataBase.Instance.GetCollection<TransportSystem>().Delete(selected.Id);
             UpdateState();
             if (AppGraph.Instance.GetSelectedSystem != null && AppGraph.Instance.GetSelectedSystem.Id == selected.Id) {
                 AppGraph.Instance.SelectSystem(null);
             }
-            AddNewPanelAction();
+
+            DisplayNew();
         }
 
+        private void ClearFromEvents(Button button) {
+            button.Click -= UpdateTransportSystem;
+            button.Click -= AddTransportSystem;
+            button.Click -= RemoveTransportSystem;
+        }
+        
         private void UpdateState() {
             _currentSystemList = AppDataBase.Instance.GetCollection<TransportSystem>().FindAll().ToList();
-            _entityListControl.UpdateList(_currentSystemList);
+            _entityList.SetSource(_currentSystemList);
         }
 
-        private bool IsViable() {
-            if (_nameBox.Value == "") {
+        private bool IsViable(TransportSystem previousSystem = null) {
+            if (_nameControl.Value == "") {
                 ComponentUtils.ShowMessage("Введите название транспортной системы", MessageBoxImage.Error);
                 return false;
             }
 
-            if (_currentSystemList.Select(ts => ts.Name).Contains(_nameBox.Value)) {
+            if (previousSystem != null && 
+                previousSystem.Name != _nameControl.Value && 
+                _currentSystemList.Select(ts => ts.Name).Contains(_nameControl.Value)) {
                 ComponentUtils.ShowMessage("Система с таким названием уже существует", MessageBoxImage.Error);
                 return false;
             }
@@ -166,12 +191,12 @@ namespace TransportGraphApp.Dialogs {
         }
 
         private void SelectClick(object sender, RoutedEventArgs e) {
-            if (_entityListControl.List.SelectedItem == null) {
+            if (_entityList.Selected == null) {
                 ComponentUtils.ShowMessage("Выберите транспортную систему из списка", MessageBoxImage.Error);
                 return;
             }
 
-            AppGraph.Instance.SelectSystem((TransportSystem) _entityListControl.List.SelectedItem);
+            AppGraph.Instance.SelectSystem(_entityList.Selected);
             DialogResult = true;
         }
     }
