@@ -5,7 +5,18 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Title="Cписок населенных пунктов">
-    <Grid>
-        
-    </Grid>
+    <StackPanel Margin="10">
+        <WrapPanel>
+            <StackPanel Name="ListPanel" x:FieldModifier="private" />
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />  
+            <StackPanel Name="PropertiesPanel" x:FieldModifier="private" />
+        </WrapPanel>
+        <Grid Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Width="60" Click="CancelClick">Отмена</Button>
+        </Grid>
+    </StackPanel>
 </Window>

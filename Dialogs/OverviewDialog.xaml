@@ -5,7 +5,6 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Title="Обзор программы">
-    <Grid>
-        
-    </Grid>
+    <StackPanel>
+    </StackPanel>
 </Window>

@@ -1,9 +1,11 @@
-﻿using TransportGraphApp.Dialogs;
+﻿using System.Windows;
+using TransportGraphApp.Dialogs;
 
 namespace TransportGraphApp.Actions {
     public static class OverviewAction {
         public static void Invoke() {
-            new OverviewDialog().ShowDialog();
+            // new OverviewDialog().ShowDialog();
+            ComponentUtils.ShowMessage("Скоро будет...", MessageBoxImage.Information);
         }
     }
 }

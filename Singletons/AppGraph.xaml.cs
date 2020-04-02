@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
@@ -87,5 +88,7 @@ namespace TransportGraphApp.Singletons {
                 GraphPanel.Children.Add(label);
             }
         }
+
+        public IList<City> GetCities() => _cities;
     }
 }

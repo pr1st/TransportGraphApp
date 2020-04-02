@@ -8,51 +8,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Compile Update="CustomComponents\AttributesChangeBox.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="CustomComponents\DoubleTextBox.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="CustomComponents\IconButton.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="CustomComponents\StringTextBox.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="CustomComponents\TrueFalseBox.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Dialogs\DataBaseDialogs\CreateDataBaseFileDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Dialogs\TransportSystemDialogs\ListTransportSystemsDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="CustomComponents\AttributesChangeBox.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="CustomComponents\DoubleTextBox.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="CustomComponents\IconButton.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="CustomComponents\StringTextBox.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="CustomComponents\TrueFalseBox.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Dialogs\DataBaseDialogs\CreateDataBaseFileDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Dialogs\TransportSystemDialogs\ListTransportSystemsDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Singletons\AppWindow.xaml">
       <SubType>Designer</SubType>
     </Page>

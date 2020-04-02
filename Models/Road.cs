@@ -8,7 +8,7 @@ namespace TransportGraphApp.Models {
         
         public ObjectId FromCityId { get; set; }
         
-        public ObjectId TpCityId { get; set; }
+        public ObjectId ToCityId { get; set; }
 
         public double Length { get; set; }
         
@@ -16,11 +16,9 @@ namespace TransportGraphApp.Models {
 
         public double Time { get; set; }
         
-        public IList<string> RoadTypes { get; set; } = new List<string>();
+        public string RoadType { get; set; }
         
-        public IList<EveryDayDepartureTime> EveryDayDepartureTime { get; set; } = new List<EveryDayDepartureTime>();
-        public IList<WeekDaysDepartureTime> WeekDaysDepartureTime { get; set; } = new List<WeekDaysDepartureTime>();
-        public IList<SpecifiedDaysDepartureTime> SpecifiedDaysDepartureTime { get; set; } = new List<SpecifiedDaysDepartureTime>();
+        public IList<DepartureTime> DepartureTimes { get; set; } = new List<DepartureTime>();
         public ObjectId TransportSystemId { get; set; }
     }
 }

@@ -48,6 +48,7 @@ namespace TransportGraphApp.CustomComponents {
         }
 
         private void ValueChanged(object sender, TextChangedEventArgs e) {
+            if (!ValueBox.IsFocused) return;
             Popup.IsOpen = true;
             CollectionViewSource.GetDefaultView(HelpList.ItemsSource).Refresh();
         }
