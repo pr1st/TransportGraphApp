@@ -25,6 +25,7 @@ namespace TransportGraphApp.Dialogs {
         public ListTransportSystemsDialog() {
             InitializeComponent();
             Owner = AppWindow.Instance;
+            Icon = AppResources.GetAppIcon;
 
             var propertyMatcher = new Dictionary<string, Func<TransportSystem, object>> {
                 {"Название", ts => ts.Name}, {

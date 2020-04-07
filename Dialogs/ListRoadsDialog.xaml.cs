@@ -37,6 +37,7 @@ namespace TransportGraphApp.Dialogs {
         public ListRoadsDialog() {
             InitializeComponent();
             Owner = AppWindow.Instance;
+            Icon = AppResources.GetAppIcon;
 
             _idToNameCitiesMap = AppGraph.Instance
                 .GetCities()

@@ -2,8 +2,8 @@
 using TransportGraphApp.Singletons;
 
 namespace TransportGraphApp.Dialogs {
-    public partial class OverviewDialog : Window {
-        public OverviewDialog() {
+    public partial class GraphParametersDialog : Window {
+        public GraphParametersDialog() {
             InitializeComponent();
             Owner = AppWindow.Instance;
             Icon = AppResources.GetAppIcon;

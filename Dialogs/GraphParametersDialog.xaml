@@ -1,0 +1,11 @@
+﻿<Window x:Class="TransportGraphApp.Dialogs.GraphParametersDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Title="Параметры визуализации графа">
+    <StackPanel>
+        
+    </StackPanel>
+</Window>

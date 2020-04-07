@@ -2,7 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using LiteDB;
 using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
@@ -21,6 +26,8 @@ namespace TransportGraphApp.Singletons {
         private IList<City> _cities;
         private IList<Road> _roads;
 
+        private GraphConfig GraphConfig { get; set; }
+
         public TransportSystem GetSelectedSystem => _transportSystem;
 
         public void SelectSystem(TransportSystem ts) {
@@ -28,27 +35,25 @@ namespace TransportGraphApp.Singletons {
                 _transportSystem = null;
                 _cities = null;
                 _roads = null;
+                GraphConfig = null;
                 AppWindow.Instance.SystemSelected(false);
+                DrawGraph();
             }
             else {
                 _transportSystem = ts;
-                _cities = AppDataBase.Instance
-                    .GetCollection<City>()
-                    .Find(c => c.TransportSystemId == ts.Id)
-                    .ToList();
-                _roads = AppDataBase.Instance
-                    .GetCollection<Road>()
-                    .Find(r => r.TransportSystemId == ts.Id)
-                    .ToList();
                 AppWindow.Instance.SystemSelected(true);
+                UpdateData();
+                DrawGraph();
             }
-
-            DrawGraph();
         }
 
         public void UpdateSystem() {
-            var db = AppDataBase.Instance;
-            _transportSystem = db.GetCollection<TransportSystem>().FindById(_transportSystem.Id);
+            _transportSystem = AppDataBase.Instance.GetCollection<TransportSystem>().FindById(_transportSystem.Id);
+            UpdateData();
+            DrawGraph();
+        }
+
+        private void UpdateData() {
             _cities = AppDataBase.Instance
                 .GetCollection<City>()
                 .Find(c => c.TransportSystemId == _transportSystem.Id)
@@ -57,31 +62,70 @@ namespace TransportGraphApp.Singletons {
                 .GetCollection<Road>()
                 .Find(r => r.TransportSystemId == _transportSystem.Id)
                 .ToList();
-            DrawGraph();
-        }
-
-        private void DrawGraph() {
-            GraphPanel.Children.Clear();
-            if (_transportSystem != null) {
-                var prev = new Label() {
-                    Content = "Скоро здесь будет рисоваться граф, а пока"
-                };
-                var nameLabel = new Label() {
-                    Content = $"Название: {_transportSystem.Name}"
-                };
-                var cityLabel = new Label() {
-                    Content = $"В сети присутсвует {_cities.Count} различных населенных пунктов"
-                };
-                var roadLabel = new Label() {
-                    Content = $"В сети присутсвует {_roads.Count} различных маршрутов"
-                };
-            
-                GraphPanel.Children.Add(prev);
-                GraphPanel.Children.Add(nameLabel);
-                GraphPanel.Children.Add(cityLabel);
-                GraphPanel.Children.Add(roadLabel);
+            if (_cities.Count == 0) {
+                GraphConfig = GraphConfig.GetDefault;
             }
             else {
+                var minY = _cities.Min(c => c.Latitude);
+                var maxY = _cities.Max(c => c.Latitude);
+                var minX = _cities.Min(c => c.Longitude);
+                var maxX = _cities.Max(c => c.Longitude);
+
+                if (maxY - minY <= 0) {
+                    minY = -180;
+                    maxY = 180;
+                }
+
+                if (maxX - minX <= 0) {
+                    minX = -180;
+                    maxX = 180;
+                }
+
+                GraphConfig = new GraphConfig() {
+                    BackGroundColor = Colors.Bisque,
+                    MinX = minX,
+                    MaxX = maxX,
+                    MinY = minY,
+                    MaxY = maxY,
+                    CircleRadius = 7.5,
+                    CircleColor = Colors.Yellow,
+                    EdgeThickness = 2
+                };   
+            }
+        }
+
+        public void DrawGraph() {
+            GraphPanel.Children.Clear();
+            GraphPanel.Height = AppWindow.Instance.Height - 86;
+
+            if (_transportSystem != null) {
+                var cfg = GraphConfig;
+                GraphPanel.Background = new SolidColorBrush(cfg.BackGroundColor);
+
+                if (_cities.Count <= 0) return;
+
+                foreach (var c in _cities) {
+                    var ellipse = new Ellipse() {
+                        Height = cfg.CircleRadius * 2,
+                        Width = cfg.CircleRadius * 2,
+                        Fill = new SolidColorBrush(cfg.CircleColor),
+                        Stroke = Brushes.Black,
+                        ToolTip = c.Name
+                    };
+
+                    var x = (c.Longitude - cfg.MinX) / (cfg.MaxX - cfg.MinX);
+                    var pixelX = x * (GraphPanel.Width - cfg.CircleRadius * 2) + cfg.CircleRadius;
+
+                    var y = (c.Latitude - cfg.MinY) / (cfg.MaxY - cfg.MinY);
+                    var pixelY = y * (GraphPanel.Height - cfg.CircleRadius * 2) + cfg.CircleRadius;
+                    pixelY = GraphPanel.Height - pixelY;
+
+                    ellipse.Margin = new Thickness(pixelX - cfg.CircleRadius, pixelY - cfg.CircleRadius, 0, 0);
+                    GraphPanel.Children.Add(ellipse);
+                }
+            }
+            else {
+                GraphPanel.Background = Brushes.Bisque;
                 var label = new Label() {
                     Content = "Никакая транспортная система еще не выбрана"
                 };
@@ -90,5 +134,31 @@ namespace TransportGraphApp.Singletons {
         }
 
         public IList<City> GetCities() => _cities;
+    }
+
+    public class GraphConfig {
+        public Color BackGroundColor { get; set; }
+
+        public double MinX { get; set; }
+        public double MaxX { get; set; }
+
+        public double MinY { get; set; }
+        public double MaxY { get; set; }
+
+        public double CircleRadius { get; set; }
+        public Color CircleColor { get; set; }
+
+        public double EdgeThickness { get; set; }
+
+        public static GraphConfig GetDefault => new GraphConfig() {
+            BackGroundColor = Colors.Bisque,
+            MinX = -180,
+            MaxX = 180,
+            MinY = -180,
+            MaxY = 180,
+            CircleRadius = 7.5,
+            CircleColor = Colors.Yellow,
+            EdgeThickness = 2
+        };
     }
 }

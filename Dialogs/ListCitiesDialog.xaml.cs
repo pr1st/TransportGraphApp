@@ -1,11 +1,18 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using LiteDB;
+using Microsoft.Win32;
 using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
 using TransportGraphApp.Singletons;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TransportGraphApp.Dialogs {
     public partial class ListCitiesDialog : Window {
@@ -26,6 +33,7 @@ namespace TransportGraphApp.Dialogs {
         public ListCitiesDialog() {
             InitializeComponent();
             Owner = AppWindow.Instance;
+            Icon = AppResources.GetAppIcon;
             
             var propertyMatcher = new Dictionary<string, Func<City, object>> {
                 {"Название", c => c.Name}, 
@@ -49,10 +57,20 @@ namespace TransportGraphApp.Dialogs {
         
         private void SetUpNewPropertiesPanel() {
             _newPanel = new StackPanel();
+            var labelPanel = new WrapPanel() {
+                Margin = new Thickness(5, 5, 5, 5)
+            };
             var label = new Label() {
-                Margin = new Thickness(5, 5, 5, 5),
+                Margin = new Thickness(0, 0, 5, 0),
                 Content = "Добавить населенный пункт"
             };
+            var importButton = new Button() {
+                VerticalAlignment = VerticalAlignment.Center,
+                Content = "Добавить из файла"
+            };
+            importButton.Click += (sender, args) => ImportFromFileClick();
+            labelPanel.Children.Add(label);
+            labelPanel.Children.Add(importButton);
             _newNameControl = new StringRowControl() {
                 TitleValue = "Название"
             };
@@ -67,7 +85,7 @@ namespace TransportGraphApp.Dialogs {
             };
             addButton.Click += (sender, args) => AddCity();
 
-            _newPanel.Children.Add(label);
+            _newPanel.Children.Add(labelPanel);
             _newPanel.Children.Add(_newNameControl);
             _newPanel.Children.Add(_newCooridnatesControl);
             _newPanel.Children.Add(_newCostOfStayingControl);
@@ -198,6 +216,54 @@ namespace TransportGraphApp.Dialogs {
         private void CancelClick(object sender, RoutedEventArgs e) {
             AppGraph.Instance.UpdateSystem();
             DialogResult = true;
+        }
+
+        private void ImportFromFileClick() {
+            var sb = new StringBuilder();
+            var msg1 = "Файл должен быть в json формате";
+            var msg2 = "В файле корневой элемент должен быть массив состоящий из нас. пунктов";
+            var msg3 = "Поля которые используются:";
+            var msg4 = "Name - нименование нас. пункта";
+            var msg5 = "Latitude - широта";
+            var msg6 = "Longitude - долгота";
+            var msg7 = "CostOfStaying - Стоимость проживания в городе";
+            var msg8 = "Пример корректного файла:";
+            var msg9 =
+                "[\n   {\n      \"Name\":\"Адыгейск\",\n      \"Latitude\":44.878414,\n      \"Longitude\":39.190289,\n      \"CostOfStaying\":123\n   }\n]";
+            sb.AppendLine(msg1);
+            sb.AppendLine(msg2);
+            sb.AppendLine(msg3);
+            sb.AppendLine(msg4);
+            sb.AppendLine(msg5);
+            sb.AppendLine(msg6);
+            sb.AppendLine(msg7);
+            sb.AppendLine(msg8);
+            sb.AppendLine(msg9);
+            ComponentUtils.ShowMessage(sb.ToString(), MessageBoxImage.Information);
+
+            var openFileDialog = new OpenFileDialog() {
+                Filter = "json files (*.json)|*.json",
+                InitialDirectory = Directory.GetCurrentDirectory()
+            };
+            
+            if (openFileDialog.ShowDialog() != true) return;
+
+            try {
+                var cities = JsonSerializer.Deserialize<IList<City>>(File.ReadAllText(openFileDialog.FileName));
+                foreach (var c in cities) {
+                    c.TransportSystemId = AppGraph.Instance.GetSelectedSystem.Id;
+                    AppDataBase.Instance.GetCollection<City>().Insert(c);   
+                }
+                UpdateState();
+                DisplayNew();
+            }
+            catch (JsonException e) {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("__");
+                Console.WriteLine(File.ReadAllText(openFileDialog.FileName));
+                Console.WriteLine("__");
+                ComponentUtils.ShowMessage("Выбранной файл представлен в неверном формате", MessageBoxImage.Error);
+            } 
         }
     }
 }

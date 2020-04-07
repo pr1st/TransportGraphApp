@@ -6,6 +6,7 @@ using TransportGraphApp.Singletons;
 namespace TransportGraphApp {
     public partial class App : Application {
         private void ApplicationStartup(object sender, StartupEventArgs e) {
+            Exit += (o, args) => ExitAction.Invoke();
             var mainWindow = AppWindow.Instance;
             AppGraph.Instance.SelectSystem(null);
             mainWindow.Show();

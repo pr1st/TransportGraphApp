@@ -4,20 +4,24 @@
         WindowStartupLocation="CenterScreen"
         Height="700" Width="950">
 
-    <DockPanel>
+    <DockPanel
+        SizeChanged="ResizeEvent"
+        >
         <StackPanel DockPanel.Dock="Top">
             <Menu>
-                <MenuItem Header="_Файл">
-                    <MenuItem Header="_Выход" Name="MenuFileExit" x:FieldModifier="private" />
+                <Menu.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </Menu.ItemsPanel>
+                <MenuItem Header="_Модели программы">
+                    <MenuItem Header="_Транспортные системы" Name="MenuModelsTransportSystems" x:FieldModifier="private" />
+                    <MenuItem Header="_Населенные пункты" Name="MenuModelsCities" x:FieldModifier="private" />
+                    <MenuItem Header="_Маршруты" Name="MenuModelsRoads" x:FieldModifier="private" />
                 </MenuItem>
-                <MenuItem Header="_Транспортная система">
-                    <MenuItem Header="_Список" Name="MenuTransportSystemList" x:FieldModifier="private" />
-                </MenuItem>
-                <MenuItem Header="_Населенные пункты">
-                    <MenuItem Header="Список" Name="MenuCitiesList" x:FieldModifier="private" />
-                </MenuItem>
-                <MenuItem Header="_Маршруты">
-                    <MenuItem Header="Список" Name="MenuRoadsList" x:FieldModifier="private" />
+                <MenuItem Header="_Граф">
+                    <MenuItem Header="_Настройка визуализации" Name="MenuGraphParameters" x:FieldModifier="private" />
+                    <MenuItem Header="_Стартовать алгоритм" Name="MenuGraphStartAlgorithm" x:FieldModifier="private" />
                 </MenuItem>
                 <MenuItem Header="_Помощь">
                     <MenuItem Header="О _программе" Name="MenuHelpAbout" x:FieldModifier="private" />
@@ -27,11 +31,11 @@
             <ToolBarTray>
                 <ToolBar>
                     <Button Name="ButtonTransportSystemList" x:FieldModifier="private" />
-                    <Button Name="ButtonTransportSystemParameters" x:FieldModifier="private" />
-                    <Separator/>
                     <Button Name="ButtonCitiesList" x:FieldModifier="private" />
-                    <Separator/>
                     <Button Name="ButtonRoadsList" x:FieldModifier="private" />
+                    <Separator/>
+                    <Button Name="ButtonGraphParameters" x:FieldModifier="private" />
+                    <Button Name="ButtonStartAlgorithm" x:FieldModifier="private" />
                 </ToolBar>
             </ToolBarTray>
         </StackPanel>
