@@ -5,7 +5,16 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Title="Параметры визуализации графа">
-    <StackPanel>
-        
+    <StackPanel Margin="10">
+        <StackPanel Name="PropertiesPanel" x:FieldModifier="private" />
+        <Grid Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Width="120" Click="ApplyClick" IsDefault="True">Применить</Button>
+            <Button Grid.Column="2" Width="60" IsCancel="True">Отмена</Button>
+        </Grid>
     </StackPanel>
 </Window>

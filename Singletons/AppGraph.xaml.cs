@@ -26,7 +26,7 @@ namespace TransportGraphApp.Singletons {
         private IList<City> _cities;
         private IList<Road> _roads;
 
-        private GraphConfig GraphConfig { get; set; }
+        public GraphConfig GraphConfig { get; set; }
 
         public TransportSystem GetSelectedSystem => _transportSystem;
 
@@ -104,6 +104,26 @@ namespace TransportGraphApp.Singletons {
 
                 if (_cities.Count <= 0) return;
 
+                
+                foreach (var r in _roads) {
+                    var from = _cities.First(c => r.FromCityId == c.Id);
+                    var to = _cities.First(c => r.ToCityId == c.Id);
+                    
+                    var fromPoint = FromCityToPixelXy(from);
+                    var toPoint = FromCityToPixelXy(to);
+                    
+                    var line = new Line() {
+                        X1 = fromPoint.X,
+                        Y1 = fromPoint.Y,
+                        X2 = toPoint.X,
+                        Y2 = toPoint.Y,
+                        Stroke = Brushes.Black,
+                        ToolTip = $"{from.Name} - {to.Name}",
+                        StrokeThickness = cfg.EdgeThickness
+                    };
+                    GraphPanel.Children.Add(line);
+                }
+                
                 foreach (var c in _cities) {
                     var ellipse = new Ellipse() {
                         Height = cfg.CircleRadius * 2,
@@ -113,14 +133,9 @@ namespace TransportGraphApp.Singletons {
                         ToolTip = c.Name
                     };
 
-                    var x = (c.Longitude - cfg.MinX) / (cfg.MaxX - cfg.MinX);
-                    var pixelX = x * (GraphPanel.Width - cfg.CircleRadius * 2) + cfg.CircleRadius;
+                    var point = FromCityToPixelXy(c);
 
-                    var y = (c.Latitude - cfg.MinY) / (cfg.MaxY - cfg.MinY);
-                    var pixelY = y * (GraphPanel.Height - cfg.CircleRadius * 2) + cfg.CircleRadius;
-                    pixelY = GraphPanel.Height - pixelY;
-
-                    ellipse.Margin = new Thickness(pixelX - cfg.CircleRadius, pixelY - cfg.CircleRadius, 0, 0);
+                    ellipse.Margin = new Thickness(point.X - cfg.CircleRadius, point.Y - cfg.CircleRadius, 0, 0);
                     GraphPanel.Children.Add(ellipse);
                 }
             }
@@ -131,6 +146,19 @@ namespace TransportGraphApp.Singletons {
                 };
                 GraphPanel.Children.Add(label);
             }
+        }
+
+        private Point FromCityToPixelXy(City c) {
+            var cfg = GraphConfig;
+            
+            var x = (c.Longitude - cfg.MinX) / (cfg.MaxX - cfg.MinX);
+            var pixelX = x * (GraphPanel.Width - cfg.CircleRadius * 2) + cfg.CircleRadius;
+            
+            var y = (c.Latitude - cfg.MinY) / (cfg.MaxY - cfg.MinY);
+            var pixelY = y * (GraphPanel.Height - cfg.CircleRadius * 2) + cfg.CircleRadius;
+            pixelY = GraphPanel.Height - pixelY;
+            
+            return new Point(pixelX, pixelY);
         }
 
         public IList<City> GetCities() => _cities;
