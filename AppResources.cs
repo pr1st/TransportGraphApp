@@ -7,7 +7,7 @@ namespace TransportGraphApp {
         private static Uri GetResourceUrl(string resourceName) => new Uri($"{ResourcesDir}/{resourceName}", UriKind.Relative);
         
         // App strings
-        public static string GetAppTitle => "Transport graph app";
+        public static string GetAppTitle => "АТДН – Анализ транспортной дискриминации населения";
         public static string GetDefaultDataBasePath => "./application-data.db";
         
         // App icons
@@ -20,7 +20,9 @@ namespace TransportGraphApp {
         public static BitmapImage GetCitiesListIcon => new BitmapImage(GetResourceUrl("models-cities.png"));
         public static BitmapImage GetRoadsListIcon => new BitmapImage(GetResourceUrl("models-roads.png"));
         
-        public static BitmapImage GetGraphParametersIcon => new BitmapImage(GetResourceUrl("graph-parameters.png"));
-        public static BitmapImage GetGraphStartAlgorithmIcon => new BitmapImage(GetResourceUrl("graph-start-algorithm.png"));
+        public static BitmapImage GetTaskSpecificationIcon => new BitmapImage(GetResourceUrl("task-specifications.png"));
+        public static BitmapImage GetTaskCheckIcon => new BitmapImage(GetResourceUrl("task-check-data.png"));
+        public static BitmapImage GetTaskStartIcon => new BitmapImage(GetResourceUrl("task-start.png"));
+        public static BitmapImage GetTaskResultsIcon => new BitmapImage(GetResourceUrl("task-results.png"));
     }
 }

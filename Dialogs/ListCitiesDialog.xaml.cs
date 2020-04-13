@@ -32,7 +32,7 @@ namespace TransportGraphApp.Dialogs {
         
         public ListCitiesDialog() {
             InitializeComponent();
-            Owner = AppWindow.Instance;
+            Owner = App.Window;
             Icon = AppResources.GetAppIcon;
             
             var propertyMatcher = new Dictionary<string, Func<City, object>> {
@@ -162,13 +162,13 @@ namespace TransportGraphApp.Dialogs {
                 return;
             }
             
-            AppDataBase.Instance.GetCollection<City>().Insert(new City() {
-                Name = _newNameControl.Value,
-                Latitude = _newCooridnatesControl.Latitude,
-                Longitude = _newCooridnatesControl.Longitude,
-                CostOfStaying = _newCostOfStayingControl.Value,
-                TransportSystemId = AppGraph.Instance.GetSelectedSystem.Id
-            });
+            // AppDataBase.Instance.GetCollection<City>().Insert(new City() {
+            //     Name = _newNameControl.Value,
+            //     Latitude = _newCooridnatesControl.Latitude,
+            //     Longitude = _newCooridnatesControl.Longitude,
+            //     CostOfStaying = _newCostOfStayingControl.Value,
+            //     TransportSystemId = AppGraph.Instance.GetSelectedSystem.Id
+            // });
             UpdateState();
             DisplayNew();
         }
@@ -191,7 +191,7 @@ namespace TransportGraphApp.Dialogs {
             selected.Longitude = _updateCooridnatesControl.Longitude;
             selected.CostOfStaying = _updateCostOfStayingControl.Value;
             
-            AppDataBase.Instance.GetCollection<City>().Update(selected);
+            // AppDataBase.Instance.GetCollection<City>().Update(selected);
             UpdateState();
             
             _entityList.Selected = _currentCitiesList.First(c => c.Id == selected.Id);
@@ -200,21 +200,21 @@ namespace TransportGraphApp.Dialogs {
         
         private void RemoveCity() {
             var selected = _entityList.Selected;
-            AppDataBase.Instance.GetCollection<City>().Delete(selected.Id);
+            // AppDataBase.Instance.GetCollection<City>().Delete(selected.Id);
             UpdateState();
             DisplayNew();
         }
         
         private void UpdateState() {
-            _currentCitiesList = AppDataBase.Instance
-                .GetCollection<City>()
-                .Find(c => c.TransportSystemId == AppGraph.Instance.GetSelectedSystem.Id)
-                .ToList();
+            // _currentCitiesList = AppDataBase.Instance
+            //     .GetCollection<City>()
+            //     .Find(c => c.TransportSystemId == AppGraph.Instance.GetSelectedSystem.Id)
+            //     .ToList();
             _entityList.SetSource(_currentCitiesList);
         }
         
         private void CancelClick(object sender, RoutedEventArgs e) {
-            AppGraph.Instance.UpdateSystem();
+            // AppGraph.Instance.UpdateSystem();
             DialogResult = true;
         }
 
@@ -251,8 +251,8 @@ namespace TransportGraphApp.Dialogs {
             try {
                 var cities = JsonSerializer.Deserialize<IList<City>>(File.ReadAllText(openFileDialog.FileName));
                 foreach (var c in cities) {
-                    c.TransportSystemId = AppGraph.Instance.GetSelectedSystem.Id;
-                    AppDataBase.Instance.GetCollection<City>().Insert(c);   
+                    // c.TransportSystemId = AppGraph.Instance.GetSelectedSystem.Id;
+                    // AppDataBase.Instance.GetCollection<City>().Insert(c);   
                 }
                 UpdateState();
                 DisplayNew();

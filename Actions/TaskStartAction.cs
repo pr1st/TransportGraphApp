@@ -1,7 +1,7 @@
 ﻿namespace TransportGraphApp.Actions {
-    public static class ExitAction  {
+    public static class TaskStartAction {
         public static void Invoke() {
-            App.DataBase.Close();
+            // todo
         }
     }
 }

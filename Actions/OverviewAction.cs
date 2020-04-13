@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using TransportGraphApp.Dialogs;
 
 namespace TransportGraphApp.Actions {
     public static class OverviewAction {

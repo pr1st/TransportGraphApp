@@ -7,9 +7,7 @@ namespace TransportGraphApp {
     public partial class App : Application {
         private void ApplicationStartup(object sender, StartupEventArgs e) {
             Exit += (o, args) => ExitAction.Invoke();
-            var mainWindow = AppWindow.Instance;
-            AppGraph.Instance.SelectSystem(null);
-            mainWindow.Show();
+            Window.Show();
             InitializationAction.Invoke();
         }
         
@@ -20,5 +18,11 @@ namespace TransportGraphApp {
                 MessageBoxImage.Warning);
             ExitAction.Invoke();
         }
+        
+        public static AppWindow Window { get; } = new AppWindow();
+        
+        public static AppDataBase DataBase { get; } = new AppDataBase();
+        
+        public static AppAlgorithm Algorithm { get; } = new AppAlgorithm();
     }
 }

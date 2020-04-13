@@ -1,71 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using TransportGraphApp.Actions;
 
 namespace TransportGraphApp.Singletons {
     public partial class AppWindow : Window {
-        private static AppWindow _instance;
-        
-        public static AppWindow Instance => _instance ??= new AppWindow();
-        
-        
-        private IList<UIElement> _systemDependentElements = new List<UIElement>();
-        
-        private AppWindow() {
+        public AppWindow() {
             InitializeComponent();
             Title = AppResources.GetAppTitle;
             Icon = AppResources.GetAppIcon;
-
-            SetUpModelsActions();
-            SetUpGraphActions();
-            MenuHelpAbout.Click += (sender, args) => AboutAction.Invoke();
-            MenuHelpOverview.Click += (sender, args) => OverviewAction.Invoke();
             
-            MainPanel.Children.Add(AppGraph.Instance);
+            SetUpModelsActions();
+            SetUpTaskActions();
+            SetUpHelpActions();
+
+            SetUpMainPanel();
         }
 
         private void SetUpModelsActions() {
-            ComponentUtils.InsertIconToButton(ButtonTransportSystemList, AppResources.GetTransportSystemsListIcon, "Список транспортных систем");
+            ComponentUtils.InsertIconToButton(ButtonTransportSystemList, AppResources.GetTransportSystemsListIcon, "Транспортные системы");
             ButtonTransportSystemList.Click += (sender, args) => ListTransportSystemsAction.Invoke();
             MenuModelsTransportSystems.Click += (sender, args) => ListTransportSystemsAction.Invoke();
 
-            ComponentUtils.InsertIconToButton(ButtonCitiesList, AppResources.GetCitiesListIcon, "Список населенных пунктов в системе");
+            ComponentUtils.InsertIconToButton(ButtonCitiesList, AppResources.GetCitiesListIcon, "Населенные пункты");
             ButtonCitiesList.Click += (sender, args) => ListCitiesAction.Invoke();
             MenuModelsCities.Click += (sender, args) => ListCitiesAction.Invoke();
-            _systemDependentElements.Add(ButtonCitiesList);
-            _systemDependentElements.Add(MenuModelsCities);
             
-            ComponentUtils.InsertIconToButton(ButtonRoadsList, AppResources.GetRoadsListIcon, "Список маршрутов в системе");
+            ComponentUtils.InsertIconToButton(ButtonRoadsList, AppResources.GetRoadsListIcon, "Маршруты");
             ButtonRoadsList.Click += (sender, args) => ListRoadsAction.Invoke();
             MenuModelsRoads.Click += (sender, args) => ListRoadsAction.Invoke();
-            _systemDependentElements.Add(ButtonRoadsList);
-            _systemDependentElements.Add(MenuModelsRoads);
         }
 
-        private void SetUpGraphActions() {
-            ComponentUtils.InsertIconToButton(ButtonGraphParameters, AppResources.GetGraphParametersIcon, "Параметры визуализации графа");
-            ButtonGraphParameters.Click += (sender, args) => GraphParametersAction.Invoke();
-            MenuGraphParameters.Click += (sender, args) => GraphParametersAction.Invoke();
-            _systemDependentElements.Add(ButtonGraphParameters);
-            _systemDependentElements.Add(MenuGraphParameters);
+        private void SetUpTaskActions() {
+            ComponentUtils.InsertIconToButton(ButtonTaskSpecification, AppResources.GetTaskSpecificationIcon, "Спецификация поставленной задачи");
+            ButtonTaskSpecification.Click += (sender, args) => TaskSpecificationAction.Invoke();
+            MenuTaskSpecification.Click += (sender, args) => TaskSpecificationAction.Invoke();
+
+            ComponentUtils.InsertIconToButton(ButtonTaskCheckData, AppResources.GetTaskCheckIcon, "Проверка данных");
+            ButtonTaskCheckData.Click += (sender, args) => TaskCheckDataAction.Invoke();
+            MenuTaskCheckData.Click += (sender, args) => TaskCheckDataAction.Invoke();
             
-            ComponentUtils.InsertIconToButton(ButtonStartAlgorithm, AppResources.GetGraphStartAlgorithmIcon, "Стартовать алгоритм");
-            ButtonStartAlgorithm.Click += (sender, args) => StartAlgorithmAction.Invoke();
-            MenuGraphStartAlgorithm.Click += (sender, args) => StartAlgorithmAction.Invoke();
-            _systemDependentElements.Add(ButtonStartAlgorithm);
-            _systemDependentElements.Add(MenuGraphStartAlgorithm);
+            ComponentUtils.InsertIconToButton(ButtonTaskStart, AppResources.GetTaskStartIcon, "Запуск задачи");
+            ButtonTaskStart.Click += (sender, args) => TaskStartAction.Invoke();
+            MenuTaskStart.Click += (sender, args) => TaskStartAction.Invoke();
+            
+            ComponentUtils.InsertIconToButton(ButtonTaskResults, AppResources.GetTaskResultsIcon, "Результаты расчетов");
+            ButtonTaskResults.Click += (sender, args) => TaskResultsAction.Invoke();
+            MenuTaskResults.Click += (sender, args) => TaskResultsAction.Invoke();
         }
-        
-        public void SystemSelected(bool isSystemSelected) {
-            foreach (var element in _systemDependentElements) {
-                element.IsEnabled = isSystemSelected;
-            }
+
+        private void SetUpHelpActions() {
+            MenuHelpAbout.Click += (sender, args) => AboutAction.Invoke();
+            MenuHelpOverview.Click += (sender, args) => OverviewAction.Invoke();
         }
-        
-        private void ResizeEvent(object sender, SizeChangedEventArgs e) {
-            AppGraph.Instance.DrawGraph();
+
+        private void SetUpMainPanel() {
+            var modelsInfo = new TextBlock {
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(5,0,0,5),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            // todo
         }
     }
 }

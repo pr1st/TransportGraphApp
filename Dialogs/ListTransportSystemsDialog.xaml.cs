@@ -24,24 +24,24 @@ namespace TransportGraphApp.Dialogs {
 
         public ListTransportSystemsDialog() {
             InitializeComponent();
-            Owner = AppWindow.Instance;
+            Owner = App.Window;
             Icon = AppResources.GetAppIcon;
 
-            var propertyMatcher = new Dictionary<string, Func<TransportSystem, object>> {
-                {"Название", ts => ts.Name}, {
-                    "Кол-во нас. пунктов",
-                    ts => AppDataBase.Instance.GetCollection<City>().Count(c => c.TransportSystemId == ts.Id)
-                }, {
-                    "Кол-во маршрутов",
-                    ts => AppDataBase.Instance.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id)
-                }
-            };
+            // var propertyMatcher = new Dictionary<string, Func<TransportSystem, object>> {
+            //     {"Название", ts => ts.Name}, {
+            //         "Кол-во нас. пунктов",
+            //         ts => AppDataBase.Instance.GetCollection<City>().Count(c => c.TransportSystemId == ts.Id)
+            //     }, {
+            //         "Кол-во маршрутов",
+            //         ts => AppDataBase.Instance.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id)
+            //     }
+            // };
 
-            _entityList = new GenericEntityListControl<TransportSystem>(
-                "Список доступных транспортных систем",
-                propertyMatcher,
-                DisplayNew,
-                DisplayUpdate);
+            // _entityList = new GenericEntityListControl<TransportSystem>(
+            //     "Список доступных транспортных систем",
+            //     propertyMatcher,
+            //     DisplayNew,
+            //     DisplayUpdate);
 
             SetUpNewPropertiesPanel();
             SetUpUpdatePropertiesPanel();
@@ -49,10 +49,10 @@ namespace TransportGraphApp.Dialogs {
             ListPanel.Children.Add(_entityList.GetUiElement());
             UpdateState();
 
-            var selected = AppGraph.Instance.GetSelectedSystem;
-            if (selected != null) {
-                _entityList.Selected = _currentSystemList.First(t => t.Id == selected.Id);
-            }
+            // var selected = AppGraph.Instance.GetSelectedSystem;
+            // if (selected != null) {
+            //     _entityList.Selected = _currentSystemList.First(t => t.Id == selected.Id);
+            // }
         }
 
 
@@ -173,12 +173,12 @@ namespace TransportGraphApp.Dialogs {
                 return;
             }
             
-            AppDataBase.Instance.GetCollection<TransportSystem>().Insert(new TransportSystem() {
-                Name = _newNameControl.Value,
-                Parameters = new TransportSystemParameters() {
-                    AvailableRoadTypes = _newAvailableRoadTypesControl.Value
-                }
-            });
+            // AppDataBase.Instance.GetCollection<TransportSystem>().Insert(new TransportSystem() {
+            //     Name = _newNameControl.Value,
+            //     Parameters = new TransportSystemParameters() {
+            //         AvailableRoadTypes = _newAvailableRoadTypesControl.Value
+            //     }
+            // });
             UpdateState();
             DisplayNew();
         }
@@ -199,11 +199,11 @@ namespace TransportGraphApp.Dialogs {
             selected.Name = _updateNameControl.Value;
             selected.Parameters.AvailableRoadTypes = (_updateAvailableRoadTypesControl).Value;
             
-            AppDataBase.Instance.GetCollection<TransportSystem>().Update(selected);
-            UpdateState();
-            if (AppGraph.Instance.GetSelectedSystem != null && AppGraph.Instance.GetSelectedSystem.Id == selected.Id) {
-                AppGraph.Instance.UpdateSystem();
-            }
+            // AppDataBase.Instance.GetCollection<TransportSystem>().Update(selected);
+            // UpdateState();
+            // if (AppGraph.Instance.GetSelectedSystem != null && AppGraph.Instance.GetSelectedSystem.Id == selected.Id) {
+            //     AppGraph.Instance.UpdateSystem();
+            // }
             _entityList.Selected = _currentSystemList.First(t => t.Id == selected.Id);
             ComponentUtils.ShowMessage("Данная транспортная система была обновлена", MessageBoxImage.Information);
         }
@@ -211,17 +211,17 @@ namespace TransportGraphApp.Dialogs {
         private void RemoveTransportSystem() {
             var selected = _entityList.Selected;
 
-            AppDataBase.Instance.GetCollection<TransportSystem>().Delete(selected.Id);
-            UpdateState();
-            if (AppGraph.Instance.GetSelectedSystem != null && AppGraph.Instance.GetSelectedSystem.Id == selected.Id) {
-                AppGraph.Instance.SelectSystem(null);
-            }
+            // AppDataBase.Instance.GetCollection<TransportSystem>().Delete(selected.Id);
+            // UpdateState();
+            // if (AppGraph.Instance.GetSelectedSystem != null && AppGraph.Instance.GetSelectedSystem.Id == selected.Id) {
+            //     AppGraph.Instance.SelectSystem(null);
+            // }
 
             DisplayNew();
         }
 
         private void UpdateState() {
-            _currentSystemList = AppDataBase.Instance.GetCollection<TransportSystem>().FindAll().ToList();
+            // _currentSystemList = AppDataBase.Instance.GetCollection<TransportSystem>().FindAll().ToList();
             _entityList.SetSource(_currentSystemList);
         }
 
@@ -231,7 +231,7 @@ namespace TransportGraphApp.Dialogs {
                 return;
             }
 
-            AppGraph.Instance.SelectSystem(_entityList.Selected);
+            // AppGraph.Instance.SelectSystem(_entityList.Selected);
             DialogResult = true;
         }
     }

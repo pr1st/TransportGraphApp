@@ -1,12 +1,11 @@
 ﻿<Window x:Class="TransportGraphApp.Singletons.AppWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         WindowStartupLocation="CenterScreen"
         Height="700" Width="950">
 
-    <DockPanel
-        SizeChanged="ResizeEvent"
-        >
+    <DockPanel>
         <StackPanel DockPanel.Dock="Top">
             <Menu>
                 <Menu.ItemsPanel>
@@ -14,18 +13,20 @@
                         <StackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </Menu.ItemsPanel>
-                <MenuItem Header="_Модели программы">
+                <MenuItem Header="_Информационное наполнение">
                     <MenuItem Header="_Транспортные системы" Name="MenuModelsTransportSystems" x:FieldModifier="private" />
                     <MenuItem Header="_Населенные пункты" Name="MenuModelsCities" x:FieldModifier="private" />
                     <MenuItem Header="_Маршруты" Name="MenuModelsRoads" x:FieldModifier="private" />
                 </MenuItem>
-                <MenuItem Header="_Граф">
-                    <MenuItem Header="_Настройка визуализации" Name="MenuGraphParameters" x:FieldModifier="private" />
-                    <MenuItem Header="_Стартовать алгоритм" Name="MenuGraphStartAlgorithm" x:FieldModifier="private" />
+                <MenuItem Header="_Постановка задачи">
+                    <MenuItem Header="_Спецификация поставленной задачи" Name="MenuTaskSpecification" x:FieldModifier="private" />
+                    <MenuItem Header="_Проверка данных" Name="MenuTaskCheckData" x:FieldModifier="private" />
+                    <MenuItem Header="_Запуск задачи" Name="MenuTaskStart" x:FieldModifier="private" />
+                    <MenuItem Header="_Результаты расчетов" Name="MenuTaskResults" x:FieldModifier="private" />
                 </MenuItem>
                 <MenuItem Header="_Помощь">
                     <MenuItem Header="О _программе" Name="MenuHelpAbout" x:FieldModifier="private" />
-                    <MenuItem Header="Обзор" Name="MenuHelpOverview" x:FieldModifier="private" />
+                    <MenuItem Header="_Обзор" Name="MenuHelpOverview" x:FieldModifier="private" />
                 </MenuItem>
             </Menu>
             <ToolBarTray>
@@ -34,12 +35,47 @@
                     <Button Name="ButtonCitiesList" x:FieldModifier="private" />
                     <Button Name="ButtonRoadsList" x:FieldModifier="private" />
                     <Separator/>
-                    <Button Name="ButtonGraphParameters" x:FieldModifier="private" />
-                    <Button Name="ButtonStartAlgorithm" x:FieldModifier="private" />
+                    <Button Name="ButtonTaskSpecification" x:FieldModifier="private" />
+                    <Button Name="ButtonTaskCheckData" x:FieldModifier="private" />
+                    <Button Name="ButtonTaskStart" x:FieldModifier="private" />
+                    <Button Name="ButtonTaskResults" x:FieldModifier="private" />
                 </ToolBar>
             </ToolBarTray>
         </StackPanel>
 
-        <StackPanel Name="MainPanel" x:FieldModifier="private" />
+        <StackPanel Name="MainPanel" x:FieldModifier="private">
+            <TextBlock Margin="20,10,0,0">Общая информация</TextBlock>
+            <WrapPanel Margin="10,10,0,0">
+                <StackPanel Width="300" Margin="0,0,10,0">
+                    <TextBlock Margin="0,0,0,5" TextWrapping="Wrap">
+                        Для заполнения программу информацией используйте вкладку «информационное наполнение»
+                    </TextBlock>
+                    <TextBlock Margin="0,0,0,5" TextWrapping="Wrap">
+                        Доуступные сущности для заполнения: 
+                        1. Транспортные системы;
+                        2. Населенные пункты;
+                        3. Маршруты;
+                        Более подробно о них в соответствующих вкладках
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Width="300" Margin="0,0,10,0">
+                    <TextBlock Margin="0,0,0,5" TextWrapping="Wrap">
+                        Для работы с поставленной задачей используйте вкладку «Постановка задачи»
+                    </TextBlock>
+                    <TextBlock Margin="0,0,0,5" TextWrapping="Wrap">
+                        «Спецификация задачи» позволяет настроить, проверить и запустить задачу
+                    </TextBlock>
+                    <TextBlock Margin="0,0,0,5" TextWrapping="Wrap">
+                        «Проверка данных» позволяет проверить корректность данных в транпортных системах указаных в спецификации
+                    </TextBlock>
+                    <TextBlock Margin="0,0,0,5" TextWrapping="Wrap">
+                        «Запуск задачи» позволяет запустить задачу указанную в спецификации, при желании изменив параметры
+                    </TextBlock>
+                    <TextBlock Margin="0,0,0,5" TextWrapping="Wrap">
+                        «Результаты расчетов» позволяет просмотреть результаты уже решенных задач
+                    </TextBlock>
+                </StackPanel>
+            </WrapPanel>
+        </StackPanel>
     </DockPanel>
 </Window>

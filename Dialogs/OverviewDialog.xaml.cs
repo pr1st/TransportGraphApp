@@ -5,7 +5,7 @@ namespace TransportGraphApp.Dialogs {
     public partial class OverviewDialog : Window {
         public OverviewDialog() {
             InitializeComponent();
-            Owner = AppWindow.Instance;
+            Owner = App.Window;
             Icon = AppResources.GetAppIcon;
         }
     }
