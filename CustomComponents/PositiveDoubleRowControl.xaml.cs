@@ -27,6 +27,7 @@ namespace TransportGraphApp.CustomComponents {
             } 
             set => ValueBox.Text = value.ToString(CultureInfo.InvariantCulture);
         }
+        
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e) {
             var initial = ValueBox.Text;

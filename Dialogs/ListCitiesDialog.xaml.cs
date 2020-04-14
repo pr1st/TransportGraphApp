@@ -17,6 +17,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 namespace TransportGraphApp.Dialogs {
     public partial class ListCitiesDialog : Window {
         private IList<City> _currentCitiesList;
+        private TransportSystem _selectedTransportSystem;
 
         private GenericEntityListControl<City> _entityList;
 
@@ -30,11 +31,12 @@ namespace TransportGraphApp.Dialogs {
         private LatitudeLongitudeRowControl _updateCooridnatesControl;
         private PositiveDoubleRowControl _updateCostOfStayingControl;
         
-        public ListCitiesDialog() {
+        public ListCitiesDialog(TransportSystem transportSystem) {
             InitializeComponent();
             Owner = App.Window;
             Icon = AppResources.GetAppIcon;
-            
+            _selectedTransportSystem = transportSystem;
+
             var propertyMatcher = new Dictionary<string, Func<City, object>> {
                 {"Название", c => c.Name}, 
                 {"Широта", c => c.Latitude}, 
@@ -43,15 +45,18 @@ namespace TransportGraphApp.Dialogs {
             };
 
             _entityList = new GenericEntityListControl<City>(
-                "Список доступных населенных пунктов",
+                "Доступные населенные пункты",
                 propertyMatcher,
-                DisplayNew,
                 DisplayUpdate);
 
             SetUpNewPropertiesPanel();
             SetUpUpdatePropertiesPanel();
             PropertiesPanel.Visibility = Visibility.Collapsed;
             ListPanel.Children.Add(_entityList.GetUiElement());
+            
+            ComponentUtils.InsertIconToButton(AddButton, AppResources.GetAddItemIcon, "Открыть окно для добавления транспортной системы");
+            AddButton.Click += (sender, args) => DisplayNew();
+            
             UpdateState();
         }
         
@@ -89,6 +94,9 @@ namespace TransportGraphApp.Dialogs {
             _newPanel.Children.Add(_newNameControl);
             _newPanel.Children.Add(_newCooridnatesControl);
             _newPanel.Children.Add(_newCostOfStayingControl);
+            _newPanel.Children.Add(new Separator() {
+                Margin = new Thickness(5,5,5,5),
+            });
             _newPanel.Children.Add(addButton);
         }
         
@@ -125,6 +133,9 @@ namespace TransportGraphApp.Dialogs {
             _updatePanel.Children.Add(_updateNameControl);
             _updatePanel.Children.Add(_updateCooridnatesControl);
             _updatePanel.Children.Add(_updateCostOfStayingControl);
+            _updatePanel.Children.Add(new Separator() {
+                Margin = new Thickness(5,5,5,5),
+            });
             _updatePanel.Children.Add(buttonPanel);
         }
         
@@ -162,13 +173,13 @@ namespace TransportGraphApp.Dialogs {
                 return;
             }
             
-            // AppDataBase.Instance.GetCollection<City>().Insert(new City() {
-            //     Name = _newNameControl.Value,
-            //     Latitude = _newCooridnatesControl.Latitude,
-            //     Longitude = _newCooridnatesControl.Longitude,
-            //     CostOfStaying = _newCostOfStayingControl.Value,
-            //     TransportSystemId = AppGraph.Instance.GetSelectedSystem.Id
-            // });
+            App.DataBase.GetCollection<City>().Insert(new City() {
+                Name = _newNameControl.Value,
+                Latitude = _newCooridnatesControl.Latitude,
+                Longitude = _newCooridnatesControl.Longitude,
+                CostOfStaying = _newCostOfStayingControl.Value,
+                TransportSystemId = _selectedTransportSystem.Id
+            });
             UpdateState();
             DisplayNew();
         }
@@ -191,7 +202,7 @@ namespace TransportGraphApp.Dialogs {
             selected.Longitude = _updateCooridnatesControl.Longitude;
             selected.CostOfStaying = _updateCostOfStayingControl.Value;
             
-            // AppDataBase.Instance.GetCollection<City>().Update(selected);
+            App.DataBase.GetCollection<City>().Update(selected);
             UpdateState();
             
             _entityList.Selected = _currentCitiesList.First(c => c.Id == selected.Id);
@@ -200,24 +211,19 @@ namespace TransportGraphApp.Dialogs {
         
         private void RemoveCity() {
             var selected = _entityList.Selected;
-            // AppDataBase.Instance.GetCollection<City>().Delete(selected.Id);
+            App.DataBase.GetCollection<City>().Delete(selected.Id);
             UpdateState();
             DisplayNew();
         }
         
         private void UpdateState() {
-            // _currentCitiesList = AppDataBase.Instance
-            //     .GetCollection<City>()
-            //     .Find(c => c.TransportSystemId == AppGraph.Instance.GetSelectedSystem.Id)
-            //     .ToList();
+            _currentCitiesList = App.DataBase
+                .GetCollection<City>()
+                .Find(c => c.TransportSystemId == _selectedTransportSystem.Id)
+                .ToList();
             _entityList.SetSource(_currentCitiesList);
         }
         
-        private void CancelClick(object sender, RoutedEventArgs e) {
-            // AppGraph.Instance.UpdateSystem();
-            DialogResult = true;
-        }
-
         private void ImportFromFileClick() {
             var sb = new StringBuilder();
             var msg1 = "Файл должен быть в json формате";
@@ -229,7 +235,20 @@ namespace TransportGraphApp.Dialogs {
             var msg7 = "CostOfStaying - Стоимость проживания в городе";
             var msg8 = "Пример корректного файла:";
             var msg9 =
-                "[\n   {\n      \"Name\":\"Адыгейск\",\n      \"Latitude\":44.878414,\n      \"Longitude\":39.190289,\n      \"CostOfStaying\":123\n   }\n]";
+                "[\n" +
+                "    {\n" +
+                "        \"Name\":\"Адыгейск\",\n" +
+                "        \"Latitude\":44.878414,\n" +
+                "        \"Longitude\":39.190289,\n" +
+                "        \"CostOfStaying\":123\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"Name\":\"Майкоп\",\n" +
+                "        \"Latitude\":44.6098268,\n" +
+                "        \"Longitude\":40.1006527,\n" +
+                "        \"CostOfStaying\":234\n" +
+                "    }\n" +
+                "]";
             sb.AppendLine(msg1);
             sb.AppendLine(msg2);
             sb.AppendLine(msg3);
@@ -250,18 +269,23 @@ namespace TransportGraphApp.Dialogs {
 
             try {
                 var cities = JsonSerializer.Deserialize<IList<City>>(File.ReadAllText(openFileDialog.FileName));
+                var allNames = cities
+                    .Select(c => c.Name)
+                    .Concat(_currentCitiesList.Select(c => c.Name))
+                    .ToList();
+                if (allNames.Distinct().Count() != allNames.Count()) {
+                    ComponentUtils.ShowMessage("Выбранной файл содержит названия нас. пунктов которые уже есть в списке " +
+                                               "или сам содержит дубликаты названий нас. пунктов", MessageBoxImage.Error);
+                    return;
+                }
                 foreach (var c in cities) {
-                    // c.TransportSystemId = AppGraph.Instance.GetSelectedSystem.Id;
-                    // AppDataBase.Instance.GetCollection<City>().Insert(c);   
+                    c.TransportSystemId = _selectedTransportSystem.Id;
+                    App.DataBase.GetCollection<City>().Insert(c);   
                 }
                 UpdateState();
                 DisplayNew();
             }
-            catch (JsonException e) {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("__");
-                Console.WriteLine(File.ReadAllText(openFileDialog.FileName));
-                Console.WriteLine("__");
+            catch (JsonException) {
                 ComponentUtils.ShowMessage("Выбранной файл представлен в неверном формате", MessageBoxImage.Error);
             } 
         }

@@ -1,0 +1,20 @@
+﻿<Window x:Class="TransportGraphApp.Dialogs.SelectTransportSystemDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Title="Выберите транспортную систему">
+    <StackPanel Margin="10">
+        <StackPanel Name="ListPanel" x:FieldModifier="private"/>
+        <Grid Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Width="120" Click="SelectClick">Выбрать</Button>
+            <Button Grid.Column="2" Width="60" IsCancel="True">Отмена</Button>
+        </Grid>
+    </StackPanel>
+</Window>

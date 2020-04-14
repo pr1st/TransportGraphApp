@@ -35,7 +35,7 @@ namespace TransportGraphApp.CustomComponents {
     public class GenericEntityListControl<T> where T : IAppModel {
         private readonly EntityListControl _entityListControl = new EntityListControl();
 
-        public GenericEntityListControl(string title, IDictionary<string, Func<T, object>> propertyMatcher, ThreadStart onAddClick, Action<T> onSelectElement) {
+        public GenericEntityListControl(string title, IDictionary<string, Func<T, object>> propertyMatcher, Action<T> onSelectElement) {
             _entityListControl.Title.Content = title;
 
             foreach (var (columnName, supplier) in propertyMatcher) {
@@ -49,9 +49,6 @@ namespace TransportGraphApp.CustomComponents {
                 };
                 ((GridView) _entityListControl.List.View).Columns.Add(column);
             }
-            
-            ComponentUtils.InsertIconToButton(_entityListControl.AddButton, AppResources.GetAddItemIcon, "Открыть окно для добавления элемента");
-            _entityListControl.AddButton.Click += (sender, args) => onAddClick.Invoke();
 
             _entityListControl.List.SelectionChanged += (sender, args) => {
                 if (Selected != null) {

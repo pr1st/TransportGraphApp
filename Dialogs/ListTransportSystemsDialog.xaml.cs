@@ -27,32 +27,32 @@ namespace TransportGraphApp.Dialogs {
             Owner = App.Window;
             Icon = AppResources.GetAppIcon;
 
-            // var propertyMatcher = new Dictionary<string, Func<TransportSystem, object>> {
-            //     {"Название", ts => ts.Name}, {
-            //         "Кол-во нас. пунктов",
-            //         ts => AppDataBase.Instance.GetCollection<City>().Count(c => c.TransportSystemId == ts.Id)
-            //     }, {
-            //         "Кол-во маршрутов",
-            //         ts => AppDataBase.Instance.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id)
-            //     }
-            // };
-
-            // _entityList = new GenericEntityListControl<TransportSystem>(
-            //     "Список доступных транспортных систем",
-            //     propertyMatcher,
-            //     DisplayNew,
-            //     DisplayUpdate);
+            var propertyMatcher = new Dictionary<string, Func<TransportSystem, object>> {
+                {
+                    "Название", 
+                    ts => ts.Name
+                }, {
+                    "Кол-во нас. пунктов",
+                    ts => App.DataBase.GetCollection<City>().Count(c => c.TransportSystemId == ts.Id)
+                }, {
+                    "Кол-во маршрутов",
+                    ts => App.DataBase.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id)
+                }
+            };
+            _entityList = new GenericEntityListControl<TransportSystem>(
+                "Доступные транспортные системы",
+                propertyMatcher,
+                DisplayUpdate);
 
             SetUpNewPropertiesPanel();
             SetUpUpdatePropertiesPanel();
             PropertiesPanel.Visibility = Visibility.Collapsed;
             ListPanel.Children.Add(_entityList.GetUiElement());
+            
+            ComponentUtils.InsertIconToButton(AddButton, AppResources.GetAddItemIcon, "Открыть окно для добавления транспортной системы");
+            AddButton.Click += (sender, args) => DisplayNew();
+            
             UpdateState();
-
-            // var selected = AppGraph.Instance.GetSelectedSystem;
-            // if (selected != null) {
-            //     _entityList.Selected = _currentSystemList.First(t => t.Id == selected.Id);
-            // }
         }
 
 
@@ -92,6 +92,9 @@ namespace TransportGraphApp.Dialogs {
             _newPanel.Children.Add(label);
             _newPanel.Children.Add(_newNameControl);
             _newPanel.Children.Add(_newAvailableRoadTypesControl);
+            _newPanel.Children.Add(new Separator() {
+                Margin = new Thickness(5,5,5,5),
+            });
             _newPanel.Children.Add(addButton);
         }
 
@@ -140,6 +143,9 @@ namespace TransportGraphApp.Dialogs {
             _updatePanel.Children.Add(label);
             _updatePanel.Children.Add(_updateNameControl);
             _updatePanel.Children.Add(_updateAvailableRoadTypesControl);
+            _updatePanel.Children.Add(new Separator() {
+                Margin = new Thickness(5,5,5,5),
+            });
             _updatePanel.Children.Add(buttonPanel);
         }
         
@@ -173,12 +179,12 @@ namespace TransportGraphApp.Dialogs {
                 return;
             }
             
-            // AppDataBase.Instance.GetCollection<TransportSystem>().Insert(new TransportSystem() {
-            //     Name = _newNameControl.Value,
-            //     Parameters = new TransportSystemParameters() {
-            //         AvailableRoadTypes = _newAvailableRoadTypesControl.Value
-            //     }
-            // });
+            App.DataBase.GetCollection<TransportSystem>().Insert(new TransportSystem() {
+                Name = _newNameControl.Value,
+                Parameters = new TransportSystemParameters() {
+                    AvailableRoadTypes = _newAvailableRoadTypesControl.Value
+                }
+            });
             UpdateState();
             DisplayNew();
         }
@@ -197,13 +203,11 @@ namespace TransportGraphApp.Dialogs {
             }
 
             selected.Name = _updateNameControl.Value;
-            selected.Parameters.AvailableRoadTypes = (_updateAvailableRoadTypesControl).Value;
+            selected.Parameters.AvailableRoadTypes = _updateAvailableRoadTypesControl.Value;
             
-            // AppDataBase.Instance.GetCollection<TransportSystem>().Update(selected);
-            // UpdateState();
-            // if (AppGraph.Instance.GetSelectedSystem != null && AppGraph.Instance.GetSelectedSystem.Id == selected.Id) {
-            //     AppGraph.Instance.UpdateSystem();
-            // }
+            App.DataBase.GetCollection<TransportSystem>().Update(selected);
+            UpdateState();
+
             _entityList.Selected = _currentSystemList.First(t => t.Id == selected.Id);
             ComponentUtils.ShowMessage("Данная транспортная система была обновлена", MessageBoxImage.Information);
         }
@@ -211,28 +215,15 @@ namespace TransportGraphApp.Dialogs {
         private void RemoveTransportSystem() {
             var selected = _entityList.Selected;
 
-            // AppDataBase.Instance.GetCollection<TransportSystem>().Delete(selected.Id);
-            // UpdateState();
-            // if (AppGraph.Instance.GetSelectedSystem != null && AppGraph.Instance.GetSelectedSystem.Id == selected.Id) {
-            //     AppGraph.Instance.SelectSystem(null);
-            // }
+            App.DataBase.GetCollection<TransportSystem>().Delete(selected.Id);
+            UpdateState();
 
             DisplayNew();
         }
 
         private void UpdateState() {
-            // _currentSystemList = AppDataBase.Instance.GetCollection<TransportSystem>().FindAll().ToList();
+            _currentSystemList = App.DataBase.GetCollection<TransportSystem>().FindAll().ToList();
             _entityList.SetSource(_currentSystemList);
-        }
-
-        private void SelectClick(object sender, RoutedEventArgs e) {
-            if (_entityList.Selected == null) {
-                ComponentUtils.ShowMessage("Выберите транспортную систему из списка", MessageBoxImage.Error);
-                return;
-            }
-
-            // AppGraph.Instance.SelectSystem(_entityList.Selected);
-            DialogResult = true;
         }
     }
 }

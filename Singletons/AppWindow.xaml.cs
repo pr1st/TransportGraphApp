@@ -12,8 +12,6 @@ namespace TransportGraphApp.Singletons {
             SetUpModelsActions();
             SetUpTaskActions();
             SetUpHelpActions();
-
-            SetUpMainPanel();
         }
 
         private void SetUpModelsActions() {
@@ -51,15 +49,6 @@ namespace TransportGraphApp.Singletons {
         private void SetUpHelpActions() {
             MenuHelpAbout.Click += (sender, args) => AboutAction.Invoke();
             MenuHelpOverview.Click += (sender, args) => OverviewAction.Invoke();
-        }
-
-        private void SetUpMainPanel() {
-            var modelsInfo = new TextBlock {
-                TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(5,0,0,5),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            // todo
         }
     }
 }

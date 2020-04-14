@@ -3,7 +3,10 @@
 namespace TransportGraphApp.Actions {
     public static class ListRoadsAction {
         public static void Invoke() {
-            new ListRoadsDialog().ShowDialog();
+            var selected = new SelectTransportSystemDialog();
+            if (selected.ShowDialog() != true) return;
+
+            new ListRoadsDialog(selected.SelectedSystem).ShowDialog();
         }
     }
 }

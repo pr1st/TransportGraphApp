@@ -4,10 +4,12 @@
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        Title="Cписок населенных пунктов">
+        Title="Населенные пункты">
     <StackPanel Margin="10">
         <WrapPanel>
             <StackPanel Name="ListPanel" x:FieldModifier="private" />
+            <Button Width="20" Height="20" VerticalAlignment="Top" 
+                    Name="AddButton" Margin="0,0,5,0"/>
             <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />  
             <StackPanel Name="PropertiesPanel" x:FieldModifier="private" />
         </WrapPanel>
@@ -16,7 +18,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Width="60" Click="CancelClick">Отмена</Button>
+            <Button Grid.Column="1" Width="60" IsCancel="True">Отмена</Button>
         </Grid>
     </StackPanel>
 </Window>
