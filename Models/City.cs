@@ -1,4 +1,5 @@
-﻿using LiteDB;
+﻿using System.Collections.Generic;
+using LiteDB;
 
 namespace TransportGraphApp.Models {
     public class City : IAppModel {
@@ -6,12 +7,10 @@ namespace TransportGraphApp.Models {
 
         public string Name { get; set; }
 
-        public double Latitude { get; set; }
-
-        public double Longitude { get; set; }
-
         public double CostOfStaying { get; set; }
-        
-        public ObjectId TransportSystemId { get; set; }
+
+        public IList<ObjectId> Tags { get; set; }
+
+        public IList<ObjectId> TransportSystemIds { get; set; }
     }
 }

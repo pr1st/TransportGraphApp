@@ -2,6 +2,6 @@
 
 namespace TransportGraphApp.Models {
     public interface IAppModel {
-        public ObjectId Id { get; }
+        public ObjectId Id { get; set; }
     }
 }
