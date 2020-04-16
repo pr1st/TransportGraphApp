@@ -30,6 +30,7 @@ namespace TransportGraphApp.CustomComponents {
             get => _values;
             set {
                 _values = value;
+                AddBox.Text = "";
                 StringList.ItemsSource = _values;
                 CollectionViewSource.GetDefaultView(StringList.ItemsSource).Refresh();
             }

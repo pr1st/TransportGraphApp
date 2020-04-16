@@ -35,5 +35,18 @@ namespace TransportGraphApp {
 
             button.Content = stackPnl;
         }
+        
+        public static void InsertIconToPanel(StackPanel panel, ImageSource icon, string toolTip) {
+            panel.Background = Brushes.Transparent;
+            panel.Height = 24;
+            panel.Width = 24;
+            panel.ToolTip = toolTip;
+
+            var img = new Image { Source = icon };
+            
+            Console.WriteLine(img.Source.Height);
+
+            panel.Children.Add(img);
+        }
     }
 }

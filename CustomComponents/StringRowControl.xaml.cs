@@ -19,6 +19,11 @@ namespace TransportGraphApp.CustomComponents {
             get => StringTitle.Text;
             set => StringTitle.Text = value;
         }
+        
+        public string TitleToolTip {
+            get => (string)StringTitle.ToolTip;
+            set => StringTitle.ToolTip = value;
+        }
 
         private void ElementGotFocus(object sender, RoutedEventArgs e) {
             ValueBox.Select(0, ValueBox.Text.Length);
