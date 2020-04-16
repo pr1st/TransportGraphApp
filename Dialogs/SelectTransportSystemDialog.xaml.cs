@@ -6,7 +6,7 @@ using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Dialogs {
     public partial class SelectTransportSystemDialog : Window {
-        private GenericEntityListControl<TransportSystem> _entityList;
+        private readonly GenericEntityListControl<TransportSystem> _entityList;
 
         public TransportSystem SelectedSystem => _entityList.Selected;
 
@@ -21,7 +21,7 @@ namespace TransportGraphApp.Dialogs {
                     ts => ts.Name
                 }, {
                     "Кол-во нас. пунктов",
-                    ts => App.DataBase.GetCollection<City>().Count(c => c.TransportSystemId == ts.Id)
+                    ts => App.DataBase.GetCollection<City>().Count(c => c.TransportSystemIds.Contains(ts.Id))
                 }, {
                     "Кол-во маршрутов",
                     ts => App.DataBase.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id)

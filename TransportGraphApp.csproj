@@ -94,4 +94,16 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Dialogs\GlobalParametersDialog.xaml">
+      <Generator></Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dialogs\GlobalParametersDialog.xaml.cs">
+      <DependentUpon>GlobalParametersDialog.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

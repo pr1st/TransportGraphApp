@@ -41,9 +41,9 @@ namespace TransportGraphApp.Dialogs {
             Icon = AppResources.GetAppIcon;
             _selectedTransportSystem = transportSystem;
             
-            _idToNameCitiesMap = App.DataBase.GetCollection<City>()
-                .Find(c => c.TransportSystemId == _selectedTransportSystem.Id)
-                .ToDictionary(c => c.Id, c => c.Name);
+            // _idToNameCitiesMap = App.DataBase.GetCollection<City>()
+            //     .Find(c => c.TransportSystemId == _selectedTransportSystem.Id)
+            //     .ToDictionary(c => c.Id, c => c.Name);
             _nameToIdCitiesMap = _idToNameCitiesMap
                 .ToDictionary(kv => kv.Value, kv => kv.Key);
             
@@ -96,10 +96,10 @@ namespace TransportGraphApp.Dialogs {
             _newTimeControl = new PositiveDoubleRowControl() {
                 TitleValue = "Время в движении (в минутах)"
             };
-            _newRoadTypeControl = new StringWithHelpRowControl() {
-                TitleValue = "Тип дороги",
-                HelpingValues = _selectedTransportSystem.Parameters.AvailableRoadTypes
-            };
+            // _newRoadTypeControl = new StringWithHelpRowControl() {
+            //     TitleValue = "Тип дороги",
+            //     HelpingValues = _selectedTransportSystem.Parameters.AvailableRoadTypes
+            // };
             _newDepartureTimeTableControl = new DepartureTimeTableControl();
             var addButton = new Button() {
                 Margin = new Thickness(5,5,5,5),
@@ -145,10 +145,10 @@ namespace TransportGraphApp.Dialogs {
             _updateTimeControl = new PositiveDoubleRowControl() {
                 TitleValue = "Время в движении (в минутах)"
             };
-            _updateRoadTypeControl = new StringWithHelpRowControl() {
-                TitleValue = "Тип дороги",
-                HelpingValues = _selectedTransportSystem.Parameters.AvailableRoadTypes
-            };
+            // _updateRoadTypeControl = new StringWithHelpRowControl() {
+            //     TitleValue = "Тип дороги",
+            //     HelpingValues = _selectedTransportSystem.Parameters.AvailableRoadTypes
+            // };
             _updateDepartureTimeTableControl = new DepartureTimeTableControl();
             var buttonPanel = new WrapPanel() {
                 Margin = new Thickness(5, 5, 5, 5),
@@ -201,7 +201,7 @@ namespace TransportGraphApp.Dialogs {
             _updateLengthControl.Value = r.Length;
             _updateCostControl.Value = r.Cost;
             _updateTimeControl.Value = r.Time;
-            _updateRoadTypeControl.Value = r.RoadType;
+            // _updateRoadTypeControl.Value = r.RoadType;
             _updateDepartureTimeTableControl.Value = r.DepartureTimes;
 
             PropertiesPanel.Children.Clear();
@@ -216,10 +216,10 @@ namespace TransportGraphApp.Dialogs {
                 return;
             }
 
-            if (!_selectedTransportSystem.Parameters.AvailableRoadTypes.Contains(_newRoadTypeControl.Value)) {
-                ComponentUtils.ShowMessage("Поле \"Тип дороги\" должен представлять название одного из типа дорог которые были объявленны в транспортной сети", MessageBoxImage.Error);
-                return;
-            }
+            // if (!_selectedTransportSystem.Parameters.AvailableRoadTypes.Contains(_newRoadTypeControl.Value)) {
+            //     ComponentUtils.ShowMessage("Поле \"Тип дороги\" должен представлять название одного из типа дорог которые были объявленны в транспортной сети", MessageBoxImage.Error);
+            //     return;
+            // }
             
             App.DataBase.GetCollection<Road>().Insert(new Road() {
                 FromCityId = _nameToIdCitiesMap[_newFromControl.Value],
@@ -227,7 +227,7 @@ namespace TransportGraphApp.Dialogs {
                 Length = _newLengthControl.Value,
                 Cost = _newCostControl.Value,
                 Time = _newTimeControl.Value,
-                RoadType = _newRoadTypeControl.Value,
+                // RoadType = _newRoadTypeControl.Value,
                 DepartureTimes = _newDepartureTimeTableControl.Value,
                 TransportSystemId = _selectedTransportSystem.Id
             });
@@ -243,17 +243,17 @@ namespace TransportGraphApp.Dialogs {
                 return;
             }
 
-            if (!_selectedTransportSystem.Parameters.AvailableRoadTypes.Contains(_updateRoadTypeControl.Value)) {
-                ComponentUtils.ShowMessage("Поле \"Тип дороги\" должен представлять название одного из типа дорог которые были объявленны в транспортной сети", MessageBoxImage.Error);
-                return;
-            }
+            // if (!_selectedTransportSystem.Parameters.AvailableRoadTypes.Contains(_updateRoadTypeControl.Value)) {
+            //     ComponentUtils.ShowMessage("Поле \"Тип дороги\" должен представлять название одного из типа дорог которые были объявленны в транспортной сети", MessageBoxImage.Error);
+            //     return;
+            // }
 
             selected.FromCityId = _nameToIdCitiesMap[_updateFromControl.Value];
             selected.ToCityId = _nameToIdCitiesMap[_updateToControl.Value];
             selected.Length = _updateLengthControl.Value;
             selected.Cost = _updateCostControl.Value;
             selected.Time = _updateTimeControl.Value;
-            selected.RoadType = _updateRoadTypeControl.Value;
+            // selected.RoadType = _updateRoadTypeControl.Value;
             selected.DepartureTimes = _updateDepartureTimeTableControl.Value;
 
             App.DataBase.GetCollection<Road>().Update(selected);

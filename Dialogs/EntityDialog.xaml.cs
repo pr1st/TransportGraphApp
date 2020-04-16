@@ -8,8 +8,6 @@ using System.Windows.Controls;
 using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
 
-// in case of not being lazy, generic implementation for entities
-
 namespace TransportGraphApp.Dialogs {
     public partial class EntityDialog : Window {
         public EntityDialog() {

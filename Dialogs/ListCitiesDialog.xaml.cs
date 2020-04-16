@@ -39,8 +39,8 @@ namespace TransportGraphApp.Dialogs {
 
             var propertyMatcher = new Dictionary<string, Func<City, object>> {
                 {"Название", c => c.Name}, 
-                {"Широта", c => c.Latitude}, 
-                {"Долгота", c => c.Longitude},
+                // {"Широта", c => c.Latitude}, 
+                // {"Долгота", c => c.Longitude},
                 {"Стоимость проживания", c => c.CostOfStaying},
             };
 
@@ -153,8 +153,8 @@ namespace TransportGraphApp.Dialogs {
         
         private void DisplayUpdate(City c) {
             _updateNameControl.Value = c.Name;
-            _updateCooridnatesControl.Latitude = c.Latitude;
-            _updateCooridnatesControl.Longitude = c.Longitude;
+            // _updateCooridnatesControl.Latitude = c.Latitude;
+            // _updateCooridnatesControl.Longitude = c.Longitude;
             _updateCostOfStayingControl.Value = c.CostOfStaying;
             
             PropertiesPanel.Children.Clear();
@@ -175,10 +175,10 @@ namespace TransportGraphApp.Dialogs {
             
             App.DataBase.GetCollection<City>().Insert(new City() {
                 Name = _newNameControl.Value,
-                Latitude = _newCooridnatesControl.Latitude,
-                Longitude = _newCooridnatesControl.Longitude,
+                // Latitude = _newCooridnatesControl.Latitude,
+                // Longitude = _newCooridnatesControl.Longitude,
                 CostOfStaying = _newCostOfStayingControl.Value,
-                TransportSystemId = _selectedTransportSystem.Id
+                // TransportSystemId = _selectedTransportSystem.Id
             });
             UpdateState();
             DisplayNew();
@@ -198,8 +198,8 @@ namespace TransportGraphApp.Dialogs {
             }
 
             selected.Name = _updateNameControl.Value;
-            selected.Latitude = _updateCooridnatesControl.Latitude;
-            selected.Longitude = _updateCooridnatesControl.Longitude;
+            // selected.Latitude = _updateCooridnatesControl.Latitude;
+            // selected.Longitude = _updateCooridnatesControl.Longitude;
             selected.CostOfStaying = _updateCostOfStayingControl.Value;
             
             App.DataBase.GetCollection<City>().Update(selected);
@@ -217,10 +217,10 @@ namespace TransportGraphApp.Dialogs {
         }
         
         private void UpdateState() {
-            _currentCitiesList = App.DataBase
-                .GetCollection<City>()
-                .Find(c => c.TransportSystemId == _selectedTransportSystem.Id)
-                .ToList();
+            // _currentCitiesList = App.DataBase
+            //     .GetCollection<City>()
+            //     .Find(c => c.TransportSystemId == _selectedTransportSystem.Id)
+            //     .ToList();
             _entityList.SetSource(_currentCitiesList);
         }
         
@@ -279,7 +279,7 @@ namespace TransportGraphApp.Dialogs {
                     return;
                 }
                 foreach (var c in cities) {
-                    c.TransportSystemId = _selectedTransportSystem.Id;
+                    // c.TransportSystemId = _selectedTransportSystem.Id;
                     App.DataBase.GetCollection<City>().Insert(c);   
                 }
                 UpdateState();

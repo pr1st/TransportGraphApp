@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using TransportGraphApp.CustomComponents;
@@ -19,117 +20,93 @@ namespace TransportGraphApp.Actions {
                 RemoveItemFunction = RemoveTransportSystem,
                 UpdateCollectionFunction = UpdateCollection
             };
-            
+
             genericEntityDialog.AddColumn(
-                "Название", 
+                "Название",
                 ts => ts.Name);
             genericEntityDialog.AddColumn(
-                "Кол-во нас. пунктов", 
-                ts => App.DataBase.GetCollection<City>().Count(c => c.TransportSystemId == ts.Id));
+                "Кол-во нас. пунктов",
+                ts => {
+                    // todo whats happening? check when cities are done
+                    return App.DataBase.GetCollection<City>().Count(c => c.TransportSystemIds.Count(tsId => tsId == ts.Id) == 1);
+                });
             genericEntityDialog.AddColumn(
-                "Кол-во маршрутов", 
+                "Кол-во маршрутов",
                 ts => App.DataBase.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id));
-            genericEntityDialog.AddColumn(
-                "Кол-во доступных типов дорог", 
-                ts => ts.Parameters.AvailableRoadTypes.Count);
-            
+
             _nameControl = new StringRowControl() {
                 TitleValue = "Название",
                 TitleToolTip = "Представляет собой уникальный индетификатор транспортной системы"
             };
-            _availableRoadTypesControl = new GenericTableRowControl<string>() {
-                TitleValue = "Используемые типы дорог",
-                TitleToolTip = "Представляет собой набор допустимых типов маршрутов в данной системе, используется при добавлении или обновлении маршрута",
-                OnAdd = roadTypes => {
-                    var d = new StringFieldDialog() {
-                        Title = "Новый тип дороги",
-                        IsViable = newRoadTypeName => {
-                            if (newRoadTypeName.Trim() == "") {
-                                ComponentUtils.ShowMessage("Введите не пустое название", MessageBoxImage.Error);
-                                return false;
-                            }
 
-                            if (roadTypes.Contains(newRoadTypeName.Trim())) {
-                                ComponentUtils.ShowMessage("Тип дороги с таким названием уже существует",
-                                    MessageBoxImage.Error);
-                                return false;
-                            }
-
-                            return true;
-                        }
-                    };
-                    d.FieldName.Text = "Введите название";
-                    d.FieldValue.Text = "";
-                    return d.ShowDialog() != true ? null : d.FieldValue.Text;
-                }
-            };
-            _availableRoadTypesControl.AddColumn("Название", s => s);
-            
             genericEntityDialog.AddProperty(
-                _nameControl, 
+                _nameControl,
                 () => _nameControl.Value = "",
                 ts => _nameControl.Value = ts.Name);
-            genericEntityDialog.AddProperty(
-                _availableRoadTypesControl.GetUiElement, 
-                () => _availableRoadTypesControl.Value = new List<string>(),
-                ts => _availableRoadTypesControl.Value = ts.Parameters.AvailableRoadTypes);
-            
+
             genericEntityDialog.ShowDialog();
         }
-        
-        private static IList<TransportSystem> _currentSystemList;
-        
+
+        private static IList<TransportSystem> _systemsList;
+
         private static StringRowControl _nameControl;
-        private static GenericTableRowControl<string> _availableRoadTypesControl;
-        
+
         private static bool AddTransportSystem() {
             if (_nameControl.Value == "") {
                 ComponentUtils.ShowMessage("Введите название транспортной системы", MessageBoxImage.Error);
                 return false;
             }
 
-            if (_currentSystemList.Select(ts => ts.Name).Contains(_nameControl.Value)) {
+            if (_systemsList.Select(ts => ts.Name).Contains(_nameControl.Value)) {
                 ComponentUtils.ShowMessage("Система с таким названием уже существует", MessageBoxImage.Error);
                 return false;
             }
-            
+
             App.DataBase.GetCollection<TransportSystem>().Insert(new TransportSystem() {
                 Name = _nameControl.Value,
-                Parameters = new TransportSystemParameters() {
-                    AvailableRoadTypes = _availableRoadTypesControl.Value
-                }
             });
+            
             return true;
         }
-        
+
         private static bool UpdateTransportSystem(TransportSystem selected) {
             if (_nameControl.Value == "") {
                 ComponentUtils.ShowMessage("Введите не пустое название транспортной системы", MessageBoxImage.Error);
                 return false;
             }
 
-            if (selected.Name != _nameControl.Value && 
-                _currentSystemList.Select(t => t.Name).Contains(_nameControl.Value)) {
+            if (selected.Name != _nameControl.Value &&
+                _systemsList.Select(t => t.Name).Contains(_nameControl.Value)) {
                 ComponentUtils.ShowMessage("Система с таким названием уже существует", MessageBoxImage.Error);
                 return false;
             }
 
             selected.Name = _nameControl.Value;
-            selected.Parameters.AvailableRoadTypes = _availableRoadTypesControl.Value;
-            
+
             App.DataBase.GetCollection<TransportSystem>().Update(selected);
             ComponentUtils.ShowMessage("Данная транспортная система была обновлена", MessageBoxImage.Information);
             return true;
         }
-        
+
         private static bool RemoveTransportSystem(TransportSystem selected) {
+            App.DataBase.GetCollection<Road>().DeleteMany(r => r.TransportSystemId == selected.Id);
+            var cities = App.DataBase.GetCollection<City>().Find(c => c.TransportSystemIds.Contains(selected.Id));
+            foreach (var city in cities) {
+                if (city.TransportSystemIds.Count == 1) {
+                    App.DataBase.GetCollection<City>().Delete(city.Id);
+                }
+                else {
+                    city.TransportSystemIds.Remove(selected.Id);
+                    App.DataBase.GetCollection<City>().Update(city);
+                }
+            }
             App.DataBase.GetCollection<TransportSystem>().Delete(selected.Id);
             return true;
         }
 
         private static IEnumerable<TransportSystem> UpdateCollection() {
-            _currentSystemList = App.DataBase.GetCollection<TransportSystem>().FindAll().ToList();
-            return _currentSystemList;
+            _systemsList = App.DataBase.GetCollection<TransportSystem>().FindAll().ToList();
+            return _systemsList;
         }
     }
 }
