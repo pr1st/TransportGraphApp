@@ -9,7 +9,7 @@ namespace TransportGraphApp.Models {
 
         public double CostOfStaying { get; set; }
 
-        public IList<ObjectId> Tags { get; set; } = new List<ObjectId>();
+        public IList<CityTag> Tags { get; set; } = new List<CityTag>();
 
         public IList<ObjectId> TransportSystemIds { get; set; } = new List<ObjectId>();
     }

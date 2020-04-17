@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using TransportGraphApp.CustomComponents;
@@ -26,10 +25,7 @@ namespace TransportGraphApp.Actions {
                 ts => ts.Name);
             genericEntityDialog.AddColumn(
                 "Кол-во нас. пунктов",
-                ts => {
-                    // todo whats happening? check when cities are done
-                    return App.DataBase.GetCollection<City>().Count(c => c.TransportSystemIds.Count(tsId => tsId == ts.Id) == 1);
-                });
+                ts => App.DataBase.CountCitiesOfTransportSystem(ts));
             genericEntityDialog.AddColumn(
                 "Кол-во маршрутов",
                 ts => App.DataBase.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id));
@@ -53,7 +49,7 @@ namespace TransportGraphApp.Actions {
 
         private static bool AddTransportSystem() {
             if (_nameControl.Value == "") {
-                ComponentUtils.ShowMessage("Введите название транспортной системы", MessageBoxImage.Error);
+                ComponentUtils.ShowMessage("Введите не пустое название транспортной системы", MessageBoxImage.Error);
                 return false;
             }
 
@@ -90,7 +86,7 @@ namespace TransportGraphApp.Actions {
 
         private static bool RemoveTransportSystem(TransportSystem selected) {
             App.DataBase.GetCollection<Road>().DeleteMany(r => r.TransportSystemId == selected.Id);
-            var cities = App.DataBase.GetCollection<City>().Find(c => c.TransportSystemIds.Contains(selected.Id));
+            var cities = App.DataBase.GetCitiesOfTransportSystem(selected);
             foreach (var city in cities) {
                 if (city.TransportSystemIds.Count == 1) {
                     App.DataBase.GetCollection<City>().Delete(city.Id);

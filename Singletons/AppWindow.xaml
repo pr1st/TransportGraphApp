@@ -14,6 +14,7 @@
                     </ItemsPanelTemplate>
                 </Menu.ItemsPanel>
                 <MenuItem Header="_Информационное наполнение">
+                    <MenuItem Header="_Глобальные параметры сети" Name="MenuModelsGlobalParameters" x:FieldModifier="private" />
                     <MenuItem Header="_Транспортные системы" Name="MenuModelsTransportSystems" x:FieldModifier="private" />
                     <MenuItem Header="_Населенные пункты" Name="MenuModelsCities" x:FieldModifier="private" />
                     <MenuItem Header="_Маршруты" Name="MenuModelsRoads" x:FieldModifier="private" />
@@ -31,6 +32,7 @@
             </Menu>
             <ToolBarTray>
                 <ToolBar>
+                    <Button Name="ButtonGlobalParameters" x:FieldModifier="private" />
                     <Button Name="ButtonTransportSystemList" x:FieldModifier="private" />
                     <Button Name="ButtonCitiesList" x:FieldModifier="private" />
                     <Button Name="ButtonRoadsList" x:FieldModifier="private" />

@@ -21,7 +21,7 @@ namespace TransportGraphApp.Dialogs {
                     ts => ts.Name
                 }, {
                     "Кол-во нас. пунктов",
-                    ts => App.DataBase.GetCollection<City>().Count(c => c.TransportSystemIds.Contains(ts.Id))
+                    ts => App.DataBase.CountCitiesOfTransportSystem(ts)
                 }, {
                     "Кол-во маршрутов",
                     ts => App.DataBase.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id)

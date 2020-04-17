@@ -15,6 +15,10 @@ namespace TransportGraphApp.Singletons {
         }
 
         private void SetUpModelsActions() {
+            ComponentUtils.InsertIconToButton(ButtonGlobalParameters, AppResources.GetGlobalParametersIcon, "Глобальные параметры сети");
+            ButtonGlobalParameters.Click += (sender, args) => GlobalParametersAction.Invoke();
+            MenuModelsGlobalParameters.Click += (sender, args) => GlobalParametersAction.Invoke();
+            
             ComponentUtils.InsertIconToButton(ButtonTransportSystemList, AppResources.GetTransportSystemsListIcon, "Транспортные системы");
             ButtonTransportSystemList.Click += (sender, args) => ListTransportSystemsAction.Invoke();
             MenuModelsTransportSystems.Click += (sender, args) => ListTransportSystemsAction.Invoke();

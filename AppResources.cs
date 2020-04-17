@@ -17,6 +17,7 @@ namespace TransportGraphApp {
         public static BitmapImage GetRemoveItemIcon => new BitmapImage(GetResourceUrl("util-remove-item.png"));
         public static BitmapImage GetInfoIcon => new BitmapImage(GetResourceUrl("util-info.png"));
 
+        public static BitmapImage GetGlobalParametersIcon => new BitmapImage(GetResourceUrl("models-global.png"));
         public static BitmapImage GetTransportSystemsListIcon => new BitmapImage(GetResourceUrl("models-transport-systems.png"));
         public static BitmapImage GetCitiesListIcon => new BitmapImage(GetResourceUrl("models-cities.png"));
         public static BitmapImage GetRoadsListIcon => new BitmapImage(GetResourceUrl("models-roads.png"));
