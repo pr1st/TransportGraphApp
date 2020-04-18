@@ -125,7 +125,7 @@ namespace TransportGraphApp.Actions {
             if (_allCitiesList.Select(с => с.Name).Contains(_nameControl.Value)) {
                 var newCity = _allCitiesList.First(c => c.Name == _nameControl.Value);
                 newCity.CostOfStaying = _costOfStayingControl.Value;
-                newCity.Tags = _cityTags.Values;
+                newCity.Tags = _tagsControl.Value;
                 newCity.TransportSystemIds.Add(_selectedSystem.Id);
                 App.DataBase.GetCollection<City>().Update(newCity);
             }

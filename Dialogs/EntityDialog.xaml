@@ -24,7 +24,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Width="60" IsCancel="True">Отмена</Button>
+            <Button Grid.Column="1" Width="60" IsCancel="True">Назад</Button>
         </Grid>
     </StackPanel>
 </Window>

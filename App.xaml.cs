@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using TransportGraphApp.Actions;
@@ -17,7 +18,7 @@ namespace TransportGraphApp {
             Console.WriteLine($"City tags in database: {DataBase.GetCollection<CityTags>().FindOne(ct => ct.IsPrimary).Values.Count}");
             Console.WriteLine($"Road types in database: {DataBase.GetCollection<RoadTypes>().FindOne(rt => rt.IsPrimary).Values.Count}");
         }
-        
+
         private void UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
             MessageBox.Show("Возникло исключение: " + e.Exception.Message + "\n Приложение будет закрыто", 
                 "Исключение", 
