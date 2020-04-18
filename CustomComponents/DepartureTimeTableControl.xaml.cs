@@ -123,7 +123,7 @@ namespace TransportGraphApp.CustomComponents {
             }
             
             var parsed = int.TryParse(result, out var res);
-            if (!parsed || res > 24 || res < 0) {
+            if (!parsed || res > 23 || res < 0) {
                 e.Handled = true;
             }
         }
@@ -148,7 +148,7 @@ namespace TransportGraphApp.CustomComponents {
             }
             
             var parsed = int.TryParse(result, out var res);
-            if (!parsed || res > 60 || res < 0) {
+            if (!parsed || res > 59 || res < 0) {
                 e.Handled = true;
             }
         }

@@ -60,6 +60,17 @@ namespace TransportGraphApp.CustomComponents {
             ValueBox.Select(0, ValueBox.Text.Length);
         }
 
+        private void ElementLostFocus(object sender, RoutedEventArgs e) {
+            // Console.WriteLine(Popup.IsFocused);
+            // Console.WriteLine(HelpList.IsFocused);
+            // var it = HelpList.ItemContainerGenerator.ContainerFromIndex(0) as ListViewItem;
+            // Console.WriteLine(it?.IsFocused);
+            // Popup.IsOpen = false;
+            //
+            // HelpList.SelectedItem = null;
+            // OnEnterPressed?.Invoke();
+        }
+
         private void ValueChanged(object sender, TextChangedEventArgs e) {
             if (!ValueBox.IsFocused) return;
             if (_helpingValues == null || !_helpingValues.Any()) return;
@@ -72,7 +83,14 @@ namespace TransportGraphApp.CustomComponents {
             return ((string)item).ToLower().Contains(Value.ToLower());
         }
 
-        private void ValueBoxPressedDown(object sender, KeyEventArgs e) {
+        private void ValueBoxPressedDownOrTab(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Tab) {
+                HelpList.SelectedItem = null;
+                Popup.IsOpen = false;
+                OnEnterPressed?.Invoke();
+                return;
+            }
+
             if (e.Key != Key.Down) return;
             
             if (HelpList.Items.Count == 1) {

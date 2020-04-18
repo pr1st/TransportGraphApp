@@ -29,12 +29,13 @@ namespace TransportGraphApp.Actions {
 
             genericEntityDialog.AddColumn("Название", c => c.Name);
             genericEntityDialog.AddColumn("Стоимость проживания", c => c.CostOfStaying);
-            genericEntityDialog.AddColumn("Кол.во Тэгов", c => c.Tags.Count());
+            genericEntityDialog.AddColumn("Кол.во Тэгов", c => c.Tags.Count);
             
             _nameControl = new StringWithHelpRowControl() {
                 TitleValue = "Название",
                 TitleToolTip = "Представляет собой уникальный индетификатор населенного пункта, в разных транспортных системах нас. пункт будет одним и тем же, если у них названия совпадают",
                 OnEnterPressed = () => {
+                    if (!_allCitiesList.Select(c => c.Name).Contains(_nameControl.Value)) return;
                     var city = _allCitiesList.First(c => c.Name == _nameControl.Value);
                     _costOfStayingControl.Value = city.CostOfStaying;
                     _tagsControl.Value = city.Tags;
@@ -102,6 +103,7 @@ namespace TransportGraphApp.Actions {
 
         private static TransportSystem _selectedSystem;
         private static CityTags _cityTags;
+        
         private static IList<City> _citiesList;
         private static IList<City> _allCitiesList;
         

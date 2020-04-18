@@ -8,8 +8,9 @@
         <TextBox Width="180" Height="25" 
                  FontSize="16"  VerticalAlignment="Top"
                  TextChanged="ValueChanged"
-                 PreviewKeyDown="ValueBoxPressedDown"
+                 PreviewKeyDown="ValueBoxPressedDownOrTab"
                  GotKeyboardFocus="ElementGotFocus"
+                 LostFocus="ElementLostFocus"
                  Name="ValueBox" x:FieldModifier="private" />
         <Popup Placement="Bottom"
                StaysOpen="False"
