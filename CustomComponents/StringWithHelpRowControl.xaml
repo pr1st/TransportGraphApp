@@ -14,7 +14,7 @@
         <Popup Placement="Bottom"
                StaysOpen="False"
                Name="Popup" x:FieldModifier="private">
-            <ListView Width="180" MaxHeight="55"
+            <ListView Width="180" MaxHeight="155"
                       MouseDoubleClick="HelpListMousePressed"
                       PreviewKeyDown="HelpListPressedEnter"
                       Name="HelpList" x:FieldModifier="private" />

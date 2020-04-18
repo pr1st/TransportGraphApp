@@ -17,6 +17,11 @@ namespace TransportGraphApp.CustomComponents {
             set => StringTitle.Text = value;
         }
         
+        public string TitleToolTip {
+            get => (string)StringTitle.ToolTip;
+            set => StringTitle.ToolTip = value;
+        }
+        
         public double Value {
             get {
                 var text = ValueBox.Text;

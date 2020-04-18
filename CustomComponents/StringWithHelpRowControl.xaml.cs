@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -31,6 +33,17 @@ namespace TransportGraphApp.CustomComponents {
             get => StringTitle.Text;
             set => StringTitle.Text = value;
         }
+        
+        public string TitleToolTip {
+            get => (string)StringTitle.ToolTip;
+            set => StringTitle.ToolTip = value;
+        }
+        
+        public ThreadStart OnEnterPressed { get; set; }
+
+        public new bool Focus() {
+            return ValueBox.Focus();
+        }
 
         public IList<string> HelpingValues {
             get => _helpingValues;
@@ -49,13 +62,14 @@ namespace TransportGraphApp.CustomComponents {
 
         private void ValueChanged(object sender, TextChangedEventArgs e) {
             if (!ValueBox.IsFocused) return;
+            if (_helpingValues == null || !_helpingValues.Any()) return;
+            
             Popup.IsOpen = true;
             CollectionViewSource.GetDefaultView(HelpList.ItemsSource).Refresh();
         }
 
         private bool ItemFilter(object item) {
-            return ((string)item).ToLower().StartsWith(Value.ToLower());
-            
+            return ((string)item).ToLower().Contains(Value.ToLower());
         }
 
         private void ValueBoxPressedDown(object sender, KeyEventArgs e) {
@@ -81,6 +95,7 @@ namespace TransportGraphApp.CustomComponents {
                     HelpList.SelectedItem = null;
                     ValueBox.Focus();
                     Popup.IsOpen = false;
+                    OnEnterPressed?.Invoke();
                     break;
                 case Key.Escape:
                     HelpList.SelectedItem = null;
@@ -96,6 +111,8 @@ namespace TransportGraphApp.CustomComponents {
                 HelpList.SelectedItem = null;
                 ValueBox.Focus();
                 Popup.IsOpen = false;
+
+                OnEnterPressed?.Invoke();
             }
         }
     }

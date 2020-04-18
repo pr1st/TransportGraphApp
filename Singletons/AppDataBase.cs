@@ -21,11 +21,11 @@ namespace TransportGraphApp.Singletons {
         }
 
         public IEnumerable<City> GetCitiesOfTransportSystem(TransportSystem ts) {
-            return GetCollection<City>().Find(c => c.TransportSystemIds.Count(tsId => tsId == ts.Id) == 1);
+            return GetCollection<City>().FindAll().Where(c => c.TransportSystemIds.Contains(ts.Id));
         }
         
         public int CountCitiesOfTransportSystem(TransportSystem ts) {
-            return GetCollection<City>().Count(c => c.TransportSystemIds.Count(tsId => tsId == ts.Id) == 1);
+            return GetCollection<City>().FindAll().Count(c => c.TransportSystemIds.Contains(ts.Id));
         }
     }
 }

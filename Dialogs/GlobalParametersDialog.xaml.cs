@@ -42,10 +42,12 @@ namespace TransportGraphApp.Dialogs {
 
                             return true;
                         },
-                        FieldName = {Text = "Введите название"},
-                        FieldValue = {Text = ""}
+                        RowControl = { 
+                            TitleValue = "Введите название",
+                            Value = ""
+                        }
                     };
-                    return d.ShowDialog() != true ? null : new CityTag() { Name = d.FieldValue.Text};
+                    return d.ShowDialog() != true ? null : new CityTag() { Name = d.RowControl.Value};
                 },
                 Value = _initCityTags.Values
             };
@@ -71,10 +73,12 @@ namespace TransportGraphApp.Dialogs {
 
                             return true;
                         },
-                        FieldName = {Text = "Введите название"},
-                        FieldValue = {Text = ""}
+                        RowControl = { 
+                            TitleValue = "Введите название",
+                            Value = ""
+                        }
                     };
-                    return d.ShowDialog() != true ? null : new RoadType() { Name = d.FieldValue.Text};
+                    return d.ShowDialog() != true ? null : new RoadType() { Name = d.RowControl.Value};
                 },
                 Value = _initRoadTypes.Values
             };
@@ -88,8 +92,6 @@ namespace TransportGraphApp.Dialogs {
         
         
         private void CancelClick() {
-            Console.WriteLine("doin it");
-            
             _initCityTags.Values = _availableCityTypesControl.Value;
             App.DataBase.GetCollection<CityTags>().Update(_initCityTags);
             
