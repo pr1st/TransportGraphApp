@@ -1,0 +1,23 @@
+﻿<Window x:Class="TransportGraphApp.Dialogs.TaskSpecificationDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Title="Спецификация задачи">
+    <StackPanel Margin="10">
+        <StackPanel Name="PropertiesPanel" x:FieldModifier="private" />
+        <Grid Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="60" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Click="RunClick">Запустить задачу</Button>
+            <Button Grid.Column="2" Click="CheckClick">Проверить данные</Button>
+            <Button Grid.Column="4" IsCancel="True">Отмена</Button>
+        </Grid>
+    </StackPanel>
+</Window>
