@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using LiteDB;
 
 namespace TransportGraphApp.Models {
@@ -17,7 +19,14 @@ namespace TransportGraphApp.Models {
         
         public IList<RoadType> RoadTypes { get; set; } = new List<RoadType>();
         
-        public DepartureTime DepartureTime { get; set; }
+        public static AlgorithmConfig GetDefault => new AlgorithmConfig() {
+            IsPrimary = true,
+            TransportSystems = new List<TransportSystem>(),
+            AlgorithmType = AlgorithmType.Cost,
+            MethodType = MethodType.Standard,
+            CityTags = new List<CityTag>(),
+            RoadTypes = new List<RoadType>(),
+        };
     }
 
     public enum AlgorithmType {

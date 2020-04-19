@@ -107,6 +107,9 @@
     <Page Update="Dialogs\TaskSpecificationDialog.xaml">
       <Generator></Generator>
     </Page>
+    <Page Update="CustomComponents\ComboBoxRowControl.xaml">
+      <Generator></Generator>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>
@@ -118,6 +121,9 @@
     </Compile>
     <Compile Update="Dialogs\TaskSpecificationDialog.xaml.cs">
       <DependentUpon>TaskSpecificationDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="CustomComponents\ComboBoxRowControl.xaml.cs">
+      <DependentUpon>ComboBoxRowControl.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 

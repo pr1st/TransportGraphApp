@@ -20,7 +20,8 @@ namespace TransportGraphApp.Dialogs {
             Owner = App.Window;
             Icon = AppResources.GetAppIcon;
 
-            AddCollectionsIfNotExisted();
+            _initCityTags = App.DataBase.GetCollection<CityTags>().FindOne(ct => ct.IsPrimary);
+            _initRoadTypes = App.DataBase.GetCollection<RoadTypes>().FindOne(rt => rt.IsPrimary);
             
             _availableCityTypesControl = new GenericTableRowControl<CityTag>() {
                 TitleValue = "Используемые типы населенных пунктов",
@@ -97,19 +98,6 @@ namespace TransportGraphApp.Dialogs {
             
             _initRoadTypes.Values = _availableRoadTypesControl.Value;
             App.DataBase.GetCollection<RoadTypes>().Update(_initRoadTypes);
-        }
-
-
-        private void AddCollectionsIfNotExisted() {
-            if (!App.DataBase.GetCollection<CityTags>().Find(ct => ct.IsPrimary).Any()) {
-                App.DataBase.GetCollection<CityTags>().Insert(new CityTags() {IsPrimary = true});
-            }
-            if (!App.DataBase.GetCollection<RoadTypes>().Find(rt => rt.IsPrimary).Any()) {
-                App.DataBase.GetCollection<RoadTypes>().Insert(new RoadTypes() {IsPrimary = true});
-            }
-
-            _initCityTags = App.DataBase.GetCollection<CityTags>().FindOne(ct => ct.IsPrimary);
-            _initRoadTypes = App.DataBase.GetCollection<RoadTypes>().FindOne(rt => rt.IsPrimary);
         }
     }
 }

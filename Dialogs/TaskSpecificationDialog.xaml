@@ -5,13 +5,13 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Title="Спецификация задачи">
-    <StackPanel Margin="10">
+    <StackPanel Margin="10" Width="500">
         <StackPanel Name="PropertiesPanel" x:FieldModifier="private" />
         <Grid Margin="0,10,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
