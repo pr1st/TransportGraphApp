@@ -12,5 +12,6 @@ namespace TransportGraphApp.Models {
         public IList<CityTag> Tags { get; set; } = new List<CityTag>();
 
         public IList<ObjectId> TransportSystemIds { get; set; } = new List<ObjectId>();
+        
     }
 }

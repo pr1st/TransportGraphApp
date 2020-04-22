@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using LiteDB;
+using TransportGraphApp.Actions;
 using TransportGraphApp.CustomComponents;
 using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Dialogs {
     public partial class TaskSpecificationDialog : Window {
         private AlgorithmConfig _config;
-
-        private IList<TransportSystem> _transportSystems;
-        private IList<CityTag> _cityTags;
-        private IList<RoadType> _roadTypes;
 
         private GenericTableRowControl<TransportSystem> _transportSystemsControl;
         private ComboBoxRowControl _algorithmTypeControl;
@@ -25,7 +21,10 @@ namespace TransportGraphApp.Dialogs {
             Owner = App.Window;
             Icon = AppResources.GetAppIcon;
             
-            ConfigUpdatedData();
+            _config = App.DataBase.GetCollection<AlgorithmConfig>().FindOne(a => a.IsPrimary);
+            var transportSystems = App.DataBase.GetCollection<TransportSystem>().FindAll().ToList();
+            var cityTags = App.DataBase.GetCollection<CityTags>().FindOne(ct => ct.IsPrimary).Values;
+            var roadTypes = App.DataBase.GetCollection<RoadTypes>().FindOne(rt => rt.IsPrimary).Values;
             
             _transportSystemsControl = new GenericTableRowControl<TransportSystem>() {
                 TitleValue = "Транспортные системы",
@@ -44,7 +43,7 @@ namespace TransportGraphApp.Dialogs {
                                 return false;
                             }
 
-                            if (!_transportSystems.Select(ts => ts.Name).Contains(transportSystemName.Trim())) {
+                            if (!transportSystems.Select(ts => ts.Name).Contains(transportSystemName.Trim())) {
                                 ComponentUtils.ShowMessage("Название должно представлять собой одно из названий транспортной системы (предоставленных в выпадающем окошке)", MessageBoxImage.Error);
                                 return false;
                             }
@@ -54,10 +53,10 @@ namespace TransportGraphApp.Dialogs {
                         RowControl = {
                             TitleValue = "Введите название транспортной системы",
                             Value = "",
-                            HelpingValues = _transportSystems.Select(ts => ts.Name).ToList()
+                            HelpingValues = transportSystems.Select(ts => ts.Name).ToList()
                         }
                     };
-                    return d.ShowDialog() != true ? null : _transportSystems.First(ts => ts.Name == d.RowControl.Value);
+                    return d.ShowDialog() != true ? null : transportSystems.First(ts => ts.Name == d.RowControl.Value);
                 },
                 Value = _config.TransportSystems
             };
@@ -74,7 +73,7 @@ namespace TransportGraphApp.Dialogs {
             _cityTagsControl = new GenericTableRowControl<CityTag>() {
                 TitleValue = "Центральные нас. пункты",
                 TitleToolTip = "Представляет собой набор тэгов, нас. пункт имеющий хотя-бы 1 тег из списка будет считаться центральным",
-                OnAdd = cityTags => {
+                OnAdd = cityTagsInList => {
                     var d = new StringFieldDialog {
                         Title = "Выбор центральных нас. пунктов",
                         IsViable = tagName => {
@@ -83,12 +82,12 @@ namespace TransportGraphApp.Dialogs {
                                 return false;
                             }
                             
-                            if (cityTags.Select(ct => ct.Name).Contains(tagName.Trim())) {
+                            if (cityTagsInList.Select(ct => ct.Name).Contains(tagName.Trim())) {
                                 ComponentUtils.ShowMessage("В списке уже есть данный тэг", MessageBoxImage.Error);
                                 return false;
                             }
 
-                            if (!_cityTags.Select(ct => ct.Name).Contains(tagName.Trim())) {
+                            if (!cityTags.Select(ct => ct.Name).Contains(tagName.Trim())) {
                                 ComponentUtils.ShowMessage("Название должно представлять собой один из тэгов населенных пунктов (предоставленных в выпадающем окошке)", MessageBoxImage.Error);
                                 return false;
                             }
@@ -98,10 +97,10 @@ namespace TransportGraphApp.Dialogs {
                         RowControl = {
                             TitleValue = "Введите название тэга",
                             Value = "",
-                            HelpingValues = _cityTags.Select(ct => ct.Name).ToList()
+                            HelpingValues = cityTags.Select(ct => ct.Name).ToList()
                         }
                     };
-                    return d.ShowDialog() != true ? null : _cityTags.First(ct => ct.Name == d.RowControl.Value);;
+                    return d.ShowDialog() != true ? null : cityTags.First(ct => ct.Name == d.RowControl.Value);;
                 },
                 Value = _config.CityTags
             };
@@ -124,7 +123,7 @@ namespace TransportGraphApp.Dialogs {
                                 return false;
                             }
 
-                            if (!_roadTypes.Select(rt => rt.Name).Contains(typeName.Trim())) {
+                            if (!roadTypes.Select(rt => rt.Name).Contains(typeName.Trim())) {
                                 ComponentUtils.ShowMessage("Название должно представлять собой один из типов маршрутов (предоставленных в выпадающем окошке)", MessageBoxImage.Error);
                                 return false;
                             }
@@ -134,10 +133,10 @@ namespace TransportGraphApp.Dialogs {
                         RowControl = {
                             TitleValue = "Введите название типа",
                             Value = "",
-                            HelpingValues = _roadTypes.Select(rt => rt.Name).ToList()
+                            HelpingValues = roadTypes.Select(rt => rt.Name).ToList()
                         }
                     };
-                    return d.ShowDialog() != true ? null : _roadTypes.First(rt => rt.Name == d.RowControl.Value);;
+                    return d.ShowDialog() != true ? null : roadTypes.First(rt => rt.Name == d.RowControl.Value);;
                 },
                 Value = _config.RoadTypes
             };
@@ -194,50 +193,14 @@ namespace TransportGraphApp.Dialogs {
             Closed += (sender, args) => CancelClick();
         }
 
-        private void ConfigUpdatedData() {
-            _config = App.DataBase.GetCollection<AlgorithmConfig>().FindOne(a => a.IsPrimary);
-
-            _transportSystems = App.DataBase.GetCollection<TransportSystem>().FindAll().ToList();
-            var trash0 = new List<TransportSystem>();
-            foreach (var ts in _config.TransportSystems) {
-                var tsFound = App.DataBase.GetCollection<TransportSystem>().FindById(ts.Id);
-                if (tsFound != null) {
-                    ts.Name = tsFound.Name;
-                }
-                else {
-                    trash0.Add(ts);
-                }
-            }
-            
-            _cityTags = App.DataBase.GetCollection<CityTags>().FindOne(ct => ct.IsPrimary).Values;
-            var trash1 = _config.CityTags
-                .Where(ct => !_cityTags.Select(c => c.Name).Contains(ct.Name))
-                .ToList();
-
-            _roadTypes = App.DataBase.GetCollection<RoadTypes>().FindOne(rt => rt.IsPrimary).Values;
-            var trash2 = _config.RoadTypes
-                .Where(rt => !_roadTypes.Select(r => r.Name).Contains(rt.Name))
-                .ToList();
-
-            foreach (var transportSystem in trash0) {
-                _config.TransportSystems.Remove(transportSystem);
-            }
-            
-            foreach (var cityTag in trash1) {
-                _config.CityTags.Remove(cityTag);
-            }
-            
-            foreach (var roadType in trash2) {
-                _config.RoadTypes.Remove(roadType);
-            }
-        }
-        
         private void RunClick(object sender, RoutedEventArgs e) {
             UpdateConfig();
+            TaskStartAction.Invoke();
         }
         
         private void CheckClick(object sender, RoutedEventArgs e) {
             UpdateConfig();
+            TaskCheckDataAction.Invoke();
         }
 
         private void CancelClick() {

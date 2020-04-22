@@ -1,7 +1,29 @@
-﻿namespace TransportGraphApp.Actions {
+﻿using System;
+using System.Windows;
+using TransportGraphApp.Models;
+
+namespace TransportGraphApp.Actions {
     public static class TaskStartAction {
         public static void Invoke() {
-            // todo
+            TaskUpdateConfigDataAction.Invoke();
+            var cfg = App.DataBase.GetCollection<AlgorithmConfig>().FindOne(a => a.IsPrimary);
+            var completed = App.Algorithm.CheckTransportSystems(cfg);
+            if (!completed) {
+                ComponentUtils.ShowMessage("Проверка данных показал отрицательный ответ \n" +
+                                           "Причина: у транспортных сетей нету необходимой связности для работы алгоритма", 
+                    MessageBoxImage.Information);
+                return;
+            }
+
+            var algorithmResult = App.Algorithm.Run(cfg);
+            
+            if (algorithmResult == null) {
+                ComponentUtils.ShowMessage("Выбранный метод работы алгоритма или тип алгоритма еще не поддерживается", MessageBoxImage.Information);
+                return;
+            }
+
+            App.DataBase.GetCollection<AlgorithmResult>().Insert(algorithmResult);
+            ComponentUtils.ShowMessage("Поставленная задача была выполнена, результаты выполнения, можно посмотреть в соответствующей вкладке", MessageBoxImage.Information);
         }
     }
 }

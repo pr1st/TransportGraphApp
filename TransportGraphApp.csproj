@@ -110,6 +110,12 @@
     <Page Update="CustomComponents\ComboBoxRowControl.xaml">
       <Generator></Generator>
     </Page>
+    <Page Update="Dialogs\TaskResultsDialog.xaml">
+      <Generator></Generator>
+    </Page>
+    <Page Update="CustomComponents\ConstantStringRowControl.xaml">
+      <Generator></Generator>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>
@@ -124,6 +130,12 @@
     </Compile>
     <Compile Update="CustomComponents\ComboBoxRowControl.xaml.cs">
       <DependentUpon>ComboBoxRowControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Dialogs\TaskResultsDialog.xaml.cs">
+      <DependentUpon>TaskResultsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="CustomComponents\ConstantStringRowControl.xaml.cs">
+      <DependentUpon>ConstantStringRowControl.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
