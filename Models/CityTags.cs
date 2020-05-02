@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LiteDB;
 
 namespace TransportGraphApp.Models {
@@ -9,8 +10,21 @@ namespace TransportGraphApp.Models {
 
         public IList<CityTag> Values { get; set; } = new List<CityTag>();
     }
-    
-    public class CityTag {
+
+    public class CityTag : IEquatable<CityTag> {
         public string Name { get; set; }
+
+        public bool Equals(CityTag other) {
+            return other != null && Name == other.Name;
+        }
+
+        public static IDictionary<string, Func<CityTag, object>> PropertyMatcher() {
+            return new Dictionary<string, Func<CityTag, object>>() {
+                {
+                    "Название",
+                    ct => ct.Name
+                }
+            };
+        }
     }
 }

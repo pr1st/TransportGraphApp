@@ -13,27 +13,9 @@ namespace TransportGraphApp.Dialogs {
             Owner = App.Window;
             Icon = AppResources.GetAppIcon;
             
-            var propertyMatcher = new Dictionary<string, Func<AlgorithmResult, object>> {
-                {
-                    "Дата выполнения", 
-                    res => res.RunDate
-                },
-                {
-                   "Метод",
-                   res => res.AlgorithmConfig.MethodType
-                },
-                {
-                  "Алгоритм",
-                  res => res.AlgorithmConfig.AlgorithmType
-                },
-                {
-                    "Кол-во. нас. пунктов",
-                    res => res.Cities.Count
-                }
-            };
             var entityList = new GenericEntityListControl<AlgorithmResult>(
                 "Результаты",
-                propertyMatcher,
+                AlgorithmResult.PropertyMatcher(),
                 DisplayProperties);
             
             ListPanel.Children.Add(entityList.GetUiElement());
@@ -53,11 +35,11 @@ namespace TransportGraphApp.Dialogs {
             
             var cfgAlgType = new ConstantStringRowControl() {
                 TitleValue = "Тип алгоритма",
-                Value = res.AlgorithmConfig.AlgorithmType.ToString()
+                Value = res.AlgorithmConfig.AlgorithmType.GetDescription()
             };
             var cfgMetType = new ConstantStringRowControl() {
                 TitleValue = "Тип метода",
-                Value = res.AlgorithmConfig.MethodType.ToString()
+                Value = res.AlgorithmConfig.MethodType.GetDescription()
             };
             var cfgTransportSystems = new ConstantStringRowControl() {
                 TitleValue = "Использованные транспортные системы",

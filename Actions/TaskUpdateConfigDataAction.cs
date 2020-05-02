@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TransportGraphApp.Models;
 
@@ -22,11 +23,11 @@ namespace TransportGraphApp.Actions {
             }
             
             var trash1 = config.CityTags
-                .Where(ct => !cityTags.Select(c => c.Name).Contains(ct.Name))
+                .Where(ct => !cityTags.Contains(ct))
                 .ToList();
 
             var trash2 = config.RoadTypes
-                .Where(rt => !roadTypes.Select(r => r.Name).Contains(rt.Name))
+                .Where(rt => !roadTypes.Contains(rt))
                 .ToList();
 
             foreach (var transportSystem in trash0) {
@@ -40,7 +41,7 @@ namespace TransportGraphApp.Actions {
             foreach (var roadType in trash2) {
                 config.RoadTypes.Remove(roadType);
             }
-            
+
             App.DataBase.GetCollection<AlgorithmConfig>().Update(config);
         }
     }

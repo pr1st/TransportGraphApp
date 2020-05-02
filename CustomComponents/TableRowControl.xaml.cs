@@ -18,17 +18,17 @@ namespace TransportGraphApp.CustomComponents {
         private readonly TableRowControl _table = new TableRowControl();
 
         private IList<T> _values = new List<T>();
-        
+
         public string TitleValue {
             get => _table.TableTitle.Text;
             set => _table.TableTitle.Text = value;
         }
-        
+
         public string TitleToolTip {
-            get => (string)_table.TableTitle.ToolTip;
+            get => (string) _table.TableTitle.ToolTip;
             set => _table.TableTitle.ToolTip = value;
         }
-        
+
         public IList<T> Value {
             get => _values;
             set {
@@ -38,28 +38,33 @@ namespace TransportGraphApp.CustomComponents {
             }
         }
 
-        public void AddColumn(string columnName, Func<T, object> columnMatcher) {
-            var column = new GridViewColumn() {
-                Header = columnName,
-                DisplayMemberBinding = new Binding() {
-                    Converter = new PropertyConverter<T>() {
-                        Supplier = columnMatcher
+        public void AddColumns(IDictionary<string, Func<T, object>> columns) {
+            foreach (var (columnName, columnMatcher) in columns) {
+                var column = new GridViewColumn() {
+                    Header = columnName,
+                    DisplayMemberBinding = new Binding() {
+                        Converter = new PropertyConverter<T>() {
+                            Supplier = columnMatcher
+                        }
                     }
-                }
-            };
-            ((GridView) _table.ItemList.View).Columns.Add(column);
+                };
+                ((GridView) _table.ItemList.View).Columns.Add(column);
+            }
         }
-        
-        public Func<IList<T>, T> OnAdd { get; set; }
-        
+
+        public Func<IList<T>, IList<T>> OnAdd { get; set; }
+
         public GenericTableRowControl() {
             _table.ItemList.ItemsSource = _values;
-            
-            _table.AddButton.Click += (sender, args) => {
-                var addedElement = OnAdd.Invoke(_values);
-                if (addedElement == null) return;
 
-                _values.Add(addedElement);
+            _table.AddButton.Click += (sender, args) => {
+                var addedElements = OnAdd.Invoke(_values);
+                if (addedElements == null) return;
+
+                foreach (var element in addedElements) {
+                    _values.Add(element);
+                }
+
                 CollectionViewSource.GetDefaultView(_table.ItemList.ItemsSource).Refresh();
             };
 

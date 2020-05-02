@@ -7,8 +7,15 @@ using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Actions {
     public static class ListTransportSystemsAction {
+        // updateable properties
+        private static IList<TransportSystem> _transportSystemsList;
+
+        // ui controls
+        private static GenericEntityDialog<TransportSystem> _dialog;
+        private static StringRowControl _nameControl;
+
         public static void Invoke() {
-            var genericEntityDialog = new GenericEntityDialog<TransportSystem>() {
+            _dialog = new GenericEntityDialog<TransportSystem>() {
                 Title = "Транспортные системы",
                 ListTitle = "Доступные транспортные системы",
                 OpenAddNewItemWindowButtonTitle = "Открыть окно для добавления транспортной системы",
@@ -20,62 +27,27 @@ namespace TransportGraphApp.Actions {
                 UpdateCollectionFunction = UpdateCollection
             };
 
-            genericEntityDialog.AddColumn(
-                "Название",
-                ts => ts.Name);
-            genericEntityDialog.AddColumn(
-                "Кол-во нас. пунктов",
-                ts => App.DataBase.CountCitiesOfTransportSystem(ts));
-            genericEntityDialog.AddColumn(
-                "Кол-во маршрутов",
-                ts => App.DataBase.GetCollection<Road>().Count(r => r.TransportSystemId == ts.Id));
+            _dialog.AddColumns(TransportSystem.PropertyMatcher());
 
-            _nameControl = new StringRowControl() {
-                TitleValue = "Название",
-                TitleToolTip = "Представляет собой уникальный индетификатор транспортной системы"
-            };
+            InitNameProperty();
 
-            genericEntityDialog.AddProperty(
-                _nameControl,
-                () => _nameControl.Value = "",
-                ts => _nameControl.Value = ts.Name);
-
-            genericEntityDialog.ShowDialog();
+            UpdateCollection();
+            _dialog.ShowDialog();
         }
 
-        private static IList<TransportSystem> _systemsList;
-
-        private static StringRowControl _nameControl;
-
+        // callback methods
         private static bool AddTransportSystem() {
-            if (_nameControl.Value == "") {
-                ComponentUtils.ShowMessage("Введите не пустое название транспортной системы", MessageBoxImage.Error);
-                return false;
-            }
-
-            if (_systemsList.Select(ts => ts.Name).Contains(_nameControl.Value)) {
-                ComponentUtils.ShowMessage("Система с таким названием уже существует", MessageBoxImage.Error);
-                return false;
-            }
+            if (!IsViable(null)) return false;
 
             App.DataBase.GetCollection<TransportSystem>().Insert(new TransportSystem() {
                 Name = _nameControl.Value,
             });
-            
+
             return true;
         }
 
         private static bool UpdateTransportSystem(TransportSystem selected) {
-            if (_nameControl.Value == "") {
-                ComponentUtils.ShowMessage("Введите не пустое название транспортной системы", MessageBoxImage.Error);
-                return false;
-            }
-
-            if (selected.Name != _nameControl.Value &&
-                _systemsList.Select(t => t.Name).Contains(_nameControl.Value)) {
-                ComponentUtils.ShowMessage("Система с таким названием уже существует", MessageBoxImage.Error);
-                return false;
-            }
+            if (!IsViable(null)) return false;
 
             selected.Name = _nameControl.Value;
 
@@ -86,7 +58,9 @@ namespace TransportGraphApp.Actions {
 
         private static bool RemoveTransportSystem(TransportSystem selected) {
             App.DataBase.GetCollection<Road>().DeleteMany(r => r.TransportSystemId == selected.Id);
-            var cities = App.DataBase.GetCitiesOfTransportSystem(selected);
+            
+            var cities = App.DataBase.GetCitiesOfTransportSystem(selected)
+                .Where(c => c.TransportSystemIds.Contains(selected.Id));
             foreach (var city in cities) {
                 if (city.TransportSystemIds.Count == 1) {
                     App.DataBase.GetCollection<City>().Delete(city.Id);
@@ -96,13 +70,45 @@ namespace TransportGraphApp.Actions {
                     App.DataBase.GetCollection<City>().Update(city);
                 }
             }
+
             App.DataBase.GetCollection<TransportSystem>().Delete(selected.Id);
+            
             return true;
         }
 
+        // support method for callback methods
+        private static bool IsViable(string previousName) {
+            if (_nameControl.Value == "") {
+                ComponentUtils.ShowMessage("Введите не пустое название транспортной системы", MessageBoxImage.Error);
+                return false;
+            }
+
+            if (_transportSystemsList.Select(с => с.Name).Contains(_nameControl.Value)
+                && previousName != _nameControl.Value) {
+                ComponentUtils.ShowMessage("Транспортная система с таким названием уже существует",
+                    MessageBoxImage.Error);
+                return false;
+            }
+
+            return true;
+        }
+
+        // init methods
+        private static void InitNameProperty() {
+            _nameControl = new StringRowControl() {
+                TitleValue = "Название",
+                TitleToolTip = "Представляет собой уникальный индетификатор транспортной системы"
+            };
+            _dialog.AddProperty(
+                _nameControl,
+                () => _nameControl.Value = "",
+                ts => _nameControl.Value = ts.Name);
+        }
+        
+        // update state method
         private static IEnumerable<TransportSystem> UpdateCollection() {
-            _systemsList = App.DataBase.GetCollection<TransportSystem>().FindAll().ToList();
-            return _systemsList;
+            _transportSystemsList = App.DataBase.GetCollection<TransportSystem>().FindAll().ToList();
+            return _transportSystemsList;
         }
     }
 }

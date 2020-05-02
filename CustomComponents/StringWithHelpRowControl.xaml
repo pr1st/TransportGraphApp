@@ -10,7 +10,6 @@
                  TextChanged="ValueChanged"
                  PreviewKeyDown="ValueBoxPressedDownOrTab"
                  GotKeyboardFocus="ElementGotFocus"
-                 LostFocus="ElementLostFocus"
                  Name="ValueBox" x:FieldModifier="private" />
         <Popup Placement="Bottom"
                StaysOpen="False"

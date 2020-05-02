@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,7 +33,7 @@ namespace TransportGraphApp.CustomComponents {
     }
     
     
-    public class GenericEntityListControl<T> where T : IAppModel {
+    public class GenericEntityListControl<T> {
         private readonly EntityListControl _entityListControl = new EntityListControl();
 
         public GenericEntityListControl(string title, IDictionary<string, Func<T, object>> propertyMatcher, Action<T> onSelectElement) {
@@ -65,6 +66,10 @@ namespace TransportGraphApp.CustomComponents {
         public T Selected {
             get => (T) _entityListControl.List.SelectedItem;
             set => _entityListControl.List.SelectedItem = value;
+        }
+        
+        public IList<T> SelectedAll() {
+            return _entityListControl.List.SelectedItems.Cast<T>().ToList();
         }
 
         public UIElement GetUiElement() => _entityListControl;

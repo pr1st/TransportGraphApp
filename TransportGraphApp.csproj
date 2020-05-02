@@ -101,9 +101,6 @@
     <Page Update="Dialogs\GlobalParametersDialog.xaml">
       <Generator></Generator>
     </Page>
-    <Page Update="Dialogs\DepartureTimeFieldDialog.xaml">
-      <Generator></Generator>
-    </Page>
     <Page Update="Dialogs\TaskSpecificationDialog.xaml">
       <Generator></Generator>
     </Page>
@@ -121,9 +118,6 @@
   <ItemGroup>
     <Compile Update="Dialogs\GlobalParametersDialog.xaml.cs">
       <DependentUpon>GlobalParametersDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Dialogs\DepartureTimeFieldDialog.xaml.cs">
-      <DependentUpon>DepartureTimeFieldDialog.xaml</DependentUpon>
     </Compile>
     <Compile Update="Dialogs\TaskSpecificationDialog.xaml.cs">
       <DependentUpon>TaskSpecificationDialog.xaml</DependentUpon>

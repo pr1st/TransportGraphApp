@@ -1,41 +1,50 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace TransportGraphApp.CustomComponents {
     public partial class ComboBoxRowControl : UserControl {
-        
-        private IList<string> _itemNames = new List<string>();
-        private IList<string> _displayedNames = new List<string>();
-        private IList<string> _itemsInfo = new List<string>();
-        
         public ComboBoxRowControl() {
             InitializeComponent();
-            ValueBox.SelectionChanged += (sender, args) => {
-                var info = _itemsInfo[_displayedNames.IndexOf((string) ValueBox.SelectedItem)];
-                InfoBox.Text = info;
-            };
         }
-        
-        public string Selected {
-            get => _itemNames[_displayedNames.IndexOf((string) ValueBox.SelectedItem)];
-            set => ValueBox.SelectedItem = _displayedNames[_itemNames.IndexOf(value)];
-        }
+    }
+
+    public class GenericComboBoxRowControl<T> where T : Enum {
+        private readonly ComboBoxRowControl _comboBoxRowControl = new ComboBoxRowControl();
+        private readonly IDictionary<T, string> _typeToDescription = new Dictionary<T, string>();
+        private readonly IDictionary<string, T> _descriptionToType = new Dictionary<string, T>();
 
         public string TitleValue {
-            get => StringTitle.Text;
-            set => StringTitle.Text = value;
-        }
-        
-        public string TitleToolTip {
-            get => (string)StringTitle.ToolTip;
-            set => StringTitle.ToolTip = value;
+            get => _comboBoxRowControl.StringTitle.Text;
+            set => _comboBoxRowControl.StringTitle.Text = value;
         }
 
-        public void AddItem(string itemName, string itemDisplayedName, string itemDescription) {
-            _itemNames.Add(itemName);
-            _displayedNames.Add(itemDisplayedName);
-            _itemsInfo.Add(itemDescription);
-            ValueBox.Items.Add(itemDisplayedName);
+        public string TitleToolTip {
+            get => (string) _comboBoxRowControl.StringTitle.ToolTip;
+            set => _comboBoxRowControl.StringTitle.ToolTip = value;
         }
+
+        public T Selected {
+            get =>  _descriptionToType[(string) _comboBoxRowControl.ValueBox.SelectedItem];
+            set => _comboBoxRowControl.ValueBox.SelectedItem = _typeToDescription[value];
+        }
+        
+        public GenericComboBoxRowControl(IDictionary<T, string> descriptionMap) {
+            _comboBoxRowControl.ValueBox.SelectionChanged += (sender, args) => {
+                var info = descriptionMap[Selected];
+                _comboBoxRowControl.InfoBox.Text = info;
+            };
+            
+            foreach (var type in descriptionMap.Keys) {
+                _typeToDescription[type] = type.GetDescription();
+                _descriptionToType[type.GetDescription()] = type;
+            }
+            
+            _comboBoxRowControl.ValueBox.ItemsSource = descriptionMap.Keys.Select(t => t.GetDescription());
+        }
+        
+        public UIElement GetUiElement => _comboBoxRowControl;
     }
 }

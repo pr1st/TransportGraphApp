@@ -57,9 +57,11 @@ namespace TransportGraphApp.Dialogs {
             _onAddWindowFunctions.Add(onAddWindow);
             _onUpdateWindowFunctions.Add(onUpdateWindow);
         }
-    
-        public void AddColumn(string name, Func<T, object> columnSupplier) {
-            _columnMatcher[name] = columnSupplier;
+
+        public void AddColumns(IDictionary<string, Func<T, object>> columns) {
+            foreach (var (name, columnSupplier) in columns) {
+                _columnMatcher[name] = columnSupplier;    
+            }
         }
     
         public void ShowDialog() {

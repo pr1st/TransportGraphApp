@@ -52,7 +52,6 @@ namespace TransportGraphApp.Singletons {
 
         private void SetUpHelpActions() {
             MenuHelpAbout.Click += (sender, args) => AboutAction.Invoke();
-            MenuHelpOverview.Click += (sender, args) => OverviewAction.Invoke();
         }
     }
 }

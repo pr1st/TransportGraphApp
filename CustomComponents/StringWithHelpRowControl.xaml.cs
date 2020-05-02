@@ -39,8 +39,6 @@ namespace TransportGraphApp.CustomComponents {
             set => StringTitle.ToolTip = value;
         }
         
-        public ThreadStart OnEnterPressed { get; set; }
-
         public new bool Focus() {
             return ValueBox.Focus();
         }
@@ -60,17 +58,6 @@ namespace TransportGraphApp.CustomComponents {
             ValueBox.Select(0, ValueBox.Text.Length);
         }
 
-        private void ElementLostFocus(object sender, RoutedEventArgs e) {
-            // Console.WriteLine(Popup.IsFocused);
-            // Console.WriteLine(HelpList.IsFocused);
-            // var it = HelpList.ItemContainerGenerator.ContainerFromIndex(0) as ListViewItem;
-            // Console.WriteLine(it?.IsFocused);
-            // Popup.IsOpen = false;
-            //
-            // HelpList.SelectedItem = null;
-            // OnEnterPressed?.Invoke();
-        }
-
         private void ValueChanged(object sender, TextChangedEventArgs e) {
             if (!ValueBox.IsFocused) return;
             if (_helpingValues == null || !_helpingValues.Any()) return;
@@ -87,7 +74,6 @@ namespace TransportGraphApp.CustomComponents {
             if (e.Key == Key.Tab) {
                 HelpList.SelectedItem = null;
                 Popup.IsOpen = false;
-                OnEnterPressed?.Invoke();
                 return;
             }
 
@@ -113,7 +99,6 @@ namespace TransportGraphApp.CustomComponents {
                     HelpList.SelectedItem = null;
                     ValueBox.Focus();
                     Popup.IsOpen = false;
-                    OnEnterPressed?.Invoke();
                     break;
                 case Key.Escape:
                     HelpList.SelectedItem = null;
@@ -124,14 +109,12 @@ namespace TransportGraphApp.CustomComponents {
         }
 
         private void HelpListMousePressed(object sender, MouseButtonEventArgs mouseButtonEventArgs) {
-            if (HelpList.SelectedItem != null) {
-                ValueBox.Text = (string) HelpList.SelectedItem;
-                HelpList.SelectedItem = null;
-                ValueBox.Focus();
-                Popup.IsOpen = false;
-
-                OnEnterPressed?.Invoke();
-            }
+            if (HelpList.SelectedItem == null) return;
+            
+            ValueBox.Text = (string) HelpList.SelectedItem;
+            HelpList.SelectedItem = null;
+            ValueBox.Focus();
+            Popup.IsOpen = false;
         }
     }
 }

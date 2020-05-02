@@ -4,38 +4,48 @@ using System.Linq;
 using System.Windows;
 using TransportGraphApp.Actions;
 using TransportGraphApp.CustomComponents;
+using TransportGraphApp.Dialogs.ResultDialogs;
 using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Dialogs {
     public partial class GlobalParametersDialog : Window {
+        // updateable properties
+        private static CityTags _cityTags;
+        private static RoadTypes _roadTypes;
 
-        private GenericTableRowControl<CityTag> _availableCityTypesControl;
-        private GenericTableRowControl<RoadType> _availableRoadTypesControl;
-
-        private CityTags _initCityTags;
-        private RoadTypes _initRoadTypes;
-
+        // ui controls
+        private GenericTableRowControl<CityTag> _cityTagsControl;
+        private GenericTableRowControl<RoadType> _roadTypesControl;
+        
         public GlobalParametersDialog() {
             InitializeComponent();
             Owner = App.Window;
             Icon = AppResources.GetAppIcon;
 
-            _initCityTags = App.DataBase.GetCollection<CityTags>().FindOne(ct => ct.IsPrimary);
-            _initRoadTypes = App.DataBase.GetCollection<RoadTypes>().FindOne(rt => rt.IsPrimary);
+            _cityTags = App.DataBase.GetCollection<CityTags>().FindOne(ct => ct.IsPrimary);
+            _roadTypes = App.DataBase.GetCollection<RoadTypes>().FindOne(rt => rt.IsPrimary);
             
-            _availableCityTypesControl = new GenericTableRowControl<CityTag>() {
+            InitCityTagsControl();
+            InitRoadTypesControl();
+
+            Closed += (sender, args) => CancelClick();
+        }
+
+        // init methods
+        private void InitCityTagsControl() {
+            _cityTagsControl = new GenericTableRowControl<CityTag>() {
                 TitleValue = "Используемые типы населенных пунктов",
                 TitleToolTip = "Представляет собой набор допустимых типов населенных пунктов в сети, используется при добавлении или обновлении населенного пункта",
-                OnAdd = roadTypes => {
-                    var d = new StringFieldDialog {
+                OnAdd = alreadyUsedCityTags => {
+                    var addDialog = new AddStringDialog() {
                         Title = "Новый тип населенного пункта",
-                        IsViable = newRoadTypeName => {
-                            if (newRoadTypeName.Trim() == "") {
+                        IsViable = newCityTagName => {
+                            if (newCityTagName.Trim() == "") {
                                 ComponentUtils.ShowMessage("Введите не пустое название", MessageBoxImage.Error);
                                 return false;
                             }
 
-                            if (roadTypes.Select(rt => rt.Name).Contains(newRoadTypeName.Trim())) {
+                            if (alreadyUsedCityTags.Contains(new CityTag() { Name = newCityTagName.Trim()})) {
                                 ComponentUtils.ShowMessage("Тип населенного пункта с таким названием уже существует",
                                     MessageBoxImage.Error);
                                 return false;
@@ -48,17 +58,25 @@ namespace TransportGraphApp.Dialogs {
                             Value = ""
                         }
                     };
-                    return d.ShowDialog() != true ? null : new CityTag() { Name = d.RowControl.Value};
+                    
+                    if (addDialog.ShowDialog() != true) return null;
+                    
+                    var created = new CityTag() { Name = addDialog.RowControl.Value};
+                    return new List<CityTag>() {created};
                 },
-                Value = _initCityTags.Values
+                Value = _cityTags.Values
             };
-            _availableCityTypesControl.AddColumn("Название", c => c.Name);
+            _cityTagsControl.AddColumns(CityTag.PropertyMatcher());
+            
+            PropertiesPanel.Children.Add(_cityTagsControl.GetUiElement);
+        }
 
-            _availableRoadTypesControl = new GenericTableRowControl<RoadType>() {
+        private void InitRoadTypesControl() {
+            _roadTypesControl = new GenericTableRowControl<RoadType>() {
                 TitleValue = "Используемые типы дорог",
                 TitleToolTip = "Представляет собой набор допустимых типов маршрутов в сети, используется при добавлении или обновлении маршрута",
-                OnAdd = roadTypes => {
-                    var d = new StringFieldDialog {
+                OnAdd = alreadyUsedRoadTypes => {
+                    var addDialog = new AddStringDialog() {
                         Title = "Новый тип дороги",
                         IsViable = newRoadTypeName => {
                             if (newRoadTypeName.Trim() == "") {
@@ -66,7 +84,7 @@ namespace TransportGraphApp.Dialogs {
                                 return false;
                             }
 
-                            if (roadTypes.Select(rt => rt.Name).Contains(newRoadTypeName.Trim())) {
+                            if (alreadyUsedRoadTypes.Contains(new RoadType() { Name = newRoadTypeName.Trim()})) {
                                 ComponentUtils.ShowMessage("Тип дороги с таким названием уже существует",
                                     MessageBoxImage.Error);
                                 return false;
@@ -79,25 +97,25 @@ namespace TransportGraphApp.Dialogs {
                             Value = ""
                         }
                     };
-                    return d.ShowDialog() != true ? null : new RoadType() { Name = d.RowControl.Value};
+                    if (addDialog.ShowDialog() != true) return null;
+                    
+                    var created = new RoadType() { Name = addDialog.RowControl.Value};
+                    return new List<RoadType>() {created};
                 },
-                Value = _initRoadTypes.Values
+                Value = _roadTypes.Values
             };
-            _availableRoadTypesControl.AddColumn("Название", r => r.Name);
+            _roadTypesControl.AddColumns(RoadType.PropertyMatcher());
 
-            PropertiesPanel.Children.Add(_availableCityTypesControl.GetUiElement);
-            PropertiesPanel.Children.Add(_availableRoadTypesControl.GetUiElement);
-
-            Closed += (sender, args) => CancelClick();
+            PropertiesPanel.Children.Add(_roadTypesControl.GetUiElement);
         }
         
         
         private void CancelClick() {
-            _initCityTags.Values = _availableCityTypesControl.Value;
-            App.DataBase.GetCollection<CityTags>().Update(_initCityTags);
+            _cityTags.Values = _cityTagsControl.Value;
+            App.DataBase.GetCollection<CityTags>().Update(_cityTags);
             
-            _initRoadTypes.Values = _availableRoadTypesControl.Value;
-            App.DataBase.GetCollection<RoadTypes>().Update(_initRoadTypes);
+            _roadTypes.Values = _roadTypesControl.Value;
+            App.DataBase.GetCollection<RoadTypes>().Update(_roadTypes);
         }
     }
 }

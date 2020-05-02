@@ -50,7 +50,6 @@ namespace TransportGraphApp.Singletons {
             var res = cfg.MethodType switch {
                 MethodType.Standard => RunStandardMethod(AlgorithmFunction(cfg)),
                 MethodType.Local => RunLocalFirstMethod(AlgorithmFunction(cfg)),
-                MethodType.Another => null,
                 _ => null
             };
             if (res != null) {

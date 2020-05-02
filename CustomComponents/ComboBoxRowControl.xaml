@@ -5,14 +5,14 @@
         <WrapPanel Width="360" Margin="0, 0, 0, 5">
             <TextBlock Width="165" Margin="0,0,5,0" 
                        TextWrapping="Wrap" FontSize="16" 
-                       Name="StringTitle" x:FieldModifier="private"/>
+                       Name="StringTitle"/>
             <ComboBox Width="180" Height="25"
                       FontSize="16" VerticalAlignment="Top"
-                      Name="ValueBox" x:FieldModifier="private"/>
+                      Name="ValueBox"/>
         </WrapPanel>
         <TextBlock Width="360"
                    TextWrapping="Wrap" FontSize="16" 
-                   Name="InfoBox" x:FieldModifier="private">
+                   Name="InfoBox">
         </TextBlock>
     </StackPanel>
 </UserControl>

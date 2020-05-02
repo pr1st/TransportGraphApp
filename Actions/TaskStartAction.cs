@@ -9,8 +9,8 @@ namespace TransportGraphApp.Actions {
             var cfg = App.DataBase.GetCollection<AlgorithmConfig>().FindOne(a => a.IsPrimary);
             var completed = App.Algorithm.CheckTransportSystems(cfg);
             if (!completed) {
-                ComponentUtils.ShowMessage("Проверка данных показал отрицательный ответ \n" +
-                                           "Причина: у транспортных сетей нету необходимой связности для работы алгоритма", 
+                ComponentUtils.ShowMessage("Проверка данных показала отрицательный ответ \n" +
+                                           "У транспортных сетей нету необходимой связности для работы алгоритма", 
                     MessageBoxImage.Information);
                 return;
             }
@@ -23,7 +23,7 @@ namespace TransportGraphApp.Actions {
             }
 
             App.DataBase.GetCollection<AlgorithmResult>().Insert(algorithmResult);
-            ComponentUtils.ShowMessage("Поставленная задача была выполнена, результаты выполнения, можно посмотреть в соответствующей вкладке", MessageBoxImage.Information);
+            ComponentUtils.ShowMessage("Поставленная задача была выполнена, результаты выполнения, можно посмотреть во вкладке \"Результаты расчетов\"", MessageBoxImage.Information);
         }
     }
 }

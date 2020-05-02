@@ -9,15 +9,14 @@ namespace TransportGraphApp.Actions {
             var completed = App.Algorithm.CheckTransportSystems(cfg);
             if (!completed) {
                 ComponentUtils.ShowMessage("Проверка отрицательная \n" +
-                                           "Причина: у транспортных сетей нету необходимой связности для работы алгоритма", 
+                                           "У указанных в концигурации транспортных сетей нету необходимой связности для работы алгоритма", 
                     MessageBoxImage.Information);
             }
             else {
                 ComponentUtils.ShowMessage("Проверка положительная\n" +
-                                           "Поставленное задание корректно и может быть выполненно\n",
+                                           "Поставленная задача корректна и может быть обработанна алгоритмом\n",
                     MessageBoxImage.Information);
             }
-            
         }
     }
 }
