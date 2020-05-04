@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LiteDB;
+using TransportGraphApp.Graph;
 
 namespace TransportGraphApp.Models {
     public class AlgorithmResult : IAppModel, IEquatable<AlgorithmResult> {
@@ -10,10 +11,9 @@ namespace TransportGraphApp.Models {
 
         public AlgorithmConfig AlgorithmConfig { get; set; }
 
-        public IList<City> Cities { get; set; } = new List<City>();
+        public IList<Node> Nodes { get; set; } = new List<Node>();
 
-        public IList<double> Values { get; set; } = new List<double>();
-
+        
         public bool Equals(AlgorithmResult other) {
             return other != null && Id == other.Id;
         }
@@ -31,7 +31,7 @@ namespace TransportGraphApp.Models {
                     res => res.AlgorithmConfig.AlgorithmType.GetDescription()
                 }, {
                     "Кол-во. нас. пунктов",
-                    res => res.Cities.Count
+                    res => res.Nodes.Count
                 },
             };
         }

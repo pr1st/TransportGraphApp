@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using LiteDB;
+using TransportGraphApp.Graph;
 using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Singletons {
@@ -33,9 +34,9 @@ namespace TransportGraphApp.Singletons {
         }
 
 
-        public bool CheckTransportSystems(AlgorithmConfig cfg) { 
+        public bool CheckTransportSystems(AlgorithmConfig cfg) {
             InitDataFromConfig(cfg);
-            var graph = new Graph(_cities) {
+            var graph = new GraphG(_cities) {
                 Roads = _roads.ToDictionary(r => r.Id, r => r)
             };
             foreach (var road in _roads) {
@@ -47,134 +48,77 @@ namespace TransportGraphApp.Singletons {
 
         public AlgorithmResult Run(AlgorithmConfig cfg) {
             InitDataFromConfig(cfg);
-            var res = cfg.MethodType switch {
-                MethodType.Standard => RunStandardMethod(AlgorithmFunction(cfg)),
-                MethodType.Local => RunLocalFirstMethod(AlgorithmFunction(cfg)),
-                _ => null
-            };
-            if (res != null) {
-                res.AlgorithmConfig = cfg;
-            }
-            return res;
-        }
-
-        private static Func<int, City, Road, double> AlgorithmFunction(AlgorithmConfig cfg) {
-            return cfg.AlgorithmType switch {
-                AlgorithmType.Length => (waitTime, city, road) => road.Length,
-                // AlgorithmType.Time => (waitTime, city, road) => waitTime + road.Time,
-                AlgorithmType.Time => null,
-                AlgorithmType.Cost => (waitTime, city, road) => road.Cost,
-                AlgorithmType.ComplexCost => null,
-                // AlgorithmType.ComplexCost => (waitTime, city, road) =>
-                    // waitTime * city.CostOfStaying / 24 / 60 + road.Cost,
-                _ => throw new NotImplementedException()
-            };
-        }
-
-        private AlgorithmResult RunStandardMethod(Func<int, City, Road, double> weightFunction) {
-            if (weightFunction == null) return null;
             
-            var graph = new Graph(_cities) {
-                Cities = _cities.ToDictionary(c => c.Id, c => c),
-                Roads = _roads.ToDictionary(r => r.Id, r => r),
-                WeightFunction = weightFunction
-            };
-            foreach (var road in _roads) {
-                graph.AddEdge(road);
+            if (cfg.MethodType == MethodType.Standard && cfg.AlgorithmType == AlgorithmType.Time) {
+                var runTimeAlgorithm = RunTimeAlgorithm();
+                runTimeAlgorithm.AlgorithmConfig = cfg;
+                return runTimeAlgorithm;
             }
 
-            var res = graph.RunDijkstra(_centralCities.Select(c => c.Id));
-            return res;
-        }
-
-        private AlgorithmResult RunLocalFirstMethod(Func<int, City, Road, double> weightFunction) {
             return null;
         }
-    }
 
-    public class Graph {
-        private readonly IDictionary<ObjectId, IList<ObjectId>> _linkedMap = new Dictionary<ObjectId, IList<ObjectId>>();
-
-        public IDictionary<ObjectId, City> Cities { get; set; }
-        public IDictionary<ObjectId, Road> Roads { get; set; }
-        public Func<int, City, Road, double> WeightFunction { get; set; }
-
-        public Graph(IEnumerable<City> cities) {
-            foreach (var city in cities) {
-                _linkedMap[city.Id] = new List<ObjectId>();
+        private AlgorithmResult RunTimeAlgorithm() {
+            Weight WeightFunction(Time waitTime, ObjectId fromCityId, ObjectId roadId) {
+                var road = _roads.First(r => r.Id == roadId);
+                var weightTime = waitTime + new Time((int) road.Time);
+                return new Weight(weightTime.Value);
             }
+
+            var graph = new Graph.Graph(_cities.Select(c => c.Id), WeightFunction);
+            foreach (var road in _roads) {
+                graph.AddEdge(road.ToCityId, road.FromCityId, road.Id, (int) road.Time, road.DepartureTimes);
+            }
+
+            var startTime = DateTime.Now;
+            graph.RunBellmanFord(_centralCities.Select(c => c.Id));
+
+            var algorithmResult = new AlgorithmResult() {
+                RunDate = startTime,
+                Nodes = graph.Results
+            };
+            return algorithmResult;
         }
 
-        public void AddEdge(Road road) {
-            _linkedMap[road.ToCityId].Add(road.Id);
-        }
+        public class GraphG {
+            private readonly IDictionary<ObjectId, IList<ObjectId>> _linkedMap =
+                new Dictionary<ObjectId, IList<ObjectId>>();
 
-        public bool ValidationCheck(IEnumerable<ObjectId> centralCities) {
-            var visited = new Dictionary<ObjectId, bool>();
-            foreach (var key in _linkedMap.Keys) {
-                visited[key] = false;
-            }
+            public IDictionary<ObjectId, Road> Roads { get; set; }
 
-            var stack = new Stack<ObjectId>();
-            foreach (var c in centralCities) {
-                stack.Push(c);
-            }
-
-            while (stack.Any()) {
-                var v = stack.Pop();
-                if (visited[v]) continue;
-
-                visited[v] = true;
-                foreach (var edge in _linkedMap[v]) {
-                    stack.Push(Roads[edge].FromCityId);
+            public GraphG(IEnumerable<City> cities) {
+                foreach (var city in cities) {
+                    _linkedMap[city.Id] = new List<ObjectId>();
                 }
             }
 
-            return visited.All(kv => kv.Value);
-        }
-
-        public AlgorithmResult RunDijkstra(IEnumerable<ObjectId> centralCities) {
-            var startTime = DateTime.Now;
-            // initialization
-            var queue = new HashSet<ObjectId>(_linkedMap.Keys);
-
-            var dist = new Dictionary<ObjectId, double>(
-                _linkedMap.ToDictionary(
-                    kv => kv.Key,
-                    kv => double.MaxValue));
-            
-            var previousCity = new Dictionary<ObjectId, ObjectId>(_linkedMap.Count);
-            
-            foreach (var centralCity in centralCities) {
-                dist[centralCity] = 0;
-                previousCity[centralCity] = null;
+            public void AddEdge(Road road) {
+                _linkedMap[road.ToCityId].Add(road.Id);
             }
-            
-            while (queue.Any()) {
-                var u = queue.OrderBy(v => dist[v]).First();
-                var uCity = Cities[u];
-                
-                queue.Remove(u);
 
-                foreach (var edge in _linkedMap[u]) {
-                    var road = Roads[edge];
-                    var v = road.FromCityId;
-                    
-                    if (!queue.Contains(v)) continue;
+            public bool ValidationCheck(IEnumerable<ObjectId> centralCities) {
+                var visited = new Dictionary<ObjectId, bool>();
+                foreach (var key in _linkedMap.Keys) {
+                    visited[key] = false;
+                }
 
-                    var alt = dist[u] + WeightFunction.Invoke(0, uCity, road);
-                    if (alt < dist[v]) {
-                        dist[v] = alt;
-                        previousCity[v] = u;
+                var stack = new Stack<ObjectId>();
+                foreach (var c in centralCities) {
+                    stack.Push(c);
+                }
+
+                while (stack.Any()) {
+                    var v = stack.Pop();
+                    if (visited[v]) continue;
+
+                    visited[v] = true;
+                    foreach (var edge in _linkedMap[v]) {
+                        stack.Push(Roads[edge].FromCityId);
                     }
                 }
-            }
 
-            return new AlgorithmResult() {
-                RunDate = startTime,
-                Cities = Cities.Values.ToList(),
-                Values = dist.Select(kv => kv.Value).ToList()
-            };
+                return visited.All(kv => kv.Value);
+            }
         }
     }
 }

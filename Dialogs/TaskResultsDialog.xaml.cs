@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using TransportGraphApp.CustomComponents;
+using TransportGraphApp.Graph;
 using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Dialogs {
@@ -54,22 +55,18 @@ namespace TransportGraphApp.Dialogs {
                 Value = string.Join(", ", res.AlgorithmConfig.RoadTypes.Select(rt => rt.Name))
             };
             
-            var propertyMatcher = new Dictionary<string, Func<City, object>> {
+            var propertyMatcher = new Dictionary<string, Func<Node, object>> {
                 {
                     "Название", 
-                    c => c.Name 
-                },
-                {
-                    "Итоговое значение",
-                    c => res.Values[res.Cities.IndexOf(c)]
+                    c => c.Id
                 }
             };
-            var entityList = new GenericEntityListControl<City>(
+            var entityList = new GenericEntityListControl<Node>(
                 "Таблица результатов",
                 propertyMatcher,
-                city => { });
+                DisplayNodeInfo);
             
-            entityList.SetSource(res.Cities);
+            entityList.SetSource(res.Nodes);
 
             PropertiesPanel.Children.Add(cfgAlgType);
             PropertiesPanel.Children.Add(cfgMetType);
@@ -79,6 +76,22 @@ namespace TransportGraphApp.Dialogs {
             PropertiesPanel.Children.Add(entityList.GetUiElement());
             
             VisibilityPanel.Visibility = Visibility.Visible;
+        }
+
+        private void DisplayNodeInfo(Node n) {
+            Console.WriteLine($"Print Node {n.Id}");
+            Console.WriteLine($"Центральный: {n.IsCentral}");
+            var minWeight = new GraphWeight(null, new Weight());
+            foreach (var (depTime, weight) in n.TimeTable) {
+                Console.WriteLine($"Dep time: {depTime} || From: {weight.From.Id} || Weight: {weight.Weight}");
+                if (weight.Weight < minWeight.Weight) {
+                    minWeight = weight;
+                }
+            }
+            Console.WriteLine($"Min value: {minWeight.Weight}");
+            Console.WriteLine($"Last node: {minWeight.From.Id}");
+
+            Console.WriteLine();
         }
     }
 }
