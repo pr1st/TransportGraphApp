@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using LiteDB;
+using TransportGraphApp.Dialogs;
 using TransportGraphApp.Graph;
 using TransportGraphApp.Models;
 
@@ -43,29 +44,76 @@ namespace TransportGraphApp.Singletons {
                 graph.AddEdge(road);
             }
 
+            // todo change source
+            
             return graph.ValidationCheck(_centralCities.Select(c => c.Id));
         }
 
         public AlgorithmResult Run(AlgorithmConfig cfg) {
             InitDataFromConfig(cfg);
+
+            var res = cfg.AlgorithmType switch {
+                AlgorithmType.Length => RunLengthAlgorithm(cfg.MethodType),
+                AlgorithmType.Cost => RunCostAlgorithm(cfg.MethodType),
+                AlgorithmType.Time => RunTimeAlgorithm(cfg.MethodType),
+                AlgorithmType.ComplexCost => RunComplexCostAlgorithm(cfg.MethodType),
+                _ => null
+            };
+            if (res == null) return null;
             
-            if (cfg.MethodType == MethodType.Standard && cfg.AlgorithmType == AlgorithmType.Time) {
-                var runTimeAlgorithm = RunTimeAlgorithm();
-                runTimeAlgorithm.AlgorithmConfig = cfg;
-                return runTimeAlgorithm;
+            res.AlgorithmConfig = cfg;
+            res.CityNames = new List<string>(res.Nodes.Count);
+            foreach (var n in res.Nodes) {
+                res.CityNames.Add(_cities.First(c => c.Id == n.Id).Name);
             }
 
-            return null;
+            return res;
+        }
+        
+        private AlgorithmResult RunLengthAlgorithm(MethodType methodType) {
+            // Weight WeightFunction(Time waitTime, ObjectId fromCityId, ObjectId roadId) {
+            //     var road = _roads.First(r => r.Id == roadId);
+            //     var weightTime = waitTime.Value + new Time((int) road.Time).Value;
+            //     return new Weight(weightTime);
+            // }
+            // todo
+            return methodType == MethodType.Standard ? RunDijkstra() : RunLocalFirstDijkstra();
+        }
+        
+        private AlgorithmResult RunCostAlgorithm(MethodType methodType) {
+            // Weight WeightFunction(Time waitTime, ObjectId fromCityId, ObjectId roadId) {
+            //     var road = _roads.First(r => r.Id == roadId);
+            //     var weightTime = waitTime.Value + new Time((int) road.Time).Value;
+            //     return new Weight(weightTime);
+            // }
+            // todo
+            return methodType == MethodType.Standard ? RunDijkstra() : RunLocalFirstDijkstra();
         }
 
-        private AlgorithmResult RunTimeAlgorithm() {
+        private AlgorithmResult RunTimeAlgorithm(MethodType methodType) {
             Weight WeightFunction(Time waitTime, ObjectId fromCityId, ObjectId roadId) {
                 var road = _roads.First(r => r.Id == roadId);
-                var weightTime = waitTime + new Time((int) road.Time);
-                return new Weight(weightTime.Value);
+                var weightTime = waitTime.Value + new Time((int) road.Time).Value;
+                return new Weight(weightTime);
             }
 
-            var graph = new Graph.Graph(_cities.Select(c => c.Id), WeightFunction);
+            return methodType == MethodType.Standard ? RunBellmanFord(WeightFunction) : RunLocalFirstBellmanFord(WeightFunction);
+        }
+        
+        private AlgorithmResult RunComplexCostAlgorithm(MethodType methodType) {
+            Weight WeightFunction(Time waitTime, ObjectId fromCityId, ObjectId roadId) {
+                var road = _roads.First(r => r.Id == roadId);
+                // var weightTime = waitTime.Value + new Time((int) road.Time).Value;
+                // return new Weight(weightTime);
+                // todo
+                return null;
+            }
+
+            return methodType == MethodType.Standard ? RunBellmanFord(WeightFunction) : RunLocalFirstBellmanFord(WeightFunction);
+        }
+
+        private AlgorithmResult RunBellmanFord(Func<Time, ObjectId, ObjectId, Weight> weightFunction) {
+            var graph = new ComplexTimeGraph(_cities.Select(c => c.Id), weightFunction);
             foreach (var road in _roads) {
                 graph.AddEdge(road.ToCityId, road.FromCityId, road.Id, (int) road.Time, road.DepartureTimes);
             }
@@ -80,6 +128,22 @@ namespace TransportGraphApp.Singletons {
             return algorithmResult;
         }
 
+        private AlgorithmResult RunLocalFirstBellmanFord(Func<Time, ObjectId, ObjectId, Weight> weightFunction) {
+            // todo
+            return null;
+        }
+        
+        private AlgorithmResult RunDijkstra() {
+            // todo
+            return null;
+        }
+        
+        private AlgorithmResult RunLocalFirstDijkstra() {
+            // todo
+            return null;
+        }
+
+        // todo delete
         public class GraphG {
             private readonly IDictionary<ObjectId, IList<ObjectId>> _linkedMap =
                 new Dictionary<ObjectId, IList<ObjectId>>();

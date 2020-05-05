@@ -52,11 +52,27 @@ namespace TransportGraphApp.CustomComponents {
             }
         }
 
-        public Func<IList<T>, IList<T>> OnAdd { get; set; }
+        private Func<IList<T>, IList<T>> _onAdd;
+        public Func<IList<T>, IList<T>> OnAdd {
+            get => _onAdd;
+            set {
+                if (value == null) {
+                    _table.AddButton.Visibility = Visibility.Collapsed;
+                    _table.RemoveButton.Visibility = Visibility.Collapsed;
+                }
+                else {
+                    _table.AddButton.Visibility = Visibility.Visible;
+                    _table.RemoveButton.Visibility = Visibility.Visible;
+                }
+
+                _onAdd = value;
+            }
+        }
 
         public GenericTableRowControl() {
             _table.ItemList.ItemsSource = _values;
 
+            OnAdd = null;
             _table.AddButton.Click += (sender, args) => {
                 var addedElements = OnAdd.Invoke(_values);
                 if (addedElements == null) return;

@@ -2,7 +2,7 @@
 
  namespace TransportGraphApp.Graph {
     public class Weight : IEquatable<Weight>{
-        public double Value { get; }
+        public double Value { get; set; }
 
         public Weight() {
             Value = double.MaxValue;
@@ -30,6 +30,10 @@
         
         public bool Equals(Weight other) {
             return other != null && Math.Abs(Value - other.Value) < 0.01;
+        }
+        
+        public override string ToString() {
+            return $"Weight({Value})";
         }
     }
 }

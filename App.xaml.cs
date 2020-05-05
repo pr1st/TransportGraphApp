@@ -13,6 +13,7 @@ namespace TransportGraphApp {
             Exit += (o, args) => ExitAction.Invoke();
             Window.Show();
             InitializationAction.Invoke();
+            // DataBase.GetCollection<AlgorithmResult>().DeleteAll();
         }
 
         private void UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
@@ -24,6 +25,8 @@ namespace TransportGraphApp {
         }
         
         public static AppWindow Window { get; } = new AppWindow();
+        
+        public static ReportSaver ReportSaver { get; } = new ReportSaver();
         
         public static AppDataBase DataBase { get; } = new AppDataBase();
         

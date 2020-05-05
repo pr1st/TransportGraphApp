@@ -5,7 +5,7 @@ using LiteDB;
 using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Graph {
-    public class Graph {
+    public class ComplexTimeGraph {
         // arg1 - time used to wait in city
         // arg2 - city id
         // arg3 - road id
@@ -17,7 +17,7 @@ namespace TransportGraphApp.Graph {
 
         public IList<Node> Results => _graphMap.Keys.ToList();
 
-        public Graph(IEnumerable<ObjectId> cityIds, Func<Time, ObjectId, ObjectId, Weight> weightFunction) {
+        public ComplexTimeGraph(IEnumerable<ObjectId> cityIds, Func<Time, ObjectId, ObjectId, Weight> weightFunction) {
             _weightFunction = weightFunction;
             foreach (var id in cityIds) {
                 var node = new Node() {
@@ -63,38 +63,46 @@ namespace TransportGraphApp.Graph {
             foreach (var centralCity in centralCities) {
                 var centralNode = _graphMap.Keys.First(n => n.Id == centralCity);
                 centralNode.IsCentral = true;
+                foreach (var list in _graphMap.Values) {
+                    var toDelete = list.Where(kv => kv.Key.Id == centralCity).ToList();
+                    foreach (var kv in toDelete) {
+                        Console.WriteLine(list.Remove(kv));
+                    }
+                }
             }
 
-            for (var i = 0; i < _graphMap.Keys.Count; i++) {
+            for (var i = 0; i < _graphMap.Keys.Count - 1; i++) {
                 foreach (var (from, list) in _graphMap) {
                     foreach (var (to, edge) in list) {
                         if (from.IsCentral) {
                             var weight = _weightFunction.Invoke(new Time(), from.Id, edge.Id);
-                            var isPreviousPresent = to.TimeTable.TryGetValue(edge.DepartureTime, out var previousValue);
-                            if (isPreviousPresent) {
+                            var previousValue = to.GetWeightForTime(edge.DepartureTime);
+                            if (previousValue != null) {
                                 if (weight < previousValue.Weight) {
                                     previousValue.Weight = weight;
                                     previousValue.From = from;
                                 }
                             }
                             else {
-                                to.TimeTable[edge.DepartureTime] = new GraphWeight(from, weight);
+                                to.AddWeight(edge.DepartureTime, new GraphWeight(from, null, weight));
                             }
                         }
                         else {
-                            foreach (var (departureTime, fromValue) in from.TimeTable) {
+                            foreach (var departureTime in from.TimeTable) {
+                                var fromValue = from.GetWeightForTime(departureTime);
                                 var waitTime = departureTime - edge.DepartureTime - edge.RunTime;
                                 var weight = _weightFunction.Invoke(waitTime, from.Id, edge.Id);
                                 
-                                var isPreviousPresent = to.TimeTable.TryGetValue(edge.DepartureTime, out var previousValue);
-                                if (isPreviousPresent) {
+                                var previousValue = to.GetWeightForTime(edge.DepartureTime);
+                                if (previousValue != null) {
                                     if (weight + fromValue.Weight < previousValue.Weight) {
                                         previousValue.Weight = weight + fromValue.Weight;
+                                        previousValue.FromTime = departureTime;
                                         previousValue.From = from;
                                     }
                                 }
                                 else {
-                                    to.TimeTable[edge.DepartureTime] = new GraphWeight(from, weight + fromValue.Weight);
+                                    to.AddWeight(edge.DepartureTime, new GraphWeight(from, departureTime, weight + fromValue.Weight));
                                 }
                             }
                         }
