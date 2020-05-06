@@ -120,7 +120,10 @@ namespace TransportGraphApp.Dialogs {
         }
         
         private void InitReportMethods() {
-            // todo
+            MinReport.Click += (sender, args) => App.ReportSaver.MinimalReport(_selectedResult);
+            MaxReport.Click += (sender, args) => App.ReportSaver.FullReport(_selectedResult);
+            JsonReport.Click += (sender, args) => App.ReportSaver.JsonReport(_selectedResult);
+            MatrixReport.Click += (sender, args) => App.ReportSaver.MatrixReport(_selectedResult);
         }
 
         // callback methods

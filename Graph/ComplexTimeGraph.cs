@@ -66,7 +66,7 @@ namespace TransportGraphApp.Graph {
                 foreach (var list in _graphMap.Values) {
                     var toDelete = list.Where(kv => kv.Key.Id == centralCity).ToList();
                     foreach (var kv in toDelete) {
-                        Console.WriteLine(list.Remove(kv));
+                        list.Remove(kv);
                     }
                 }
             }
@@ -92,7 +92,7 @@ namespace TransportGraphApp.Graph {
                                 var fromValue = from.GetWeightForTime(departureTime);
                                 var waitTime = departureTime - edge.DepartureTime - edge.RunTime;
                                 var weight = _weightFunction.Invoke(waitTime, from.Id, edge.Id);
-                                
+
                                 var previousValue = to.GetWeightForTime(edge.DepartureTime);
                                 if (previousValue != null) {
                                     if (weight + fromValue.Weight < previousValue.Weight) {
@@ -102,13 +102,19 @@ namespace TransportGraphApp.Graph {
                                     }
                                 }
                                 else {
-                                    to.AddWeight(edge.DepartureTime, new GraphWeight(from, departureTime, weight + fromValue.Weight));
+                                    to.AddWeight(edge.DepartureTime,
+                                        new GraphWeight(from, departureTime, weight + fromValue.Weight));
                                 }
                             }
                         }
                     }
                 }
             }
+        }
+
+        public void RunLocalFirstBellmanFord(IDictionary<ObjectId, City> centralCities,
+            IDictionary<ObjectId, City> terminalCities) {
+            // todo
         }
     }
 }

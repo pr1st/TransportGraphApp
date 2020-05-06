@@ -12,11 +12,38 @@ using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Singletons {
     public class AppAlgorithm {
+        private IList<ObjectId> _transportSystems;
         private IList<City> _cities;
         private IList<Road> _roads;
         private IList<City> _centralCities;
 
+        private IDictionary<ObjectId, IList<City>> CentralCitiesByTransportSystem() {
+            var map = new Dictionary<ObjectId, IList<City>>();
+            foreach (var transportSystem in _transportSystems) {
+                map[transportSystem] =
+                    _centralCities.Where(c => c.TransportSystemIds.Contains(transportSystem)).ToList();
+            }
+            return map;
+        }
+        
+        private IDictionary<ObjectId, IList<City>> TerminalCitiesByTransportSystem() {
+            var map = new Dictionary<ObjectId, IList<City>>();
+            foreach (var transportSystem in _transportSystems) {
+                map[transportSystem] =
+                    _cities.Where(c => c.TransportSystemIds.Count >= 2 
+                                       && c.TransportSystemIds.Contains(transportSystem))
+                        .ToList();
+            }
+            return map;
+        }
+
         private void InitDataFromConfig(AlgorithmConfig cfg) {
+            _transportSystems = App.DataBase
+                .GetCollection<TransportSystem>()
+                .FindAll()
+                .Where(ts => cfg.TransportSystems.Contains(ts))
+                .Select(ts => ts.Id)
+                .ToList();
             _cities = App.DataBase
                 .GetCollection<City>()
                 .FindAll()
@@ -37,15 +64,11 @@ namespace TransportGraphApp.Singletons {
 
         public bool CheckTransportSystems(AlgorithmConfig cfg) {
             InitDataFromConfig(cfg);
-            var graph = new GraphG(_cities) {
-                Roads = _roads.ToDictionary(r => r.Id, r => r)
-            };
+            var graph = new SimpleGraph(_cities.Select(c => c.Id), null);
             foreach (var road in _roads) {
-                graph.AddEdge(road);
+                graph.AddEdge(road.ToCityId, road.FromCityId, road.Id);
             }
 
-            // todo change source
-            
             return graph.ValidationCheck(_centralCities.Select(c => c.Id));
         }
 
@@ -71,23 +94,19 @@ namespace TransportGraphApp.Singletons {
         }
         
         private AlgorithmResult RunLengthAlgorithm(MethodType methodType) {
-            // Weight WeightFunction(Time waitTime, ObjectId fromCityId, ObjectId roadId) {
-            //     var road = _roads.First(r => r.Id == roadId);
-            //     var weightTime = waitTime.Value + new Time((int) road.Time).Value;
-            //     return new Weight(weightTime);
-            // }
-            // todo
-            return methodType == MethodType.Standard ? RunDijkstra() : RunLocalFirstDijkstra();
+            Weight WeightFunction(ObjectId roadId) {
+                var road = _roads.First(r => r.Id == roadId);
+                return new Weight(road.Length);
+            }
+            return methodType == MethodType.Standard ? RunDijkstra(WeightFunction) : RunLocalFirstDijkstra(WeightFunction);
         }
         
         private AlgorithmResult RunCostAlgorithm(MethodType methodType) {
-            // Weight WeightFunction(Time waitTime, ObjectId fromCityId, ObjectId roadId) {
-            //     var road = _roads.First(r => r.Id == roadId);
-            //     var weightTime = waitTime.Value + new Time((int) road.Time).Value;
-            //     return new Weight(weightTime);
-            // }
-            // todo
-            return methodType == MethodType.Standard ? RunDijkstra() : RunLocalFirstDijkstra();
+            Weight WeightFunction(ObjectId roadId) {
+                var road = _roads.First(r => r.Id == roadId);
+                return new Weight(road.Cost);
+            }
+            return methodType == MethodType.Standard ? RunDijkstra(WeightFunction) : RunLocalFirstDijkstra(WeightFunction);
         }
 
         private AlgorithmResult RunTimeAlgorithm(MethodType methodType) {
@@ -103,10 +122,9 @@ namespace TransportGraphApp.Singletons {
         private AlgorithmResult RunComplexCostAlgorithm(MethodType methodType) {
             Weight WeightFunction(Time waitTime, ObjectId fromCityId, ObjectId roadId) {
                 var road = _roads.First(r => r.Id == roadId);
-                // var weightTime = waitTime.Value + new Time((int) road.Time).Value;
-                // return new Weight(weightTime);
-                // todo
-                return null;
+                var city = _cities.First(c => c.Id == fromCityId);
+                var weightCost = waitTime.Value * city.CostOfStaying / 24 / 60 + road.Cost;
+                return new Weight(weightCost);
             }
 
             return methodType == MethodType.Standard ? RunBellmanFord(WeightFunction) : RunLocalFirstBellmanFord(WeightFunction);
@@ -129,60 +147,32 @@ namespace TransportGraphApp.Singletons {
         }
 
         private AlgorithmResult RunLocalFirstBellmanFord(Func<Time, ObjectId, ObjectId, Weight> weightFunction) {
+            var centralCities = CentralCitiesByTransportSystem();
+            var terminalCities = TerminalCitiesByTransportSystem();
             // todo
+
             return null;
         }
         
-        private AlgorithmResult RunDijkstra() {
-            // todo
-            return null;
+        private AlgorithmResult RunDijkstra(Func<ObjectId, Weight> weightFunction) {
+            var graph = new SimpleGraph(_cities.Select(c => c.Id), weightFunction);
+            foreach (var road in _roads) {
+                graph.AddEdge(road.ToCityId, road.FromCityId, road.Id);
+            }
+
+            var startTime = DateTime.Now;
+            graph.RunDijkstra(_centralCities.Select(c => c.Id));
+
+            var algorithmResult = new AlgorithmResult() {
+                RunDate = startTime,
+                Nodes = graph.Results
+            };
+            return algorithmResult;
         }
         
-        private AlgorithmResult RunLocalFirstDijkstra() {
+        private AlgorithmResult RunLocalFirstDijkstra(Func<ObjectId, Weight> weightFunction) {
             // todo
             return null;
-        }
-
-        // todo delete
-        public class GraphG {
-            private readonly IDictionary<ObjectId, IList<ObjectId>> _linkedMap =
-                new Dictionary<ObjectId, IList<ObjectId>>();
-
-            public IDictionary<ObjectId, Road> Roads { get; set; }
-
-            public GraphG(IEnumerable<City> cities) {
-                foreach (var city in cities) {
-                    _linkedMap[city.Id] = new List<ObjectId>();
-                }
-            }
-
-            public void AddEdge(Road road) {
-                _linkedMap[road.ToCityId].Add(road.Id);
-            }
-
-            public bool ValidationCheck(IEnumerable<ObjectId> centralCities) {
-                var visited = new Dictionary<ObjectId, bool>();
-                foreach (var key in _linkedMap.Keys) {
-                    visited[key] = false;
-                }
-
-                var stack = new Stack<ObjectId>();
-                foreach (var c in centralCities) {
-                    stack.Push(c);
-                }
-
-                while (stack.Any()) {
-                    var v = stack.Pop();
-                    if (visited[v]) continue;
-
-                    visited[v] = true;
-                    foreach (var edge in _linkedMap[v]) {
-                        stack.Push(Roads[edge].FromCityId);
-                    }
-                }
-
-                return visited.All(kv => kv.Value);
-            }
         }
     }
 }
