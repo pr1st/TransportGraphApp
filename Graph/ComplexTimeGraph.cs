@@ -114,6 +114,7 @@ namespace TransportGraphApp.Graph {
 
         public void RunLocalFirstBellmanFord(IDictionary<ObjectId, City> centralCities,
             IDictionary<ObjectId, City> terminalCities) {
+            // may be recive objectIds insted of City?
             // todo
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LiteDB;
+using TransportGraphApp.Models;
 
 namespace TransportGraphApp.Graph {
     public class SimpleGraph {
@@ -97,6 +98,11 @@ namespace TransportGraphApp.Graph {
             foreach (var node in _graphMap.Keys) {
                 node.AddWeight(null, new GraphWeight(prev[node], null, dist[node]));
             }
+        }
+        
+        public void RunLocalFirstDijkstra(IDictionary<ObjectId, City> centralCities,
+            IDictionary<ObjectId, City> terminalCities) {
+            // todo
         }
     }
 }
