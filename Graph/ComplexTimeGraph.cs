@@ -76,7 +76,7 @@ namespace TransportGraphApp.Graph {
                     foreach (var (to, edge) in list) {
                         if (from.IsCentral) {
                             var weight = _weightFunction.Invoke(new Time(), from.Id, edge.Id);
-                            var previousValue = to.GetWeightForTime(edge.DepartureTime);
+                            var previousValue = to.Weights.FirstOrDefault(w => w.Time == edge.DepartureTime);
                             if (previousValue != null) {
                                 if (weight < previousValue.Weight) {
                                     previousValue.Weight = weight;
@@ -84,26 +84,23 @@ namespace TransportGraphApp.Graph {
                                 }
                             }
                             else {
-                                to.AddWeight(edge.DepartureTime, new GraphWeight(from, null, weight));
+                                to.Weights.Add(new GraphWeight(edge.DepartureTime, from, null, weight));
                             }
                         }
                         else {
-                            foreach (var departureTime in from.TimeTable) {
-                                var fromValue = from.GetWeightForTime(departureTime);
-                                var waitTime = departureTime - edge.DepartureTime - edge.RunTime;
+                            foreach (var fromWeight in from.Weights) {
+                                var waitTime = fromWeight.Time - edge.DepartureTime - edge.RunTime;
                                 var weight = _weightFunction.Invoke(waitTime, from.Id, edge.Id);
-
-                                var previousValue = to.GetWeightForTime(edge.DepartureTime);
+                                var previousValue = to.Weights.FirstOrDefault(w => w.Time == edge.DepartureTime);
                                 if (previousValue != null) {
-                                    if (weight + fromValue.Weight < previousValue.Weight) {
-                                        previousValue.Weight = weight + fromValue.Weight;
-                                        previousValue.FromTime = departureTime;
+                                    if (weight + fromWeight.Weight < previousValue.Weight) {
+                                        previousValue.Weight = weight + fromWeight.Weight;
+                                        previousValue.FromTime = fromWeight.Time;
                                         previousValue.From = from;
                                     }
                                 }
                                 else {
-                                    to.AddWeight(edge.DepartureTime,
-                                        new GraphWeight(from, departureTime, weight + fromValue.Weight));
+                                    to.Weights.Add(new GraphWeight(edge.DepartureTime, from, fromWeight.Time, weight));
                                 }
                             }
                         }

@@ -1,20 +1,23 @@
 ﻿namespace TransportGraphApp.Graph {
     public class GraphWeight {
+        public Time Time { get; set; }
+        public Weight Weight { get; set; }
         public Node From { get; set; }
         public Time FromTime { get; set; }
-        public Weight Weight { get; set; }
 
 
         public GraphWeight() {
+            Time = null;
+            Weight = new Weight();
             From = null;
             FromTime = null;
-            Weight = new Weight();
         }
         
-        public GraphWeight(Node from, Time fromTime, Weight weight) {
+        public GraphWeight(Time time, Node from, Time fromTime, Weight weight) {
+            Time = time;
+            Weight = weight;
             From = from;
             FromTime = fromTime;
-            Weight = weight;
         }
     }
 }

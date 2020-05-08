@@ -85,9 +85,8 @@ namespace TransportGraphApp.Singletons {
             if (res == null) return null;
             
             res.AlgorithmConfig = cfg;
-            res.CityNames = new List<string>(res.Nodes.Count);
             foreach (var n in res.Nodes) {
-                res.CityNames.Add(_cities.First(c => c.Id == n.Id).Name);
+                n.Name = _cities.First(c => c.Id == n.Id).Name;
             }
 
             return res;

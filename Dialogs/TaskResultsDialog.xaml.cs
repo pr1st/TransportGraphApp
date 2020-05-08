@@ -85,7 +85,7 @@ namespace TransportGraphApp.Dialogs {
             var propertyMatcher = new Dictionary<string, Func<Node, object>> {
                 {
                     "Название",
-                    n => _selectedResult?.GetCityName(n)
+                    n => n.Name
                 }, {
                     "Итоговое значение",
                     n => {
@@ -143,13 +143,12 @@ namespace TransportGraphApp.Dialogs {
 
         private void DisplayNodeInfo(Node n) {
             var res = _selectedResult;
-            Console.WriteLine($"Print Node: {res.GetCityName(n)}");
+            Console.WriteLine($"Print Node: {n.Name}");
             Console.WriteLine($"Центральный: {n.IsCentral}");
             var minWeight = new GraphWeight();
-            foreach (var depTime in n.TimeTable) {
-                var weight = n.GetWeightForTime(depTime);
+            foreach (var weight in n.Weights) {
                 Console.WriteLine(
-                    $"Dep time: {depTime} || From: {res.GetCityName(weight.From)} || Weight: {weight.Weight}");
+                    $"Dep time: {weight.Time} || From: {weight.From.Name} || Weight: {weight.Weight}");
                 if (weight.Weight < minWeight.Weight) {
                     minWeight = weight;
                 }
@@ -158,18 +157,18 @@ namespace TransportGraphApp.Dialogs {
             if (n.IsCentral) return;
 
             Console.WriteLine($"Min value: {minWeight.Weight}");
-            Console.WriteLine($"Last node: {res.GetCityName(minWeight.From)}");
+            Console.WriteLine($"Last node: {minWeight.From.Name}");
 
             Console.WriteLine("Path");
             var a = minWeight;
-            Console.Write($"{res.GetCityName(n)}");
+            Console.Write($"{n.Name}");
             while (!a.From.IsCentral) {
-                var next = a.From.GetWeightForTime(a.FromTime);
-                Console.Write($" ->(+{(a.Weight - next.Weight).Value}) {res.GetCityName(a.From)}");
+                var next = a.From.Weights.First(w => a.FromTime == w.Time);
+                Console.Write($" ->(+{(a.Weight - next.Weight).Value}) {a.From.Name}");
                 a = next;
             }
 
-            Console.Write($" ->(+{(a.Weight).Value}) {res.GetCityName(a.From)}");
+            Console.Write($" ->(+{(a.Weight).Value}) {a.From.Name}");
 
             Console.WriteLine();
             Console.WriteLine();

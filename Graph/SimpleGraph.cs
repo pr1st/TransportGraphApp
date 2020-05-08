@@ -96,7 +96,7 @@ namespace TransportGraphApp.Graph {
             }
 
             foreach (var node in _graphMap.Keys) {
-                node.AddWeight(null, new GraphWeight(prev[node], null, dist[node]));
+                node.Weights.Add(new GraphWeight(null, prev[node], null, dist[node]));
             }
         }
         

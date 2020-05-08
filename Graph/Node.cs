@@ -9,19 +9,9 @@ namespace TransportGraphApp.Graph {
         
         public bool IsCentral { get; set; }
         
-        public IList<Time> TimeTable { get; set; } = new List<Time>();
-        
+        public string Name { get; set; }
+
         public IList<GraphWeight> Weights { get; set; } = new List<GraphWeight>();
-
-        public GraphWeight GetWeightForTime(Time t) {
-            var index = TimeTable.IndexOf(t);
-            return index == -1 ? null : Weights[index];
-        }
-
-        public void AddWeight(Time t, GraphWeight weight) {
-            TimeTable.Add(t);
-            Weights.Add(weight);
-        }
 
         public GraphWeight MinWeight() {
             var minWeight = new GraphWeight();
