@@ -73,7 +73,7 @@ namespace TransportGraphApp.Singletons {
                         continue;
                     }
 
-                    var found = fromNode.Weights.FirstOrDefault(w => w.From == toNode);
+                    var found = fromNode.Weights.FirstOrDefault(w => toNode.Equals(w.From));
                     if (found == null) {
                         sb.Append(",-1");
                         continue;
@@ -114,34 +114,16 @@ namespace TransportGraphApp.Singletons {
                     var d = time / (60 * 24);
                     time -= d * 60 * 24;
                     var h = time / 60;
-                    time -= h * 24;
+                    time -= h * 60;
                     var m = time;
                     return $"{d} д. {h} ч. {m} м.";
                 }
                 case AlgorithmType.Length:
                 case AlgorithmType.ComplexCost:
                 case AlgorithmType.Cost:
-                    return $"{weight} у.е.";
+                    return $"{weight:F2} у.е.";
                 default: throw new NotImplementedException();
             }
-        }
-
-        private static string TimeToWeekDay(Time time) {
-            var t = time.Value;
-            var d = t / (60 * 24);
-            t -= d * 60 * 24;
-            var h = t / 60;
-            t -= h * 24;
-            var m = t;
-            var dName = "";
-            dName += d == 0 ? "Пн" : "";
-            dName += d == 1 ? "Вт" : "";
-            dName += d == 2 ? "Ср" : "";
-            dName += d == 3 ? "Чт" : "";
-            dName += d == 4 ? "Пт" : "";
-            dName += d == 5 ? "Сб" : "";
-            dName += d == 6 ? "Вс" : "";
-            return $"{dName} {h} ч. {m} м.";
         }
 
         public static string FullReport(AlgorithmResult res) {
@@ -170,11 +152,25 @@ namespace TransportGraphApp.Singletons {
                 sb.AppendLine($"\tНазвание: {node.Name}");
                 var isCenter = node.IsCentral ? "да" : "нет";
                 sb.AppendLine($"\tЯвляется центральным: {isCenter}");
-                if (node.IsCentral) {
-                    var gw = node.MinWeight();
+                if (!node.IsCentral) {
                     sb.AppendLine($"\tЗначение доступности: {WeightValueWithExtension(node, res.AlgorithmConfig.AlgorithmType)}");
-                    sb.AppendLine(
-                        $"\tНаилучший маршрут идет в населенный пункт: {gw.From.Name} в {TimeToWeekDay(gw.Time)}");
+                    
+                    var minWeight = node.MinWeight();
+                    var a = minWeight;
+                    sb.Append($"\t{node.Name}");
+                    while (!a.From.IsCentral) {
+                        GraphWeight next;
+                        if (res.AlgorithmConfig.AlgorithmType == AlgorithmType.Cost ||
+                            res.AlgorithmConfig.AlgorithmType == AlgorithmType.Length) {
+                            next = a.From.Weights[0];
+                        }
+                        else {
+                            next = a.From.Weights.First(w => a.FromTime.Value == w.Time.Value);
+                        }
+                        sb.Append($" ->(+{(a.Weight - next.Weight).Value:F2}) {a.From.Name}");
+                        a = next;
+                    }
+                    sb.AppendLine($" ->(+{(a.Weight).Value}) {a.From.Name}");
                 }
 
                 sb.AppendLine("}");
@@ -184,7 +180,7 @@ namespace TransportGraphApp.Singletons {
         }
 
         public static string JsonReport(AlgorithmResult res) {
-            var options = new JsonSerializerOptions {WriteIndented = true};
+            var options = new JsonSerializerOptions {WriteIndented = true, IgnoreNullValues = true};
             options.Converters.Add(new AlgorithmTypeOffsetConverter());
             options.Converters.Add(new MethodTypeOffsetConverter());
             var jsonString = JsonSerializer.Serialize(res, options);

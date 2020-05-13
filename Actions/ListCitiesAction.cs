@@ -100,7 +100,7 @@ namespace TransportGraphApp.Actions {
 
             if (!_transportSystemsControl.Value.Any()) {
                 ComponentUtils.ShowMessage(
-                    "Населенный пункт должен принадлежать по крайней мере одной траснортной системе",
+                    "Населенный пункт должен принадлежать по крайней мере одной траснспортной системе",
                     MessageBoxImage.Error);
                 return false;
             }

@@ -25,14 +25,14 @@ namespace TransportGraphApp.Dialogs {
             _cityTags = App.DataBase.GetCollection<CityTags>().FindOne(ct => ct.IsPrimary);
             _roadTypes = App.DataBase.GetCollection<RoadTypes>().FindOne(rt => rt.IsPrimary);
             
-            InitCityTagsControl();
-            InitRoadTypesControl();
+            InitCityTagsProperty();
+            InitRoadTypesProperty();
 
             Closed += (sender, args) => CancelClick();
         }
 
         // init methods
-        private void InitCityTagsControl() {
+        private void InitCityTagsProperty() {
             _cityTagsControl = new GenericTableRowControl<CityTag>() {
                 TitleValue = "Используемые типы населенных пунктов",
                 TitleToolTip = "Представляет собой набор допустимых типов населенных пунктов в сети, используется при добавлении или обновлении населенного пункта",
@@ -71,7 +71,7 @@ namespace TransportGraphApp.Dialogs {
             PropertiesPanel.Children.Add(_cityTagsControl.GetUiElement);
         }
 
-        private void InitRoadTypesControl() {
+        private void InitRoadTypesProperty() {
             _roadTypesControl = new GenericTableRowControl<RoadType>() {
                 TitleValue = "Используемые типы дорог",
                 TitleToolTip = "Представляет собой набор допустимых типов маршрутов в сети, используется при добавлении или обновлении маршрута",

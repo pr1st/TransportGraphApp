@@ -63,6 +63,7 @@ namespace TransportGraphApp.Graph {
             foreach (var centralCity in centralCities) {
                 var centralNode = _graphMap.Keys.First(n => n.Id == centralCity);
                 centralNode.IsCentral = true;
+                centralNode.Weights.Add(new GraphWeight(null, null, null, new Weight(0)));
                 foreach (var list in _graphMap.Values) {
                     var toDelete = list.Where(kv => kv.Key.Id == centralCity).ToList();
                     foreach (var kv in toDelete) {
@@ -109,9 +110,8 @@ namespace TransportGraphApp.Graph {
             }
         }
 
-        public void RunLocalFirstBellmanFord(IDictionary<ObjectId, City> centralCities,
-            IDictionary<ObjectId, City> terminalCities) {
-            // may be recive objectIds insted of City?
+        public void RunLocalFirstBellmanFord(IDictionary<ObjectId, IList<ObjectId>> centralCities,
+            IDictionary<ObjectId, IList<ObjectId>> terminalCities) {
             // todo
         }
     }

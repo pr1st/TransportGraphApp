@@ -86,7 +86,7 @@ namespace TransportGraphApp.Graph {
                 var minDistNode = queue.Aggregate((min, cur) => dist[cur] < dist[min] ? cur : min);
                 queue.Remove(minDistNode);
                 foreach (var (to, edgeId) in _graphMap[minDistNode]) {
-                    if (queue.Contains(to)) continue;
+                    if (!queue.Contains(to)) continue;
                     var alt = dist[minDistNode] + _weightFunction.Invoke(edgeId);
                     if (alt < dist[to]) {
                         dist[to] = alt;
@@ -97,11 +97,12 @@ namespace TransportGraphApp.Graph {
 
             foreach (var node in _graphMap.Keys) {
                 node.Weights.Add(new GraphWeight(null, prev[node], null, dist[node]));
+                Console.WriteLine(dist[node]);
             }
         }
         
-        public void RunLocalFirstDijkstra(IDictionary<ObjectId, City> centralCities,
-            IDictionary<ObjectId, City> terminalCities) {
+        public void RunLocalFirstDijkstra(IDictionary<ObjectId, IList<ObjectId>> centralCities,
+            IDictionary<ObjectId, IList<ObjectId>> terminalCities) {
             // todo
         }
     }

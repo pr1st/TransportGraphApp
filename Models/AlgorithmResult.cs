@@ -7,7 +7,6 @@ using TransportGraphApp.Graph;
 
 namespace TransportGraphApp.Models {
     public class AlgorithmResult : IAppModel, IEquatable<AlgorithmResult> {
-        [JsonIgnore]
         public ObjectId Id { get; set; }
 
         public DateTime RunDate { get; set; }

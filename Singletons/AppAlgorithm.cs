@@ -17,21 +17,24 @@ namespace TransportGraphApp.Singletons {
         private IList<Road> _roads;
         private IList<City> _centralCities;
 
-        private IDictionary<ObjectId, IList<City>> CentralCitiesByTransportSystem() {
-            var map = new Dictionary<ObjectId, IList<City>>();
+        private IDictionary<ObjectId, IList<ObjectId>> CentralCitiesByTransportSystem() {
+            var map = new Dictionary<ObjectId, IList<ObjectId>>();
             foreach (var transportSystem in _transportSystems) {
                 map[transportSystem] =
-                    _centralCities.Where(c => c.TransportSystemIds.Contains(transportSystem)).ToList();
+                    _centralCities.Where(c => c.TransportSystemIds.Contains(transportSystem))
+                        .Select(c => c.Id)
+                        .ToList();
             }
             return map;
         }
         
-        private IDictionary<ObjectId, IList<City>> TerminalCitiesByTransportSystem() {
-            var map = new Dictionary<ObjectId, IList<City>>();
+        private IDictionary<ObjectId, IList<ObjectId>> TerminalCitiesByTransportSystem() {
+            var map = new Dictionary<ObjectId, IList<ObjectId>>();
             foreach (var transportSystem in _transportSystems) {
                 map[transportSystem] =
                     _cities.Where(c => c.TransportSystemIds.Count >= 2 
                                        && c.TransportSystemIds.Contains(transportSystem))
+                        .Select(c => c.Id)
                         .ToList();
             }
             return map;

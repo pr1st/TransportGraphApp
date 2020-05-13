@@ -99,14 +99,14 @@ namespace TransportGraphApp.Dialogs {
                                 var d = time / (60 * 24);
                                 time -= d * 60 * 24;
                                 var h = time / 60;
-                                time -= h * 24;
+                                time -= h * 60;
                                 var m = time;
                                 return $"{d} д. {h} ч. {m} м.";
                             }
                             case AlgorithmType.Length:
                             case AlgorithmType.ComplexCost:
                             case AlgorithmType.Cost:
-                                return $"{weight} у.е.";
+                                return $"{weight:F2} у.е.";
                             default: throw new NotImplementedException();
                         }
                     }
@@ -115,7 +115,7 @@ namespace TransportGraphApp.Dialogs {
             _resultTableControl = new GenericEntityListControl<Node>(
                 "Таблица результатов",
                 propertyMatcher,
-                DisplayNodeInfo);
+                n => { });
             PropertiesPanel.Children.Add(_resultTableControl.GetUiElement());
         }
         
