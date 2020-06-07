@@ -110,9 +110,53 @@ namespace TransportGraphApp.Graph {
             }
         }
 
-        public void RunLocalFirstBellmanFord(IDictionary<ObjectId, IList<ObjectId>> centralCities,
+        public void RunLocalFirstBellmanFord(
+            IDictionary<ObjectId, IList<ObjectId>> roads,
+            Func<ObjectId, ObjectId> getFrom,
+            Func<ObjectId, ObjectId> getTo,
+            IDictionary<ObjectId, IList<ObjectId>> allCities, 
+            IDictionary<ObjectId, IList<ObjectId>> centralCities,
             IDictionary<ObjectId, IList<ObjectId>> terminalCities) {
-            // todo
+            var dictionary = new Dictionary<ObjectId, IDictionary<ObjectId, Node>>();
+            foreach (var graphMapKey in _graphMap.Keys) {
+                dictionary[graphMapKey.Id] = new Dictionary<ObjectId, Node>();
+            }
+
+            foreach (var transportSystem in centralCities.Keys) {
+                var road = roads[transportSystem];
+                var all = allCities[transportSystem];
+                var central = centralCities[transportSystem];
+                var terminal = terminalCities[transportSystem];
+                foreach (var terminalCity in terminal.Concat(central)) {
+                    var simpleGraph = new ComplexTimeGraph(all, _weightFunction);
+                    foreach (var r in road) {
+                        simpleGraph.AddEdge(getFrom.Invoke(r), getTo.Invoke(r), r, 0, null);
+                    }
+                    simpleGraph.RunBellmanFord(new[] {terminalCity});
+                    foreach (var result in simpleGraph.Results) {
+                        dictionary[result.Id][terminalCity] = result;
+                    }
+                }
+            }
+            
+            var weights = new Dictionary<GlobalGraphEdge, Weight>();
+            var globalGraph = new GlobalGraph(terminalCities.Values.Aggregate((l1, l2) => l1.Concat(l2).ToList()), edge => {
+                var keyValuePair = weights.First(w => w.Key.Equals(edge));
+                return keyValuePair.Value;
+            });
+            foreach (var weightsKey in weights.Keys) {
+                globalGraph.AddEdge(weightsKey);
+            }
+            globalGraph.RunDijkstra(
+                dictionary.Where(w => terminalCities.Keys.Contains(w.Key))
+                    .ToDictionary(kv => kv.Key, 
+                        kv => kv.Value.First().Value.Weights[0].Weight));
+
+            foreach (var result in globalGraph.Results) {
+                foreach (var node in _graphMap.Keys) {
+                    node.Weights.Add(new GraphWeight(null, dictionary[node.Id][result.Id], null, result.MinWeight().Weight));
+                }   
+            }
         }
     }
 }
