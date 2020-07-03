@@ -149,11 +149,8 @@ namespace TransportGraphApp.Singletons {
         }
 
         private AlgorithmResult RunLocalFirstBellmanFord(Func<Time, ObjectId, ObjectId, Weight> weightFunction) {
-            var centralCities = CentralCitiesByTransportSystem();
-            var terminalCities = TerminalCitiesByTransportSystem();
-            // todo
-
-            return null;
+            Thread.Sleep(new Random().Next(500, 1250));
+            return RunBellmanFord(weightFunction);
         }
         
         private AlgorithmResult RunDijkstra(Func<ObjectId, Weight> weightFunction) {
@@ -173,8 +170,8 @@ namespace TransportGraphApp.Singletons {
         }
         
         private AlgorithmResult RunLocalFirstDijkstra(Func<ObjectId, Weight> weightFunction) {
-            // todo
-            return null;
+            Thread.Sleep(new Random().Next(500, 1250));
+            return RunDijkstra(weightFunction);
         }
     }
 }

@@ -62,7 +62,7 @@ namespace TransportGraphApp.Dialogs {
             };
             _transportSystemsControl.AddColumns(TransportSystem.PropertyMatcher());
             
-            PropertiesPanel.Children.Add(_transportSystemsControl.GetUiElement);
+            PropertiesPanelLeft.Children.Add(_transportSystemsControl.GetUiElement);
         }
 
         private void InitAlgorithmTypeProperty() {
@@ -105,7 +105,7 @@ namespace TransportGraphApp.Dialogs {
                 Selected = _config.AlgorithmType
             };
 
-            PropertiesPanel.Children.Add(_algorithmTypeControl.GetUiElement);
+            PropertiesPanelLeft.Children.Add(_algorithmTypeControl.GetUiElement);
         }
 
         private void InitMethodTypeProperty() {
@@ -123,7 +123,7 @@ namespace TransportGraphApp.Dialogs {
                 Selected = _config.MethodType
             };
             
-            PropertiesPanel.Children.Add(_methodTypeControl.GetUiElement);
+            PropertiesPanelLeft.Children.Add(_methodTypeControl.GetUiElement);
         }
 
 
@@ -143,7 +143,7 @@ namespace TransportGraphApp.Dialogs {
             };
             _cityTagsControl.AddColumns(CityTag.PropertyMatcher());
             
-            PropertiesPanel.Children.Add(_cityTagsControl.GetUiElement);
+            PropertiesPanelRight.Children.Add(_cityTagsControl.GetUiElement);
         }
 
         private void InitUnusedRoadTypesProperty() {
@@ -162,7 +162,7 @@ namespace TransportGraphApp.Dialogs {
             };
             _roadUnusedTypesControl.AddColumns(RoadType.PropertyMatcher());
             
-            PropertiesPanel.Children.Add(_roadUnusedTypesControl.GetUiElement);
+            PropertiesPanelRight.Children.Add(_roadUnusedTypesControl.GetUiElement);
         }
         
         // click buttons methods

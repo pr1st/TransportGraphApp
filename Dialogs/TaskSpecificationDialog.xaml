@@ -5,8 +5,11 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Title="Спецификация задачи">
-    <StackPanel Margin="10" Width="500">
-        <StackPanel Name="PropertiesPanel" x:FieldModifier="private" />
+    <StackPanel Margin="10" Width="740">
+        <WrapPanel Height="800">
+            <StackPanel Width="370" Name="PropertiesPanelLeft" x:FieldModifier="private" />
+            <StackPanel Width="370" Name="PropertiesPanelRight" x:FieldModifier="private" />
+        </WrapPanel>
         <Grid Margin="0,10,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />
